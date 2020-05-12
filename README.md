@@ -27,7 +27,7 @@
 
 ### android
 
-* [담다](https://lab.ssafy.com/s02-final/s02p31b205/tree/develop/damda-android) : 안드로이드 프로젝트 ( 주 서비스 )
+* [담다](https://lab.ssafy.com/s02-final/s02p31b205/tree/develop/damda) : 안드로이드 프로젝트 ( 주 서비스 )
 
 
 
