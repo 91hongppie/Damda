@@ -2,6 +2,15 @@
 
 ## 기본 문법
 
+### var, val
+
+```kotlin
+var name: string
+name = "kotlin"
+```
+
+
+
 ### 문자열 템플릿
 
 ```kotlin
