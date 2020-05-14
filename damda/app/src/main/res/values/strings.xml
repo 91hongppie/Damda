@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Howlstagram</string>
+    <string name="app_name">Damda</string>
     <string name="facebook_app_id">873009302900995</string>
     <string name="fb_login_protocol_scheme">fb873009302900995</string>
 
@@ -15,6 +15,7 @@
     <string name="signout_success">Signout success</string>
     <string name="signout_fail">Signout fail</string>
     <string name="signout_fail_null">Please enter your email and password</string>
+    <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
 
     <!-- Bottom Navigation View -->
     <string name="home">home</string>
@@ -50,6 +51,6 @@
     <string name="back">Back</string>
 
     <!-- etc -->
-    <item name="visible" type="id"/>
-    <item name="masked" type="id"/>
+    <item name="visible" type="id" />
+    <item name="masked" type="id" />
 </resources>
