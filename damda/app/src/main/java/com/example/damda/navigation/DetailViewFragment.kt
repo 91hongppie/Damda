@@ -6,11 +6,9 @@ import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.damda.PhotoAdapter
-import com.example.damda.Photos
+import com.example.damda.navigation.model.Photos
 import com.example.damda.R
-import kotlinx.android.synthetic.main.fragment_detail.*
 import kotlinx.android.synthetic.main.fragment_detail.view.*
 
 class DetailViewFragment : Fragment() {
@@ -30,11 +28,64 @@ class DetailViewFragment : Fragment() {
             Photos(R.drawable.photo),
             Photos(R.drawable.photo),
             Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
+            Photos(R.drawable.photo),
             Photos(R.drawable.photo)
         )
 
         view.rv_photo.adapter = PhotoAdapter(photoList)
-        view.rv_photo.layoutManager = GridLayoutManager(activity, 6)
+        view.rv_photo.layoutManager = GridLayoutManager(activity, 3)
 
 
         return view

@@ -4,7 +4,9 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
+import com.example.damda.navigation.model.Photos
 
 
 class PhotoAdapter (val photoList: ArrayList<Photos>) : RecyclerView.Adapter<PhotoAdapter.CustomViewHolder>()
@@ -13,7 +15,13 @@ class PhotoAdapter (val photoList: ArrayList<Photos>) : RecyclerView.Adapter<Pho
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoAdapter.CustomViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.photo_list_item, parent, false)
-        return CustomViewHolder(view)
+        return CustomViewHolder(view).apply {
+            itemView.setOnClickListener {
+                Toast.makeText(parent.context, "클릭하면 나와용", Toast.LENGTH_SHORT).show()
+
+            }
+
+        }
     }
 
     override fun getItemCount(): Int {
