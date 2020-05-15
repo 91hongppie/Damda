@@ -55,12 +55,9 @@ class LoginActivity : AppCompatActivity() {
 
                     GlobalApplication.prefs.myEditText = login?.token
 
-                    var dialog = AlertDialog.Builder(this@LoginActivity)
-                    dialog.setTitle("토큰")
-                    dialog.setMessage(login?.token)
-                    dialog.show()
-                    //startActivity(Intent(this,MainActivity::class.java))
-
+                    var intent = Intent(this@LoginActivity, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }
             })
 
