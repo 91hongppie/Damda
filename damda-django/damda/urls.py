@@ -22,4 +22,6 @@ urlpatterns = [
     path('api/accounts/', include('accounts.urls')),
     path('api/albums', include('albums.urls')),
     path('api-token-auth/', obtain_jwt_token),
+    path('rest-auth/', include('rest_auth.urls')),
+    path('rest-auth/registration/', include('rest_auth.registration.urls'))
 ]
