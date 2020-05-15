@@ -5,6 +5,11 @@
 ### var, val
 
 ```kotlin
+/*
+val => 읽기전용, 값 할당 1회만 가능, 초기화 필요, 나중에 할당 X
+var => 값 할당 여러번 가능
+*/
+
 var name: string
 name = "kotlin"
 ```
@@ -66,6 +71,21 @@ val sameRef = a === b
 
 - `a === b` 값은 `false`
 - 같은 파일을 참조하지만 각각 별개의 File 객체 인스턴스
+
+```kotlin
+var a: Int = 10000
+var b: Int = 10000
+println(a === b) // true
+println(a == b)  // true
+
+// 자바 문법으로 변환시 Int -> int 형으로 Int? -> Integer (오브젝트) 형으로 변환되기 때문
+var a: Int = 10000
+var b: Int? = 10000
+println(a === b) // false
+println(a == b)  // true
+```
+
+
 
 #### 구조 동등성
 

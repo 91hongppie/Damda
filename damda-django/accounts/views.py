@@ -1,3 +1,4 @@
+from django.views.decorators.csrf import csrf_exempt
 from django.shortcuts import render
 from django.http import HttpResponse
 import requests
@@ -27,3 +28,10 @@ def notification(request):
     print(request.body)
     send_push_notification('APA91bEBFS7geug932VTU7Xj5VkNuoM3Nr36NspbBVPLzoiWIbsL_KVTx5LxDlRyTlKTwGqIPBPpHlImSVCTvc9i_PkmqRcYaVpEwsQZAK80pbGGonq5TANel_RoIRH1Ez4H8b8suCku', 'Damda', 'textextext')
     return HttpResponse(200)
+
+# Create your views here.
+
+
+@csrf_exempt
+def app_login(request):
+    pass

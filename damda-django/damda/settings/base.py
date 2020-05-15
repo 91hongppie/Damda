@@ -28,6 +28,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'accounts',
     'albums',
+    'imagekit',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
@@ -121,6 +122,7 @@ REST_FRAMEWORK = {
     ),
 }
 
+AUTH_USER_MODEL = 'accounts.User'
 JWT_AUTH = {
     # 'JWT_SECRET_KEY': SECRET_KEY,
     # 'JWT_ALGORITHM': 'HS256',
@@ -128,3 +130,7 @@ JWT_AUTH = {
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
     # 'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=28),
 }
+
+ACCOUNT_EMAIL_REQUIRED = False
+ACCOUNT_EMAIL_VERIFICATION = None
+ACCOUNT_LOGOUT_ON_GET = True
