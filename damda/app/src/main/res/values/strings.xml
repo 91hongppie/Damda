@@ -2,6 +2,9 @@
     <string name="app_name">Damda</string>
     <string name="facebook_app_id">873009302900995</string>
     <string name="fb_login_protocol_scheme">fb873009302900995</string>
+    <string name="kakao_app_key">1ecc00ce5effc6b1718425438d605126</string>
+    <string name="kakao_scheme">kakao1ecc00ce5effc6b1718425438d605126</string>
+    <string name="kakaolink_host">kakaolink</string>
 
     <!-- Sign In -->
     <string name="email">Email</string>
