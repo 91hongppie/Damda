@@ -28,7 +28,9 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         // Instance ID token to your app server.
         sendRegistrationToServer(token)
     }
+    private fun sendRegistrationToServer(token: String?) {
 
+    }
     /**
      * this method will be triggered every time there is new FCM Message.
      */
