@@ -3,6 +3,7 @@ package com.example.damda
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
+import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.damda.navigation.AlarmFragment
 import com.example.damda.navigation.DetailViewFragment
 import com.example.damda.navigation.GridFragment
@@ -17,6 +18,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         setContentView(R.layout.activity_main)
         bottom_navigation.setOnNavigationItemSelectedListener(this)
 
+        // Set default screen
+        bottom_navigation.selectedItemId = R.id.action_home
     }
 
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
