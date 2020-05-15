@@ -3,9 +3,8 @@ package com.example.damda
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.view.MenuItem
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.damda.navigation.AlarmFragment
-import com.example.damda.navigation.DetailViewFragment
+import com.example.damda.navigation.PhotoListFragment
 import com.example.damda.navigation.GridFragment
 import com.example.damda.navigation.UserFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -25,7 +24,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         when (p0.itemId) {
             R.id.action_home -> {
-                var detailViewFragment = DetailViewFragment()
+                var detailViewFragment = PhotoListFragment()
                 supportFragmentManager.beginTransaction()
                     .replace(R.id.main_content, detailViewFragment).commit()
                 return true
