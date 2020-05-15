@@ -15,10 +15,10 @@ class LoginActivity : AppCompatActivity() {
     var login:Login? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        setContentView(R.layout.activity_login)
 
         var retrofit = Retrofit.Builder()
-            .baseUrl("https://loacalhost:8000/damda/login")
+            .baseUrl("http://10.0.2.2:8000")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         var loginService: LoginService = retrofit.create(LoginService::class.java)
@@ -48,3 +48,5 @@ class LoginActivity : AppCompatActivity() {
         }
     }
 }
+
+
