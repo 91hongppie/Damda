@@ -28,6 +28,7 @@ ALLOWED_HOSTS = []
 INSTALLED_APPS = [
     'accounts',
     'albums',
+    'imagekit',
     'corsheaders',
     'rest_framework',
     'rest_framework.authtoken',
