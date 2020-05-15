@@ -30,7 +30,7 @@ class LoginActivity : AppCompatActivity() {
         setContentView(R.layout.activity_login)
 
         var retrofit = Retrofit.Builder()
-            .baseUrl("https://i02b105.p.ssafy.io")
+            .baseUrl("http://10.0.2.2:8000")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         var loginService: LoginService = retrofit.create(LoginService::class.java)
@@ -48,12 +48,13 @@ class LoginActivity : AppCompatActivity() {
                     dialog.show()
                 }
                 override fun onResponse(call: Call<Login>, response: Response<Login>) {
-                    login = response.body()
-                    Log.d("LOGIN","token : "+login?.token)
-                    var dialog = AlertDialog.Builder(this@LoginActivity)
-                    dialog.setTitle("토큰")
-                    dialog.setMessage(login?.token)
-                    dialog.show()
+//                    login = response.body()
+//                    Log.d("LOGIN","token : "+login?.token)
+//                    var dialog = AlertDialog.Builder(this@LoginActivity)
+//                    dialog.setTitle("토큰")
+//                    dialog.setMessage(login?.token)
+//                    dialog.show()
+                    startActivity(Intent(this,MainActivity::class.java))
                 }
             })
 
@@ -109,3 +110,5 @@ class LoginActivity : AppCompatActivity() {
         finish()
     }
 }
+
+
