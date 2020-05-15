@@ -81,7 +81,7 @@ $pip install -r requirements.txt
 MySQL WorkBanch 사용
 
 id : root
-password : 개인설정 (settings/base.py 에서 수정 후 사용)
+password : 개인설정 (damda/settings/local.py 에서 수정 후 사용)
 
 ```sql
 DB 생성
