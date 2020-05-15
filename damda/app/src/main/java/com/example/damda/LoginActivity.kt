@@ -6,13 +6,15 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.kakao.auth.ApiResponseCallback
+import com.kakao.auth.AuthService
 import com.kakao.auth.ISessionCallback
 import com.kakao.auth.Session
+import com.kakao.auth.network.response.AccessTokenInfoResponse
 import com.kakao.network.ErrorResult
 import com.kakao.usermgmt.UserManagement
 import com.kakao.usermgmt.callback.MeV2ResponseCallback
 import com.kakao.usermgmt.response.MeV2Response
-import com.kakao.util.OptionalBoolean
 import com.kakao.util.exception.KakaoException
 import kotlinx.android.synthetic.main.activity_login.*
 import retrofit2.Call
@@ -21,18 +23,19 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
+
 class LoginActivity : AppCompatActivity() {
     var login:Login? = null
+    var kakaoLogin:KakaoLogin? = null
     private var callback: SessionCallback = SessionCallback()
+    var retrofit = Retrofit.Builder()
+        .baseUrl("http://10.0.2.2:8000")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    var loginService: LoginService = retrofit.create(LoginService::class.java)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
-        var retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8000")
-            .addConverterFactory(GsonConverterFactory.create())
-            .build()
-        var loginService: LoginService = retrofit.create(LoginService::class.java)
 
         login_button.setOnClickListener{
             var text1 = email.text.toString()
@@ -68,25 +71,45 @@ class LoginActivity : AppCompatActivity() {
         tokendialog.setMessage(GlobalApplication.prefs.myEditText)
         tokendialog.show()
     }
+
     private inner class SessionCallback : ISessionCallback {
         override fun onSessionOpened() {
             // 로그인 세션이 열렸을 때
             UserManagement.getInstance().me( object : MeV2ResponseCallback() {
                 override fun onSuccess(result: MeV2Response?) {
                     // 로그인이 성공했을 때
-                    var intent = Intent(this@LoginActivity, MainActivity::class.java)
-                    intent.putExtra("name", result!!.getNickname())
-                    intent.putExtra("profile", result!!.getProfileImagePath())
-                    if(result.getKakaoAccount().hasEmail() == OptionalBoolean.TRUE)
-                        intent.putExtra("email", result.getKakaoAccount().getEmail())
-                    else
-                        intent.putExtra("email", "none")
-                    if(result.getKakaoAccount().hasBirthday() == OptionalBoolean.TRUE)
-                        intent.putExtra("birthday", result.getKakaoAccount().getBirthday());
-                    else
-                        intent.putExtra("birthday", "none")
-                    startActivity(intent)
-                    finish()
+                    val accessToken = Session.getCurrentSession().tokenInfo.accessToken
+                    var params:HashMap<String, Any> = HashMap<String, Any>()
+                    params.put("access_token", accessToken)
+
+                    loginService.requestKakao(params)?.enqueue(object: Callback<KakaoLogin>{
+                        override fun onFailure(call: Call<KakaoLogin>, t: Throwable) {
+                            Log.e("LOGIN",t.message)
+                            var dialog = AlertDialog.Builder(this@LoginActivity)
+                            dialog.setTitle("에러")
+                            dialog.setMessage("호출실패했습니다.")
+                            dialog.show()
+                        }
+                        override fun onResponse(call: Call<KakaoLogin>, response: Response<KakaoLogin>) {
+                            kakaoLogin = response.body()
+                            Log.d("LOGIN","token : "+kakaoLogin?.token)
+                            GlobalApplication.prefs.myEditText = kakaoLogin?.token
+
+                            var intent = Intent(this@LoginActivity, MainActivity::class.java)
+//                    intent.putExtra("name", result!!.getNickname())
+//                    intent.putExtra("profile", result!!.getProfileImagePath())
+//                    if(result.getKakaoAccount().hasEmail() == OptionalBoolean.TRUE)
+//                        intent.putExtra("email", result.getKakaoAccount().getEmail())
+//                    else
+//                        intent.putExtra("email", "none")
+//                    if(result.getKakaoAccount().hasBirthday() == OptionalBoolean.TRUE)
+//                        intent.putExtra("birthday", result.getKakaoAccount().getBirthday());
+//                    else
+//                        intent.putExtra("birthday", "none")
+                            startActivity(intent)
+                            finish()
+                        }
+                    })
                 }
 
                 override fun onSessionClosed(errorResult: ErrorResult?) {
