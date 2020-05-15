@@ -6,7 +6,6 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.content.ContextCompat.startActivity
 import com.kakao.auth.ISessionCallback
 import com.kakao.auth.Session
 import com.kakao.network.ErrorResult
@@ -50,16 +49,24 @@ class LoginActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<Login>, response: Response<Login>) {
                     login = response.body()
                     Log.d("LOGIN","token : "+login?.token)
+
+                    GlobalApplication.prefs.myEditText = login?.token
+
                     var dialog = AlertDialog.Builder(this@LoginActivity)
                     dialog.setTitle("토큰")
                     dialog.setMessage(login?.token)
                     dialog.show()
                     //startActivity(Intent(this,MainActivity::class.java))
+
                 }
             })
 
         }
         Session.getCurrentSession().addCallback(callback)
+        var tokendialog = AlertDialog.Builder(this@LoginActivity)
+        tokendialog.setTitle("토큰")
+        tokendialog.setMessage(GlobalApplication.prefs.myEditText)
+        tokendialog.show()
     }
     private inner class SessionCallback : ISessionCallback {
         override fun onSessionOpened() {
