@@ -1,6 +1,9 @@
 package com.example.damda.navigation.model
 
-/**
- * 클래스 모델 객체
- */
-class Photos (val image: Int)
+class PhotoList (var data: List<Photos>)
+
+class Photos (var image: Int)
+
+class ImageList (var result: List<Image>)
+
+class Image (var id: Int, var pic_name: String, var title: String)
