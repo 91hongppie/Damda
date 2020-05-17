@@ -62,11 +62,12 @@ class LoginActivity : AppCompatActivity() {
             })
 
         }
-        Session.getCurrentSession().addCallback(callback)
-        var tokendialog = AlertDialog.Builder(this@LoginActivity)
-        tokendialog.setTitle("토큰")
-        tokendialog.setMessage(GlobalApplication.prefs.myEditText)
-        tokendialog.show()
+        if (GlobalApplication.prefs.myEditText !== "") {
+            var intent = Intent(this@LoginActivity, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        } else {
+        Session.getCurrentSession().addCallback(callback)}
     }
 
     private inner class SessionCallback : ISessionCallback {
