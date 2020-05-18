@@ -7,30 +7,24 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-<<<<<<< HEAD
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.damda.navigation.*
-=======
 import com.example.damda.navigation.AlarmFragment
 import com.example.damda.navigation.DetailViewFragment
 import com.example.damda.navigation.GridFragment
 import com.example.damda.navigation.UserFragment
->>>>>>> adb6a8c817c631776f657062a8690582d401db71
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_main.*
-<<<<<<< HEAD
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-=======
 import androidx.fragment.app.Fragment
->>>>>>> adb6a8c817c631776f657062a8690582d401db71
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
