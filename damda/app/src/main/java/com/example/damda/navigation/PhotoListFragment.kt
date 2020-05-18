@@ -59,7 +59,7 @@ class PhotoListFragment : Fragment() {
                 activity?.runOnUiThread {
 
                     val album = arguments?.getParcelable<Album>("album")
-                    view?.albumName?.text = album?.name
+                    view?.albumTitle?.text = album?.title
                     view?.rv_photo?.adapter = PhotoAdapter(list)
                     view?.rv_photo?.layoutManager = GridLayoutManager(activity, 3)
                 }
