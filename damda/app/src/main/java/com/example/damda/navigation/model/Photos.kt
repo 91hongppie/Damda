@@ -1,5 +1,7 @@
 package com.example.damda.navigation.model
 
-class PhotoList (var result: List<Photos>)
+import java.lang.reflect.Array
 
 class Photos (var id: Int, var pic_name: String, var title: String)
+
+class Image (var image: Int)
