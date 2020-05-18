@@ -31,10 +31,7 @@
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".LoginActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -53,8 +50,12 @@
             android:exported="true" />
 
         <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-        <activity android:name=".navigation.AddPhotoActivity" />
+        <activity android:name=".AddPhotoActivity" />
 
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>

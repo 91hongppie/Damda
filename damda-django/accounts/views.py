@@ -2,6 +2,7 @@ from django.views.decorators.csrf import csrf_exempt
 from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
 from rest_auth.registration.views import SocialLoginView
 from django.utils.decorators import method_decorator
+from .messaging import send_to_token
 
 # Create your views here.
 
@@ -13,3 +14,7 @@ from django.utils.decorators import method_decorator
 @method_decorator(csrf_exempt, name='dispatch')
 class KakaoLogin(SocialLoginView):
     adapter_class = KakaoOAuth2Adapter
+
+
+def messaging(request):
+    send_to_token()
