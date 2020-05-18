@@ -31,7 +31,7 @@ class GridFragment : Fragment() {
         val albumAdapter = AlbumAdapter(albumList) { album ->
             var bundle = Bundle()
             bundle.putParcelable("album",album)
-            var fragment = DetailViewFragment()
+            var fragment = PhotoListFragment()
             fragment.arguments = bundle
             context.replaceFragment(fragment)
         }
