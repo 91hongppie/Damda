@@ -43,7 +43,7 @@ class PhotoListFragment : Fragment() {
 
     fun fetchJson() {
         val url = URL("http://10.0.2.2:8000/api/albums/photo")
-        val request = Request.Builder().url(url).addHeader("Authorization", "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluQHNzYWZ5LmNvbSIsImV4cCI6MTU5MDMwNTE2MSwiZW1haWwiOiJhZG1pbkBzc2FmeS5jb20ifQ.BLlRaNa1WT78BzvrNe8I557ppTQr5QRNfGYnZtkMSXc")
+        val request = Request.Builder().url(url).addHeader("Authorization", "JWT eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJ1c2VybmFtZSI6ImFkbWluQGFkbWluLmNvbSIsImV4cCI6MTU5MDM4Mzg4NCwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20ifQ.kLOnTOAYpXkLb_AEUXWdkdypp8Vsq2KO5ecEBgmZ4lA")
             .build()
         val client = OkHttpClient()
 
