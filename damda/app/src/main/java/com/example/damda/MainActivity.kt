@@ -33,6 +33,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
             1
         )
+
+        bottom_navigation.selectedItemId = R.id.action_search
     }
 
     fun runtimeEnableAutoInit() {
@@ -41,9 +43,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         // [END fcm_runtime_enable_auto_init]
 
         // Set default screen
-        bottom_navigation.selectedItemId = R.id.action_home
     }
-
+    fun replaceFragment(fragment: Fragment){
+        supportFragmentManager.beginTransaction().replace(R.id.main_content,fragment).addToBackStack(null).commit()
+    }
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         when (p0.itemId) {
             R.id.action_home -> {
@@ -93,11 +96,4 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     val service = retrofit.create(RetrofitNetwork::class.java)
 
 
-}
-fun AppCompatActivity.replaceFragment(fragment: Fragment){
-    val fragmentManager = supportFragmentManager
-    val transaction = fragmentManager.beginTransaction()
-    transaction.replace(R.id.main_content,fragment)
-    transaction.addToBackStack(null)
-    transaction.commit()
 }

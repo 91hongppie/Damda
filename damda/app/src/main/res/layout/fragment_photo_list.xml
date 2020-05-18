@@ -8,7 +8,7 @@
     android:orientation="vertical">
 
     <TextView
-        android:id="@+id/albumName"
+        android:id="@+id/albumTitle"
         android:layout_width="match_parent"
         android:layout_height="44dp"
         android:text="TextView"

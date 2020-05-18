@@ -27,7 +27,8 @@ class PhotoListFragment : Fragment() {
         savedInstanceState: Bundle?
     ): View? {
         var view = LayoutInflater.from(activity).inflate(R.layout.fragment_photo_list, container, false)
-        val url = URL("http://10.0.2.2:8000/api/albums/photo/")
+        val album = arguments?.getParcelable<Album>("album")
+        val url = URL("http://10.0.2.2:8000/api/albums/photo/${album?.id}/")
         val jwt = GlobalApplication.prefs.myEditText
         val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt")
             .build()
@@ -48,8 +49,7 @@ class PhotoListFragment : Fragment() {
                 })
             }
         })
-        val album = arguments?.getParcelable<Album>("album")
-        view.albumName?.text = album?.name
+        view.albumTitle?.text = album?.title
         view.rv_photo?.layoutManager = GridLayoutManager(activity, 3)
 
         return view
