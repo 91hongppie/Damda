@@ -7,5 +7,6 @@ app_name = "accounts"
 urlpatterns = [
     path('checkemail/',views.checkemail),
     path('signup/', views.signup),
-    path('rest-auth/kakao/', views.KakaoLogin.as_view())
+    path('rest-auth/kakao/', views.KakaoLogin.as_view()),
+    path('user/', views.UserInfo)
 ]

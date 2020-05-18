@@ -4,7 +4,10 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+<<<<<<< HEAD
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+=======
+>>>>>>> bc167bc7db7706f48263e31045631ba12b2929d3
     <application
         android:name=".GlobalApplication"
         android:allowBackup="true"
@@ -14,6 +17,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+<<<<<<< HEAD
         <service
             android:name=".SignupService"
             android:enabled="true"
@@ -29,6 +33,10 @@
             android:value="false" />
 
         <!-- 배포시 삭제  userCleartextTraffic     -->
+=======
+        <activity android:name=".AddFamilyActivity"></activity>
+        <!-- 배포시 삭제  userCleartextTraffic -->
+>>>>>>> bc167bc7db7706f48263e31045631ba12b2929d3
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
@@ -60,6 +68,7 @@
             android:enabled="true"
             android:exported="true" />
 
+<<<<<<< HEAD
         <activity android:name=".MainActivity">
         </activity>
         <activity android:name=".navigation.AddPhotoActivity" />
@@ -70,6 +79,9 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVEN" />
             </intent-filter>
         </service>
+=======
+        <activity android:name=".MainActivity"></activity>
+>>>>>>> bc167bc7db7706f48263e31045631ba12b2929d3
     </application>
 
 </manifest>
