@@ -29,7 +29,7 @@
             android:layout_width="match_parent"
             android:backgroundTint="@color/white"
             android:maxLines="1"
-            android:maxLength="12"
+            android:maxLength="20"
             android:inputType="text"
             android:textColor="@color/white"
             android:layout_height="match_parent"

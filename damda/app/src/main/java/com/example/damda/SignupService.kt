@@ -1,15 +1,21 @@
 package com.example.damda
 
 import retrofit2.Call
-import retrofit2.http.Body
-import retrofit2.http.POST
+import retrofit2.http.*
 
 
 interface SignupService{
-
-    @POST("/api/accounts/checkemail/")
+    @Headers("Accept: application/json")
+    @GET("/api/accounts/checkemail/")
     fun requestCheckEmail(
-        @Body parameters: HashMap<String,Any>
+        @Query ("username") text1:String
     ) : Call<CheckEmail>
+    @FormUrlEncoded
+    @POST("/api/accounts/signup/")
+    fun signUp(
+        @FieldMap parameters:HashMap<String,Any>
+    ): Call<SignUp>
+
+
 
 }

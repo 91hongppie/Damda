@@ -10,12 +10,24 @@ from django.http import JsonResponse
 
 @csrf_exempt
 def checkemail(request):
-    print(request)
-    if request.method == 'POST':
-        users = User.objects.all()
-        print(users)
-    
-        if id in users: 
-            return JsonResponse({'token':'exist'})
+    data = request.GET.get('username', None)
+    print(data)
+    user = None
+    if request.method == 'GET':
+        user = User.objects.filter(username=data)
+        print(user.count())
+        
+        if user.count() == 0:
+            token = "true"
         else:
-            return JsonResponse({'token': ''})
+            token = "false"
+        context = {"token":token}
+        return JsonResponse(context)
+@csrf_exempt
+def signup(request):
+    print(request.POST.get('username',None))
+    if request.method == 'POST':
+        user = User()
+        user.username = request.POST.get('username',None)
+        user.save()
+    return JsonResponse({"token":"true"})

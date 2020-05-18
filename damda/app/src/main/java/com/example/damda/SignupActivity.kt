@@ -1,6 +1,7 @@
 package com.example.damda
 
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.widget.EditText
@@ -57,35 +58,48 @@ class SignupActivity : AppCompatActivity() {
     }
 
     private fun setListener() {
+
+        isCheckID = false
         var retrofit = Retrofit.Builder()
             .baseUrl("http://10.0.2.2:8000")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         var signupService: SignupService = retrofit.create(SignupService::class.java)
-        var params:HashMap<String, Any> = HashMap<String, Any>()
-        params.put("username", editEmail)
         btnDone.setOnClickListener {
-
+            var params:HashMap<String, Any> = HashMap<String, Any>()
+            var text1 = editEmail.text.toString()
+            params.put("username", text1)
             if (isCheckID) {
-                var dialog = AlertDialog.Builder(this@SignupActivity)
-                dialog.setTitle("성공")
-                dialog.setMessage("회원가입성공.")
-                dialog.show()
-//                startActivity(LoginActivity.newIntent(this@JoinActivity))
-                finish()
+                signupService.signUp(params).enqueue(object:Callback<SignUp>{
+                    override fun onFailure(call: Call<SignUp>, t: Throwable) {
+                        Log.e("LOGIN", t.message)
+                        var dialog = AlertDialog.Builder(this@SignupActivity)
+                        dialog.setTitle("에러")
+                        dialog.setMessage("호출실패했습니다.")
+                        dialog.show()
+                    }
+
+                    override fun onResponse(call: Call<SignUp>, response: Response<SignUp>) {
+                        var dialog = AlertDialog.Builder(this@SignupActivity)
+                        dialog.setTitle("성공")
+                        dialog.setMessage("회원가입성공.")
+                        dialog.show()
+                        val intent = Intent(this@SignupActivity, LoginActivity::class.java)
+                        startActivity(intent)
+                    }
+                })
             } else {
                 toast(getString(R.string.error_do_not_check_id))
             }
         }
         btnCheckExistID.setOnClickListener {
             var text1 = editEmail.text.toString()
-
             if (editEmail.text.toString().isEmpty()) {
                 isCheckID = false
                 toast(getString(R.string.error_do_not_input_id))
                 return@setOnClickListener
             }
-            signupService.requestCheckEmail(params).enqueue(object : Callback<CheckEmail> {
+            signupService.requestCheckEmail(text1).enqueue(object : Callback<CheckEmail> {
                 override fun onFailure(call: Call<CheckEmail>, t: Throwable) {
                     Log.e("LOGIN", t.message)
                     var dialog = AlertDialog.Builder(this@SignupActivity)
@@ -98,11 +112,12 @@ class SignupActivity : AppCompatActivity() {
                     checkemail = response.body()
                     Log.d("ChekID", "token : " + checkemail?.token)
 
-                    if(checkemail?.token=="exist"){
+                    if(checkemail?.token=="false"){
                         toast(getString(R.string.error_exist_email))
                         isCheckID = false
                     }
                     else{
+                        toast(getString(R.string.can_use_email))
                         isCheckID = true
                     }
                 }
@@ -145,15 +160,15 @@ class SignupActivity : AppCompatActivity() {
 
 
         //Email
-        val disposableEmail = RxTextView.textChanges(inputDataField[3])
-            .map { t -> t.isEmpty() || Pattern.matches(Constants.EMAIL_RULS, t) }
-            .subscribe({
-                reactiveInputTextViewData(3, it)
-            }){
-                //Error Block
-            }
+//        val disposableEmail = RxTextView.textChanges(inputDataField[3])
+//            .map { t -> t.isEmpty() || Pattern.matches(Constants.EMAIL_RULS, t) }
+//            .subscribe({
+//                reactiveInputTextViewData(3, it)
+//            }){
+//                //Error Block
+//            }
 
-        viewDisposables.addAll(disposableID, disposablePwd, disposableRePwd, disposableEmail)
+        viewDisposables.addAll(disposableID, disposablePwd, disposableRePwd)
     }
 
     var isSuccess = false
