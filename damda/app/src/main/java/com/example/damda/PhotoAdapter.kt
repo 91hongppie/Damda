@@ -8,13 +8,12 @@ import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
-import com.example.damda.navigation.JsonObj
-import com.example.damda.navigation.MyMy
+import com.example.damda.navigation.model.PhotoList
 import com.example.damda.navigation.model.Photos
 import kotlinx.android.synthetic.main.list_item_photo.view.*
 
 
-class PhotoAdapter (val photoList: JsonObj) : RecyclerView.Adapter<PhotoAdapter.CustomViewHolder>()
+class PhotoAdapter (val photoList: PhotoList) : RecyclerView.Adapter<PhotoAdapter.CustomViewHolder>()
 {
 
 
@@ -38,12 +37,9 @@ class PhotoAdapter (val photoList: JsonObj) : RecyclerView.Adapter<PhotoAdapter.
     }
 
     class CustomViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
-        fun bindItems(data: MyMy){
-            println("tttttttttttttttttt ${data.pic_name}")
+        fun bindItems(data: Photos){
             Glide.with(view.context).load("http://10.0.2.2:8000${data.pic_name}").apply(RequestOptions().override(600, 600))
                 .apply(RequestOptions.centerCropTransform()).into(view.iv_image)
         }
-//        val image = itemView.findViewById<ImageView>(R.id.iv_image)
-
     }
 }
