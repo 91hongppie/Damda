@@ -7,11 +7,10 @@ import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.LinearLayoutManager
-import com.example.damda.navigation.AlarmFragment
-import com.example.damda.navigation.DetailViewFragment
-import com.example.damda.navigation.GridFragment
-import com.example.damda.navigation.UserFragment
+import com.example.damda.navigation.*
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_main.*
@@ -83,7 +82,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
         return false
     }
-    interface RetrofitNetwork { @GET("/network") fun listUser() : Call<Array> }
+    interface RetrofitNetwork { @GET("/network") fun listUser() : Call<Array<String>> }
 
     val retrofit = Retrofit.Builder()
         .baseUrl("http://10.0.2.2:8000")
