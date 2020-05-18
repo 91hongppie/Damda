@@ -11,14 +11,14 @@ import com.example.damda.navigation.model.Album
 import com.example.damda.AlbumAdapter
 import com.example.damda.R
 import com.example.damda.replaceFragment
-import kotlinx.android.synthetic.main.fragment_grid.view.*
+import kotlinx.android.synthetic.main.fragment_album_list.view.*
 
 
-class GridFragment : Fragment() {
+class AlbumListFragment : Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
         val context = activity as AppCompatActivity
-        var view = LayoutInflater.from(activity).inflate(R.layout.fragment_grid, container, false)
+        var view = LayoutInflater.from(activity).inflate(R.layout.fragment_album_list, container, false)
         var albumList = arrayListOf<Album>(
             Album("첫번째 앨범"),
             Album("두번째 앨범"),
