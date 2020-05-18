@@ -1,14 +1,29 @@
 package com.example.damda
 
+import android.Manifest
+import android.content.Intent
+import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.util.Log
 import android.view.MenuItem
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
+import androidx.recyclerview.widget.LinearLayoutManager
+import com.example.damda.navigation.*
 import com.example.damda.navigation.AlarmFragment
 import com.example.damda.navigation.DetailViewFragment
 import com.example.damda.navigation.GridFragment
 import com.example.damda.navigation.UserFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
+import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_main.*
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import retrofit2.http.GET
 import androidx.fragment.app.Fragment
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
@@ -17,6 +32,17 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         bottom_navigation.setOnNavigationItemSelectedListener(this)
+        ActivityCompat.requestPermissions(
+            this,
+            arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+            1
+        )
+    }
+
+    fun runtimeEnableAutoInit() {
+        // [START fcm_runtime_enable_auto_init]
+        FirebaseMessaging.getInstance().isAutoInitEnabled = true
+        // [END fcm_runtime_enable_auto_init]
 
         // Set default screen
         bottom_navigation.selectedItemId = R.id.action_home
@@ -37,6 +63,13 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 return true
             }
             R.id.action_add_photo -> {
+                if (ContextCompat.checkSelfPermission(
+                        this,
+                        Manifest.permission.READ_EXTERNAL_STORAGE
+                    ) == PackageManager.PERMISSION_GRANTED
+                ) {
+                    startActivity(Intent(this, AddPhotoActivity::class.java))
+                }
                 return true
             }
             R.id.action_favorite_alarm -> {
@@ -54,6 +87,16 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
         return false
     }
+    interface RetrofitNetwork { @GET("/network") fun listUser() : Call<Array<String>> }
+
+    val retrofit = Retrofit.Builder()
+        .baseUrl("http://10.0.2.2:8000")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+    val service = retrofit.create(RetrofitNetwork::class.java)
+
+
 }
 fun AppCompatActivity.replaceFragment(fragment: Fragment){
     val fragmentManager = supportFragmentManager
