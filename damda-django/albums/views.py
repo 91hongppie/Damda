@@ -10,5 +10,5 @@ from .serializers import PhotoSerializer
 def photo(request):
     photos = Photo.objects.all()
     serializers = PhotoSerializer(photos, many=True)
-    data = {"result": serializers.data}
-    return Response(data)
+
+    return Response(serializers.data)
