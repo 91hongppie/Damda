@@ -29,10 +29,6 @@ class PhotoListFragment : Fragment() {
     ): View? {
 
         var view = LayoutInflater.from(activity).inflate(R.layout.fragment_photo_list, container, false)
-        initStartView()
-        initDataBinding()
-        initAfterBinding()
-        viewDataBinding.executePendingBindings()
         fetchJson()
 //        var photoList = arrayListOf<Photos>(
 //            Photos(R.drawable.avatar)
