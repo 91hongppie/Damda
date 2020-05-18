@@ -4,6 +4,7 @@
 
     <uses-permission android:name="android.permission.INTERNET" />
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <application
         android:name=".GlobalApplication"
         android:allowBackup="true"
@@ -19,6 +20,15 @@
             android:exported="true"></service>
 
         <activity android:name=".SignupActivity" /> <!-- 배포시 삭제  userCleartextTraffic -->
+
+        <meta-data
+            android:name="firebase_messaging_auto_init_enabled"
+            android:value="false" />
+        <meta-data
+            android:name="firebase_analytics_collection_enabled"
+            android:value="false" />
+
+        <!-- 배포시 삭제  userCleartextTraffic     -->
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
@@ -49,6 +59,17 @@
             android:name=".LoginService"
             android:enabled="true"
             android:exported="true" />
+
+        <activity android:name=".MainActivity">
+        </activity>
+        <activity android:name=".navigation.AddPhotoActivity" />
+
+        <service android:name=".MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+                <action android:name="com.google.firebase.INSTANCE_ID_EVEN" />
+            </intent-filter>
+        </service>
     </application>
 
 </manifest>

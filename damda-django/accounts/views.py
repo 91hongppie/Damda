@@ -1,9 +1,11 @@
-from django.shortcuts import render
 from django.views.decorators.csrf import csrf_exempt
 from .models import User
 from rest_framework.response import Response
 from django.http import JsonResponse
 
+from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
+from rest_auth.registration.views import SocialLoginView
+from django.utils.decorators import method_decorator
 
 # Create your views here.
 
@@ -31,3 +33,7 @@ def signup(request):
         user.username = request.POST.get('username',None)
         user.save()
     return JsonResponse({"token":"true"})
+
+@method_decorator(csrf_exempt, name='dispatch')
+class KakaoLogin(SocialLoginView):
+    adapter_class = KakaoOAuth2Adapter

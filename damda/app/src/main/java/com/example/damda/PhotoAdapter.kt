@@ -14,7 +14,7 @@ class PhotoAdapter (val photoList: ArrayList<Photos>) : RecyclerView.Adapter<Pho
 
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoAdapter.CustomViewHolder {
-        val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_album, parent, false)
+        val view = LayoutInflater.from(parent.context).inflate(R.layout.photo_list_item, parent, false)
         return CustomViewHolder(view).apply {
             itemView.setOnClickListener {
                 Toast.makeText(parent.context, "클릭하면 나와용", Toast.LENGTH_SHORT).show()
