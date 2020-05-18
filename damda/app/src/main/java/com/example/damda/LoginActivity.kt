@@ -27,6 +27,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class LoginActivity : AppCompatActivity() {
     var login:Login? = null
     var kakaoLogin:KakaoLogin? = null
+    var userInfo:UserInfo? = null
     private var callback: SessionCallback = SessionCallback()
     var retrofit = Retrofit.Builder()
         .baseUrl("http://10.0.2.2:8000")
@@ -51,13 +52,18 @@ class LoginActivity : AppCompatActivity() {
                 }
                 override fun onResponse(call: Call<Login>, response: Response<Login>) {
                     login = response.body()
-                    Log.d("LOGIN","token : "+login?.token)
+                    Log.v("response", login.toString())
 
                     GlobalApplication.prefs.myEditText = login?.token
-
-                    var intent = Intent(this@LoginActivity, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    if (login?.family === 0) {
+                        var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    } else {
+                        var intent = Intent(this@LoginActivity, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
                 }
             })
 
@@ -90,22 +96,30 @@ class LoginActivity : AppCompatActivity() {
                         }
                         override fun onResponse(call: Call<KakaoLogin>, response: Response<KakaoLogin>) {
                             kakaoLogin = response.body()
-                            Log.d("LOGIN","token : "+kakaoLogin?.token)
                             GlobalApplication.prefs.myEditText = kakaoLogin?.token
-
-                            var intent = Intent(this@LoginActivity, MainActivity::class.java)
-//                    intent.putExtra("name", result!!.getNickname())
-//                    intent.putExtra("profile", result!!.getProfileImagePath())
-//                    if(result.getKakaoAccount().hasEmail() == OptionalBoolean.TRUE)
-//                        intent.putExtra("email", result.getKakaoAccount().getEmail())
-//                    else
-//                        intent.putExtra("email", "none")
-//                    if(result.getKakaoAccount().hasBirthday() == OptionalBoolean.TRUE)
-//                        intent.putExtra("birthday", result.getKakaoAccount().getBirthday());
-//                    else
-//                        intent.putExtra("birthday", "none")
-                            startActivity(intent)
-                            finish()
+                            val token = "JWT " + kakaoLogin?.token
+                            loginService.requestUser(token)?.enqueue(object: Callback<UserInfo>{
+                                override fun onFailure(call: Call<UserInfo>, t: Throwable) {
+                                    Log.e("LOGIN",t.message)
+                                    var dialog = AlertDialog.Builder(this@LoginActivity)
+                                    dialog.setTitle("에러")
+                                    dialog.setMessage("호출실패했습니다.")
+                                    dialog.show()
+                                }
+                                override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
+                                    userInfo = response.body()
+                                    Log.v("UserInfo",userInfo?.family.toString())
+                                    if (userInfo?.family == 0) {
+                                        var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                    } else {
+                                        var intent = Intent(this@LoginActivity, MainActivity::class.java)
+                                        startActivity(intent)
+                                        finish()
+                                    }
+                                }
+                            })
                         }
                     })
                 }
