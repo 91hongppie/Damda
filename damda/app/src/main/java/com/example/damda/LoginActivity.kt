@@ -56,11 +56,15 @@ class LoginActivity : AppCompatActivity() {
                     dialog.setTitle("토큰")
                     dialog.setMessage(login?.token)
                     dialog.show()
-                    //startActivity(Intent(this,MainActivity::class.java))
+
 
                 }
             })
 
+        }
+        signup_button.setOnClickListener {
+            val intent = Intent(this, SignupActivity::class.java)
+            startActivity(intent)
         }
         Session.getCurrentSession().addCallback(callback)
         var tokendialog = AlertDialog.Builder(this@LoginActivity)

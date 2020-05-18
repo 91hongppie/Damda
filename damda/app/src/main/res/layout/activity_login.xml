@@ -42,17 +42,17 @@
             android:layout_marginTop="15dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="35dp"
-            android:text="@string/signin_email"
+            android:text="LOG in"
             android:theme="@style/ButtonStyle" />
 
-        <Button8
+        <Button
+            android:id="@+id/signup_button"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="5dp"
-            android:background="@drawable/btn_signin_facebook"
-            android:text="@string/signin_facebook"
+            android:text="sign_up"
             android:textColor="@color/colorWhite" />
 
         <Button
