@@ -8,9 +8,8 @@ from .serializers import PhotoSerializer, AlbumSerializer
 
 @api_view(['GET', 'POST', ])
 def photo(request, album_pk):
-    photos = Photo.objects.all()
+    photos = Photo.objects.filter(album=album_pk)
     serializers = PhotoSerializer(photos, many=True)
-    print(serializers.data)
     return Response(serializers.data)
 
 @api_view(['GET', 'POST', ])
