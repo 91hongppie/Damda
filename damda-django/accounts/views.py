@@ -38,10 +38,7 @@ def signup(request):
 @method_decorator(csrf_exempt, name='dispatch')
 class KakaoLogin(SocialLoginView):
     adapter_class = KakaoOAuth2Adapter
-<<<<<<< HEAD
 
 
 def messaging(request):
     send_to_token()
-=======
->>>>>>> 31994c8781de0251826cad2d3bd3e868d4a2cb0c

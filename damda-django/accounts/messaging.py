@@ -6,7 +6,7 @@ from firebase_admin import messaging
 def send_to_token():
     # [START send_to_token]
     # This registration token comes from the client FCM SDKs.
-    registration_token = 'YOUR_REGISTRATION_TOKEN'
+    registration_token = 'AAAAbxUojHM:APA91bFcGGGHsNjfGLAfg5SUqk4LOjEdcxkwNlHXG_LnVFqKN377iJBpPRq_INrsAB8gf0SgXg16LqBez-vSgbk6NsRpNWBB7vf1xz2BN-V0aHVb0ci8CR9c06tUJetaigx5JetYkaj8'
 
     # See documentation on defining a message payload.
     message = messaging.Message(
