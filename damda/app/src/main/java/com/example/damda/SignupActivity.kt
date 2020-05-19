@@ -68,7 +68,9 @@ class SignupActivity : AppCompatActivity() {
         btnDone.setOnClickListener {
             var params:HashMap<String, Any> = HashMap<String, Any>()
             var text1 = editEmail.text.toString()
+            var text2 = editPWD.text.toString()
             params.put("username", text1)
+            params.put("password",text2)
             if (isCheckID) {
                 signupService.signUp(params).enqueue(object:Callback<SignUp>{
                     override fun onFailure(call: Call<SignUp>, t: Throwable) {

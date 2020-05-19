@@ -1,7 +1,10 @@
 package com.example.damda
 
 data class SignUp(
-    val token: String
+    val id: Int,
+    val username: String,
+    val is_main_member: Boolean,
+    val family: Int
 )
 data class CheckEmail(
     val token: String

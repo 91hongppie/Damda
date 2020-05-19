@@ -9,7 +9,7 @@ class Family(models.Model):
 class User(AbstractUser):
     username = models.EmailField(unique=True, null=False, max_length=254)
     is_main_member = models.BooleanField(default=False)
-    family = models.ForeignKey(Family, related_name='user_family', on_delete=models.PROTECT, blank=True, null=True)
+    family_id = models.ForeignKey(Family, related_name='user_family', on_delete=models.PROTECT, blank=True, null=True)
 
 # class Addresses(models.Model):
 #     name = models.CharField(max_length=10)
