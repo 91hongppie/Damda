@@ -48,6 +48,16 @@ dependencies {
     implementation 'com.github.bumptech.glide:glide:4.11.0'
     implementation 'androidx.gridlayout:gridlayout:1.0.0'
     implementation 'com.afollestad:drag-select-recyclerview:2.3.0'
+    //RX
+    implementation "com.jakewharton.rxbinding2:rxbinding-kotlin:$rxKotlinVersion"
+    // Anko Commons
+    implementation "org.jetbrains.anko:anko-commons:$anko_version"
+    // Appcompat-v7 (only Anko Commons)
+    implementation "org.jetbrains.anko:anko-appcompat-v7-commons:$anko_version"
+    // Support-v4 (only Anko Commons)
+    implementation "org.jetbrains.anko:anko-support-v4-commons:$anko_version"
+    //noinspection GradleCompatible
+
     implementation 'com.google.firebase:firebase-messaging:20.1.7'
     implementation 'com.google.firebase:firebase-storage:19.1.1'
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
