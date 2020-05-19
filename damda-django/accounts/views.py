@@ -13,7 +13,6 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.response import Response
 from .serializers import UserSerializer
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-import jwt
 
 # Create your views here.
 
@@ -21,31 +20,25 @@ import jwt
 @permission_classes([IsAuthenticated])
 @authentication_classes((JSONWebTokenAuthentication,))
 def UserInfo(request):
-    encoded_token = request.headers['Authorization'].split()[1]
-    pk = jwt.decode(encoded_token, 'SECRET', algorithms=['HS256'])['user_id']
     User = get_user_model()
-    user = get_object_or_404(User, pk=pk)
+    user = get_object_or_404(User, username=request.user)
     serializer = UserSerializer(user)
     return Response(serializer.data)
 
 @csrf_exempt
 def checkemail(request):
     data = request.GET.get('username', None)
-    print(data)
-    user = None
     if request.method == 'GET':
-        user = User.objects.filter(username=data)
-        print(user.count())
-        
+        user = User.objects.filter(username=data)        
         if user.count() == 0:
             token = "true"
         else:
             token = "false"
         context = {"token":token}
         return JsonResponse(context)
+
 @csrf_exempt
 def signup(request):
-    print(request.POST.get('username',None))
     if request.method == 'POST':
         user = User()
         user.username = request.POST.get('username',None)

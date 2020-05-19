@@ -132,11 +132,10 @@ REST_FRAMEWORK = {
 REST_USE_JWT = True
 AUTH_USER_MODEL = 'accounts.User'
 JWT_AUTH = {
-    'JWT_SECRET_KEY': 'SECRET',
+    # 'JWT_SECRET_KEY': SECRET_KEY,
     # 'JWT_ALGORITHM': 'HS256',
     # 'JWT_ALLOW_REFRESH': True,
     'JWT_EXPIRATION_DELTA': datetime.timedelta(days=7),
-    'JWT_RESPONSE_PAYLOAD_HANDLER': 'rest_framework_jwt.utils.jwt_response_payload_handler',
     # 'JWT_REFRESH_EXPIRATION_DELTA': datetime.timedelta(days=28),
 }
 
