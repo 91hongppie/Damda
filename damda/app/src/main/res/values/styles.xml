@@ -9,7 +9,7 @@
     </style>
 
     <style name="ButtonStyle" parent="Widget.AppCompat.Button.Colored">
-        <item name="colorButtonNormal">@color/colorWhite</item>
+        <item name="colorButtonNormal">@color/colorPrimary</item>
     </style>
     <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>

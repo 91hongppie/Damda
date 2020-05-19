@@ -6,11 +6,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.kakao.auth.ApiResponseCallback
-import com.kakao.auth.AuthService
 import com.kakao.auth.ISessionCallback
 import com.kakao.auth.Session
-import com.kakao.auth.network.response.AccessTokenInfoResponse
 import com.kakao.network.ErrorResult
 import com.kakao.usermgmt.UserManagement
 import com.kakao.usermgmt.callback.MeV2ResponseCallback

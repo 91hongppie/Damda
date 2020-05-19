@@ -18,7 +18,9 @@
         <service
             android:name=".SignupService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true">
+
+        </service>
 
         <activity android:name=".SignupActivity" /> <!-- 배포시 삭제  userCleartextTraffic -->
 
@@ -62,8 +64,12 @@
             android:exported="true" />
 
         <activity android:name=".MainActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
-        <activity android:name=".navigation.AddPhotoActivity" />
+        <activity android:name=".AddPhotoActivity" />
 
         <service android:name=".MyFirebaseMessagingService">
             <intent-filter>

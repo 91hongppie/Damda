@@ -24,7 +24,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     private fun sendRegistrationToServer(token: String?) {
-
+        Log.d(TAG, "sendRegistrationTokenToServer($token)")
     }
 
     override fun onMessageReceived(remoteMessage: RemoteMessage) {
