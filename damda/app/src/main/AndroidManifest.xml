@@ -30,8 +30,8 @@
         <meta-data
             android:name="firebase_analytics_collection_enabled"
             android:value="false" />
-
-        <!-- 배포시 삭제  userCleartextTraffic     -->
+        <activity android:name=".AddFamilyActivity"></activity>
+        <!-- 배포시 삭제  userCleartextTraffic -->
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
