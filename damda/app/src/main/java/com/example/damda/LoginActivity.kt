@@ -6,11 +6,8 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
-import com.kakao.auth.ApiResponseCallback
-import com.kakao.auth.AuthService
 import com.kakao.auth.ISessionCallback
 import com.kakao.auth.Session
-import com.kakao.auth.network.response.AccessTokenInfoResponse
 import com.kakao.network.ErrorResult
 import com.kakao.usermgmt.UserManagement
 import com.kakao.usermgmt.callback.MeV2ResponseCallback
@@ -54,7 +51,7 @@ class LoginActivity : AppCompatActivity() {
                     login = response.body()
                     Log.v("response", login.toString())
 
-                    GlobalApplication.prefs.myEditText = login?.token
+                    GlobalApplication.prefs.token = login?.token
                     if (login?.family_id === 0) {
                         var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
                         startActivity(intent)
@@ -72,7 +69,7 @@ class LoginActivity : AppCompatActivity() {
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
         }
-        if (GlobalApplication.prefs.myEditText !== "") {
+        if (GlobalApplication.prefs.token !== "") {
             var intent = Intent(this@LoginActivity, MainActivity::class.java)
             startActivity(intent)
             finish()
@@ -100,7 +97,7 @@ class LoginActivity : AppCompatActivity() {
                         }
                         override fun onResponse(call: Call<KakaoLogin>, response: Response<KakaoLogin>) {
                             kakaoLogin = response.body()
-                            GlobalApplication.prefs.myEditText = kakaoLogin?.token
+                            GlobalApplication.prefs.token = kakaoLogin?.token
                             val token = "JWT " + kakaoLogin?.token
                             Log.v("token", token)
                             loginService.requestUser(token)?.enqueue(object: Callback<UserInfo>{
