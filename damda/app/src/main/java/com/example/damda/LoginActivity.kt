@@ -55,7 +55,7 @@ class LoginActivity : AppCompatActivity() {
                     Log.v("response", login.toString())
 
                     GlobalApplication.prefs.myEditText = login?.token
-                    if (login?.family === 0) {
+                    if (login?.family_id === 0) {
                         var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
                         startActivity(intent)
                         finish()
@@ -102,6 +102,7 @@ class LoginActivity : AppCompatActivity() {
                             kakaoLogin = response.body()
                             GlobalApplication.prefs.myEditText = kakaoLogin?.token
                             val token = "JWT " + kakaoLogin?.token
+                            Log.v("token", token)
                             loginService.requestUser(token)?.enqueue(object: Callback<UserInfo>{
                                 override fun onFailure(call: Call<UserInfo>, t: Throwable) {
                                     Log.e("LOGIN",t.message)
@@ -112,8 +113,8 @@ class LoginActivity : AppCompatActivity() {
                                 }
                                 override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
                                     userInfo = response.body()
-                                    Log.v("UserInfo",userInfo?.family.toString())
-                                    if (userInfo?.family == 0) {
+                                    Log.v("UserInfo",userInfo?.family_id.toString())
+                                    if (userInfo?.family_id == 0) {
                                         var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
                                         startActivity(intent)
                                         finish()
@@ -127,7 +128,6 @@ class LoginActivity : AppCompatActivity() {
                         }
                     })
                 }
-
                 override fun onSessionClosed(errorResult: ErrorResult?) {
                     // 로그인 도중 세션이 비정상적인 이유로 닫혔을 때
                     Toast.makeText(

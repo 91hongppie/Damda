@@ -17,6 +17,6 @@ interface FamilyService{
 //    @POST("/api/accounts/rest-auth/kakao/")
 //    fun requestKakao(@Body parameters: HashMap<String, Any>): Call<KakaoLogin>
 
-    @POST("/api/accounts/family")
-    fun requestUser(@Header("Authorization") token: String): Call<UserInfo>
+    @POST("/api/accounts/family/")
+    fun requestUser(@Header("Authorization") token: String): Call<Family>
 }

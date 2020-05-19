@@ -2,7 +2,6 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import User
 from rest_framework.response import Response
 from django.http import JsonResponse
-from .serializers import UserSerializer
 from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
 from rest_auth.registration.views import SocialLoginView
 from django.utils.decorators import method_decorator
@@ -12,7 +11,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from .serializers import JoinFamilySerializer
+from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer
 
 # Create your views here.
 @api_view(['GET', 'POST'])
@@ -54,11 +53,11 @@ def JoinFamily(request, user_pk):
 @authentication_classes((JSONWebTokenAuthentication,))
 def Family(request):
     User = get_user_model()
-    user = get_object_or_404(User, username=username)
-    familySerializer = FamilySerializer(data={'main_member': request.user})
+    user = get_object_or_404(User, username=request.user)
+    familySerializer = FamilySerializer(data={'main_member': user.username})
     if familySerializer.is_valid(raise_exception=True):
         familySerializer.save()
-        userSerializer = UserSerializer(data={'state': 3, 'family_id': familySerializer.data['id']}, instance=user)
+        userSerializer = UserSerializer(data={'username': user.username, 'state': 3, 'family': familySerializer.data['id']}, instance=user)
         if userSerializer.is_valid(raise_exception=True):
             userSerializer.save()
             return Response(userSerializer.data)

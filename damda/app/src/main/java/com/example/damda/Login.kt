@@ -6,7 +6,7 @@ data class Login(
     val id: Int,
     val username: String,
     val state: Int,
-    val family: Int
+    val family_id: Int
 )
 
 data class KakaoLogin(
@@ -17,5 +17,5 @@ data class UserInfo(
     val id: Int,
     val username: String,
     val state: Int,
-    val family: Int
+    val family_id: Int
 )
