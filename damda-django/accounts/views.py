@@ -13,8 +13,57 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.response import Response
 from .serializers import UserSerializer
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+from .serializers import JoinFamilySerializer
 
 # Create your views here.
+@api_view(['GET', 'POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes((JSONWebTokenAuthentication,))
+def JoinFamily(request, user_pk):
+    if request.method == 'GET':
+        data = request.GET.get('req')
+        if data.isdigit():
+            family = get_object_or_404(Family, pk=data)
+            serializer = JoinFamilySerializer(data={'main_member_id': family.main_user,'wait_user': request.user})
+        else:
+            user = get_object_or_404(get_user_model, username=data)
+            if user.state == 3:
+                serializer = JoinFamilySerializer(data={'main_member_id': data,'wait_user': request.user})
+            else:
+                return Response({'error': '메인 멤버가 아닙니다'})
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            user = get_object_or_404(get_user_model, pk=user_pk)
+            userSerializers = UserSerializer(data={'state': 1}, instance=user)
+            if userSerializers.is_valid(raise_exception=True):
+                userSerializers.save()
+        return Response(serializer.data)
+    elif request.method == 'POST': 
+        User = get_user_model()
+        user = get_object_or_404(User, pk=request.POST.get('id'))
+        main_member = get_object_or_404(User, pk=user_pk)
+        serializer = UserSerializer(data={'state': 2, 'family_id': main_member.family_id}, instance=user)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            wait_user = get_object_or_404(User, wait_user=user.username)
+            wait_user.delete()
+        return Response(serializer.data)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes((JSONWebTokenAuthentication,))
+def Family(request):
+    User = get_user_model()
+    user = get_object_or_404(User, username=username)
+    familySerializer = FamilySerializer(data={'main_member': request.user})
+    if familySerializer.is_valid(raise_exception=True):
+        familySerializer.save()
+        userSerializer = UserSerializer(data={'state': 3, 'family_id': familySerializer.data['id']}, instance=user)
+        if userSerializer.is_valid(raise_exception=True):
+            userSerializer.save()
+            return Response(userSerializer.data)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
 @permission_classes([IsAuthenticated])
@@ -41,7 +90,7 @@ def checkemail(request):
 def signup(request):
     if request.method == 'POST':
         user = User()
-        user.username = request.POST.get('username',None)
+        user.username = request.POST.get('username', None)
         user.save()
     return JsonResponse({"token":"true"})
 
