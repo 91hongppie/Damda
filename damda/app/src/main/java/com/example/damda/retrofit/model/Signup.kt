@@ -1,4 +1,4 @@
-package com.example.damda
+package com.example.damda.retrofit.model
 
 data class SignUp(
     val id: Int,

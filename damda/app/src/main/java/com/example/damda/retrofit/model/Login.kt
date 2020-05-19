@@ -1,4 +1,4 @@
-package com.example.damda
+package com.example.damda.retrofit.model
 
 // response 구조
 data class Login(

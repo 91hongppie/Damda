@@ -1,4 +1,4 @@
-package com.example.damda
+package com.example.damda.activity
 
 import android.content.Intent
 import android.os.Bundle
@@ -6,6 +6,11 @@ import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.damda.*
+import com.example.damda.retrofit.model.KakaoLogin
+import com.example.damda.retrofit.model.Login
+import com.example.damda.retrofit.model.UserInfo
+import com.example.damda.retrofit.service.LoginService
 import com.kakao.auth.ISessionCallback
 import com.kakao.auth.Session
 import com.kakao.network.ErrorResult
@@ -22,15 +27,16 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 class LoginActivity : AppCompatActivity() {
-    var login:Login? = null
-    var kakaoLogin:KakaoLogin? = null
-    var userInfo:UserInfo? = null
+    var login: Login? = null
+    var kakaoLogin: KakaoLogin? = null
+    var userInfo: UserInfo? = null
     private var callback: SessionCallback = SessionCallback()
     var retrofit = Retrofit.Builder()
         .baseUrl("http://10.0.2.2:8000")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
-    var loginService: LoginService = retrofit.create(LoginService::class.java)
+    var loginService: LoginService = retrofit.create(
+        LoginService::class.java)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)

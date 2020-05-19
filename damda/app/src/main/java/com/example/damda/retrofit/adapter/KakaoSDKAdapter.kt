@@ -1,4 +1,4 @@
-package com.example.damda
+package com.example.damda.retrofit.adapter
 
 import com.example.damda.GlobalApplication
 import com.kakao.auth.*

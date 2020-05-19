@@ -1,5 +1,7 @@
-package com.example.damda
+package com.example.damda.retrofit.service
 
+import com.example.damda.retrofit.model.CheckEmail
+import com.example.damda.retrofit.model.SignUp
 import retrofit2.Call
 import retrofit2.http.*
 

@@ -1,4 +1,4 @@
-package com.example.damda
+package com.example.damda.retrofit.model
 
 import com.example.damda.navigation.model.Album
 

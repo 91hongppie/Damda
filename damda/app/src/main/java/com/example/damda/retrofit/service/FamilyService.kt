@@ -1,6 +1,6 @@
-package com.example.damda
+package com.example.damda.retrofit.service
 
-import com.google.gson.JsonObject
+import com.example.damda.retrofit.model.Family
 import retrofit2.Call
 import retrofit2.http.*
 

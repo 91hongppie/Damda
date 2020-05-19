@@ -4,13 +4,10 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import androidx.appcompat.app.AppCompatActivity
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.damda.GlobalApplication
-import com.example.damda.MainActivity
-import com.example.damda.PhotoAdapter
+import com.example.damda.navigation.adapter.PhotoAdapter
 import com.example.damda.navigation.model.Photos
 import com.example.damda.R
 import com.example.damda.navigation.model.Album
@@ -34,7 +31,8 @@ class PhotoListFragment : Fragment() {
             .build()
         val client = OkHttpClient()
         var result = emptyArray<Photos>()
-        view.rv_photo?.adapter = PhotoAdapter(result)
+        view.rv_photo?.adapter =
+            PhotoAdapter(result)
         client.newCall(request).enqueue(object: Callback {
             override fun onFailure(call: Call, e: IOException){
                 println("Failed to execute request!")
@@ -45,7 +43,8 @@ class PhotoListFragment : Fragment() {
                 var photoList = emptyArray<Photos>()
                 val list = gson.fromJson(body, photoList::class.java)
                 activity?.runOnUiThread(Runnable {
-                    view.rv_photo?.adapter = PhotoAdapter(list)
+                    view.rv_photo?.adapter =
+                        PhotoAdapter(list)
                 })
             }
         })
