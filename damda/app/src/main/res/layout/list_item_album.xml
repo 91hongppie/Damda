@@ -31,13 +31,13 @@
             android:layout_marginEnd="8dp"
             android:layout_marginRight="8dp"
             android:background="@drawable/album"
-            app:layout_constraintBottom_toTopOf="@+id/tv_album_name"
+            app:layout_constraintBottom_toTopOf="@+id/tv_album_title"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
-            android:id="@+id/tv_album_name"
+            android:id="@+id/tv_album_title"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="8dp"

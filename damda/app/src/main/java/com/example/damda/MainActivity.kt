@@ -5,22 +5,18 @@ import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.MenuItem
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.damda.navigation.*
 import com.example.damda.navigation.AlarmFragment
-import com.example.damda.navigation.DetailViewFragment
-import com.example.damda.navigation.GridFragment
+import com.example.damda.navigation.PhotoListFragment
+import com.example.damda.navigation.AlbumListFragment
 import com.example.damda.navigation.UserFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
@@ -37,6 +33,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
             1
         )
+
+        bottom_navigation.selectedItemId = R.id.action_search
     }
 
     fun runtimeEnableAutoInit() {
@@ -45,19 +43,20 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         // [END fcm_runtime_enable_auto_init]
 
         // Set default screen
-        bottom_navigation.selectedItemId = R.id.action_home
     }
-
+    fun replaceFragment(fragment: Fragment){
+        supportFragmentManager.beginTransaction().replace(R.id.main_content,fragment).addToBackStack(null).commit()
+    }
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         when (p0.itemId) {
             R.id.action_home -> {
-                var detailViewFragment = DetailViewFragment()
+                var photoListFragment = PhotoListFragment()
                 supportFragmentManager.beginTransaction()
-                    .replace(R.id.main_content, detailViewFragment).commit()
+                    .replace(R.id.main_content, photoListFragment).commit()
                 return true
             }
             R.id.action_search -> {
-                var gridFragment = GridFragment()
+                var gridFragment = AlbumListFragment()
                 supportFragmentManager.beginTransaction().replace(R.id.main_content, gridFragment)
                     .commit()
                 return true
@@ -97,11 +96,4 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     val service = retrofit.create(RetrofitNetwork::class.java)
 
 
-}
-fun AppCompatActivity.replaceFragment(fragment: Fragment){
-    val fragmentManager = supportFragmentManager
-    val transaction = fragmentManager.beginTransaction()
-    transaction.replace(R.id.main_content,fragment)
-    transaction.addToBackStack(null)
-    transaction.commit()
 }
