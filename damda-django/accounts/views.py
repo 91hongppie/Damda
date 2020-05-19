@@ -2,16 +2,15 @@ from django.views.decorators.csrf import csrf_exempt
 from .models import User
 from rest_framework.response import Response
 from django.http import JsonResponse
-
+from .serializers import UserSerializer
 from allauth.socialaccount.providers.kakao.views import KakaoOAuth2Adapter
 from rest_auth.registration.views import SocialLoginView
 from django.utils.decorators import method_decorator
 from django.shortcuts import get_object_or_404
 from django.contrib.auth import get_user_model
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
-from .serializers import UserSerializer
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 # Create your views here.
@@ -28,6 +27,7 @@ def UserInfo(request):
 @csrf_exempt
 def checkemail(request):
     data = request.GET.get('username', None)
+    user = None
     if request.method == 'GET':
         user = User.objects.filter(username=data)        
         if user.count() == 0:
@@ -37,13 +37,19 @@ def checkemail(request):
         context = {"token":token}
         return JsonResponse(context)
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
 @csrf_exempt
 def signup(request):
+    print('aaa')
     if request.method == 'POST':
-        user = User()
-        user.username = request.POST.get('username',None)
-        user.save()
-    return JsonResponse({"token":"true"})
+        serializer = UserSerializer(data=request.data)
+        print(serializer)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 @method_decorator(csrf_exempt, name='dispatch')
 class KakaoLogin(SocialLoginView):
