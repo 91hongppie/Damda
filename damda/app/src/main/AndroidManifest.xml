@@ -3,8 +3,8 @@
     package="com.example.damda">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <application
         android:name=".GlobalApplication"
         android:allowBackup="true"
@@ -14,6 +14,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <service
+            android:name=".SignupService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <activity android:name=".SignupActivity" /> <!-- 배포시 삭제  userCleartextTraffic -->
+
         <meta-data
             android:name="firebase_messaging_auto_init_enabled"
             android:value="false" />
@@ -31,7 +38,15 @@
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".LoginActivity">
+<<<<<<< HEAD
 
+=======
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+>>>>>>> 31994c8781de0251826cad2d3bd3e868d4a2cb0c
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 

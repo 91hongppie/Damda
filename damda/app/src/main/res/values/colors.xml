@@ -12,4 +12,12 @@
     <color name="colorGoogleSignInPressed">#b02513</color>
     <color name="colorEmailSignIn">#009688</color>
     <color name="colorEmailSignInPressed">#004D40</color>
+
+    <!-- Sign In-->
+    <color name="pink">#FF4081</color>
+    <color name="enableButton">#0E637E</color>
+    <color name="disableButton">#A7A27F</color>
+    <color name="black">#444444</color>
+    <color name="gray">#D5D5D5</color>
+    <color name="white">#ffffff</color>
 </resources>

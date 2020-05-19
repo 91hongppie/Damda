@@ -52,6 +52,11 @@ class LoginActivity : AppCompatActivity() {
 
                     GlobalApplication.prefs.myEditText = login?.token
 
+                    var dialog = AlertDialog.Builder(this@LoginActivity)
+                    dialog.setTitle("토큰")
+                    dialog.setMessage(login?.token)
+                    dialog.show()
+
                     var intent = Intent(this@LoginActivity, MainActivity::class.java)
                     startActivity(intent)
                     finish()
@@ -59,6 +64,15 @@ class LoginActivity : AppCompatActivity() {
             })
 
         }
+        signup_button.setOnClickListener {
+            val intent = Intent(this, SignupActivity::class.java)
+            startActivity(intent)
+        }
+        Session.getCurrentSession().addCallback(callback)
+        var tokendialog = AlertDialog.Builder(this@LoginActivity)
+        tokendialog.setTitle("토큰")
+        tokendialog.setMessage(GlobalApplication.prefs.myEditText)
+        tokendialog.show()
         if (GlobalApplication.prefs.myEditText !== "") {
             var intent = Intent(this@LoginActivity, MainActivity::class.java)
             startActivity(intent)
