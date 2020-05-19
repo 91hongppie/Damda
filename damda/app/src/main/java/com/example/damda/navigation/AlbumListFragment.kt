@@ -38,7 +38,7 @@ class AlbumListFragment : Fragment() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val jwt = GlobalApplication.prefs.myEditText
+        val jwt = GlobalApplication.prefs.token
         var albumsService: AlbumsService = retrofit.create(AlbumsService::class.java)
         albumsService.requestAlbums("JWT $jwt").enqueue(object: Callback<Albums>{
             override fun onFailure(call: Call<Albums>, t: Throwable) {

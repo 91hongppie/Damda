@@ -24,7 +24,7 @@ class AddFamilyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_family)
         make_family.setOnClickListener{
-            val token = "JWT " + GlobalApplication.prefs.myEditText
+            val token = "JWT " + GlobalApplication.prefs.token
             familyService.requestUser(token).enqueue(object: Callback<Family> {
                 override fun onFailure(call: Call<Family>, t: Throwable) {
                     Log.e("LOGIN",t.message)

@@ -29,7 +29,7 @@ class PhotoListFragment : Fragment() {
         var view = LayoutInflater.from(activity).inflate(R.layout.fragment_photo_list, container, false)
         val album = arguments?.getParcelable<Album>("album")
         val url = URL("http://10.0.2.2:8000/api/albums/photo/${album?.id}/")
-        val jwt = GlobalApplication.prefs.myEditText
+        val jwt = GlobalApplication.prefs.token
         val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt")
             .build()
         val client = OkHttpClient()
