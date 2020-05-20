@@ -94,6 +94,4 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         .build()
 
     val service = retrofit.create(RetrofitNetwork::class.java)
-
-
 }
