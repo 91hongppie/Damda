@@ -117,15 +117,15 @@ class LoginActivity : AppCompatActivity() {
                                 override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
                                     userInfo = response.body()
                                     Log.v("UserInfo",userInfo?.family_id.toString())
-                                    if (userInfo?.family_id == 0) {
-                                        var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
-                                        startActivity(intent)
-                                        finish()
-                                    } else {
+//                                    if (userInfo?.family_id == 0) {
+//                                        var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
+//                                        startActivity(intent)
+//                                        finish()
+//                                    } else {
                                         var intent = Intent(this@LoginActivity, MainActivity::class.java)
                                         startActivity(intent)
                                         finish()
-                                    }
+//                                    }
                                 }
                             })
                         }

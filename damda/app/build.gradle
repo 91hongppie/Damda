@@ -9,11 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.damda"
-<<<<<<< HEAD
-        minSdkVersion 21
-=======
         minSdkVersion 23
->>>>>>> 08bd7b5b450a7925d252ec46f5380f3649e60819
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"

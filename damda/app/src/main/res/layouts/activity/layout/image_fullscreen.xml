@@ -3,5 +3,5 @@
     android:id="@+id/ivFullscreenImage"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@android:color/black"
-    android:scaleType="centerCrop" />
+    android:contentDescription="Image"
+    android:scaleType="fitCenter" />

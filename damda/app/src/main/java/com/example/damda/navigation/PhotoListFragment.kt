@@ -6,7 +6,6 @@ import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionInflater
 import android.graphics.Bitmap
-import android.os.Bundle
 import android.os.Environment
 import android.util.Log
 import android.view.LayoutInflater
@@ -49,24 +48,27 @@ class PhotoListFragment : Fragment() {
         val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt")
             .build()
         val client = OkHttpClient()
-        var result = emptyArray<Photos>()
+        var photoList = emptyArray<Photos>()
         view.rv_photo?.adapter =
-            PhotoAdapter(result) { photo ->
+            PhotoAdapter(photoList) { photo ->
                 var bundle = Bundle()
-                bundle.putSerializable("photo", photo.pic_name)
+                bundle.putSerializable("photoList", photoList)
+                bundle.putInt("position", photoList.indexOf(photo))
                 var fragment = PhotoDetailFragment()
                 fragment.arguments = bundle
                 context.replaceFragment(fragment)
+
             }
         client.newCall(request).enqueue(object: Callback {
-            override fun onFailure(call: Call, e: IOException){
+            override fun onFailure(call: Call, e: IOException) {
                 println("Failed to execute request!")
             }
+
             override fun onResponse(call: Call, response: Response) {
                 val body = response.body()?.string()
                 val gson = GsonBuilder().create()
-                var photoList = emptyArray<Photos>()
-                result = gson.fromJson(body, photoList::class.java)
+                var list = emptyArray<Photos>()
+                photoList= gson.fromJson(body, list::class.java)
                 activity?.runOnUiThread(Runnable {
                     view.rv_photo?.adapter =
                         PhotoAdapter(photoList) { photo ->
@@ -77,15 +79,23 @@ class PhotoListFragment : Fragment() {
                             fragment.arguments = bundle
                             context.replaceFragment(fragment)
                         }
-                activity?.runOnUiThread(Runnable {
-                    view.rv_photo?.adapter = PhotoAdapter(result)
-                })
-            }
-        })
+                    })
+                }
+            })
         view.albumTitle?.text = album?.title
         view.rv_photo?.layoutManager = GridLayoutManager(activity, 3)
         prepareTransitions()
         postponeEnterTransition()
+//        view.saveAlbum.setOnClickListener{
+//            var image_task: URLtoBitmapTask = URLtoBitmapTask()
+//            for(photo in photoList){
+//                image_task = URLtoBitmapTask().apply {
+//                    imgurl = URL("http://10.0.2.2:8000${photo.pic_name}")
+//                }
+//                var bitmap: Bitmap = image_task.execute().get()
+//                Log.e("ebtest",""+bitmap)
+//            }
+//        }
         return view
     }
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
@@ -121,18 +131,18 @@ class PhotoListFragment : Fragment() {
 
 
         // A similar mapping is set at the ImagePagerFragment with a setEnterSharedElementCallback.
-//        setExitSharedElementCallback(
-//            object : SharedElementCallback() {
-//                override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
-//                    // Locate the ViewHolder for the clicked position.
-//                    val selectedViewHolder = view?.rv_photo?.findViewHolderForAdapterPosition(
-//                        MainActivity.currentPosition)
-//                        ?: return
-//
-//                    // Map the first shared element name to the child ImageView.
-//                    sharedElements[names[0]] = selectedViewHolder.itemView.findViewById(R.id.iv_card)
-//                }
-//            })
+        setExitSharedElementCallback(
+            object : SharedElementCallback() {
+                override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
+                    // Locate the ViewHolder for the clicked position.
+                    val selectedViewHolder = view?.rv_photo?.findViewHolderForAdapterPosition(
+                        currentPosition)
+                        ?: return
+
+                    // Map the first shared element name to the child ImageView.
+                    sharedElements[names[0]] = selectedViewHolder.itemView.findViewById(R.id.ivFullscreenImage)
+                }
+            })
     }
     companion object {
         /**
@@ -144,19 +154,4 @@ class PhotoListFragment : Fragment() {
         var currentPosition = 0
         private const val KEY_CURRENT_POSITION = "com.google.samples.gridtopager.key.currentPosition"
     }
-        view.saveAlbum.setOnClickListener{
-            var image_task: URLtoBitmapTask = URLtoBitmapTask()
-            for(photo in result){
-                image_task = URLtoBitmapTask().apply {
-                    imgurl = URL("http://10.0.2.2:8000${photo.pic_name}")
-                }
-                var bitmap: Bitmap = image_task.execute().get()
-                Log.e("ebtest",""+bitmap)
-            }
-        }
-
-        return view
-    }
-
-
-}
+ }
