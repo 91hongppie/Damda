@@ -86,4 +86,6 @@
     <string name="error_do_not_check_id">아이디 중복 체크 확인해 주세요.</string>
     <string name="album_title">앨범이름</string>
 
+    <string name="saveAlbum">앨범저장</string>
+
 </resources>

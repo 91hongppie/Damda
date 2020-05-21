@@ -1,4 +1,4 @@
-package com.example.damda
+package com.example.damda.activity
 
 import android.Manifest
 import android.content.Intent
@@ -8,7 +8,6 @@ import android.os.Bundle
 import android.view.MenuItem
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.example.damda.navigation.*
 import com.example.damda.navigation.AlarmFragment
 import com.example.damda.navigation.PhotoListFragment
 import com.example.damda.navigation.AlbumListFragment
@@ -21,6 +20,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import androidx.fragment.app.Fragment
+import com.example.damda.R
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 

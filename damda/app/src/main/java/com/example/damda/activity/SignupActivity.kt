@@ -1,4 +1,4 @@
-package com.example.damda
+package com.example.damda.activity
 
 
 import android.content.Intent
@@ -7,6 +7,10 @@ import android.util.Log
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
+import com.example.damda.*
+import com.example.damda.retrofit.model.CheckEmail
+import com.example.damda.retrofit.model.SignUp
+import com.example.damda.retrofit.service.SignupService
 import com.google.android.material.textfield.TextInputLayout
 import com.jakewharton.rxbinding2.widget.RxTextView
 import io.reactivex.disposables.CompositeDisposable
@@ -21,7 +25,7 @@ import java.util.regex.Pattern
 
 
 class SignupActivity : AppCompatActivity() {
-    var checkemail:CheckEmail? = null
+    var checkemail: CheckEmail? = null
 
     internal val viewDisposables = CompositeDisposable()
 
@@ -52,7 +56,9 @@ class SignupActivity : AppCompatActivity() {
     private fun init() {
         inputDataField = arrayOf(editEmail, editPWD, editPWDConfirm)
         textInputLayoutArray = arrayOf(editEmailLayout, editPWDLayout, editPWDConfirmLayout)
-        inputInfoMessage = arrayOf(getString(R.string.error_discorrent_email), getString(R.string.txtInputInfoPWD), getString(R.string.txtInputInfoRePWD))
+        inputInfoMessage = arrayOf(getString(R.string.error_discorrent_email), getString(
+            R.string.txtInputInfoPWD
+        ), getString(R.string.txtInputInfoRePWD))
 
         typingListener()
     }
@@ -64,11 +70,14 @@ class SignupActivity : AppCompatActivity() {
             .baseUrl("http://10.0.2.2:8000")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        var signupService: SignupService = retrofit.create(SignupService::class.java)
+        var signupService: SignupService = retrofit.create(
+            SignupService::class.java)
         btnDone.setOnClickListener {
             var params:HashMap<String, Any> = HashMap<String, Any>()
             var text1 = editEmail.text.toString()
+            var text2 = editPWD.text.toString()
             params.put("username", text1)
+            params.put("password",text2)
             if (isCheckID) {
                 signupService.signUp(params).enqueue(object:Callback<SignUp>{
                     override fun onFailure(call: Call<SignUp>, t: Throwable) {

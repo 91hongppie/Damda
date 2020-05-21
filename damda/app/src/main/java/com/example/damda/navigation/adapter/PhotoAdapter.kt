@@ -1,21 +1,19 @@
-package com.example.damda
+package com.example.damda.navigation.adapter
 
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
-import android.widget.TextView
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.damda.R
 import com.example.damda.navigation.model.Photos
-import kotlinx.android.synthetic.main.list_item_photo.view.*
 
 
 class PhotoAdapter (val photoList: Array<Photos>) : RecyclerView.Adapter<PhotoAdapter.CustomViewHolder>()
 {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): PhotoAdapter.CustomViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_photo, parent, false)
         return CustomViewHolder(view)
     }

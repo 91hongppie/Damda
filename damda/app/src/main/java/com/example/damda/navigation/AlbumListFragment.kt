@@ -9,7 +9,11 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.damda.*
+import com.example.damda.activity.MainActivity
 import com.example.damda.navigation.model.Album
+import com.example.damda.navigation.adapter.AlbumAdapter
+import com.example.damda.retrofit.model.Albums
+import com.example.damda.retrofit.service.AlbumsService
 import kotlinx.android.synthetic.main.fragment_album_list.view.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -26,20 +30,22 @@ class AlbumListFragment : Fragment() {
 
         var albums: Albums? = null
         var albumList = emptyArray<Album>()
-        view.rv_album.adapter = AlbumAdapter(albumList){ album ->
-            var bundle = Bundle()
-            bundle.putParcelable("album",album)
-            var fragment = PhotoListFragment()
-            fragment.arguments = bundle
-            context.replaceFragment(fragment)
-        }
+        view.rv_album.adapter =
+            AlbumAdapter(albumList) { album ->
+                var bundle = Bundle()
+                bundle.putParcelable("album", album)
+                var fragment = PhotoListFragment()
+                fragment.arguments = bundle
+                context.replaceFragment(fragment)
+            }
         var retrofit = Retrofit.Builder()
             .baseUrl("http://10.0.2.2:8000")
             .addConverterFactory(GsonConverterFactory.create())
             .build()
 
-        val jwt = GlobalApplication.prefs.myEditText
-        var albumsService: AlbumsService = retrofit.create(AlbumsService::class.java)
+        val jwt = GlobalApplication.prefs.token
+        var albumsService: AlbumsService = retrofit.create(
+            AlbumsService::class.java)
         albumsService.requestAlbums("JWT $jwt").enqueue(object: Callback<Albums>{
             override fun onFailure(call: Call<Albums>, t: Throwable) {
                 Log.e("Albu ", ""+t)
@@ -52,13 +58,14 @@ class AlbumListFragment : Fragment() {
             override fun onResponse(call: Call<Albums>, response: Response<Albums>) {
                 albums = response.body()
                 albumList = albums!!.data
-                val albumAdapter = AlbumAdapter(albumList) { album ->
-                    var bundle = Bundle()
-                    bundle.putParcelable("album",album)
-                    var fragment = PhotoListFragment()
-                    fragment.arguments = bundle
-                    context.replaceFragment(fragment)
-                }
+                val albumAdapter =
+                    AlbumAdapter(albumList) { album ->
+                        var bundle = Bundle()
+                        bundle.putParcelable("album", album)
+                        var fragment = PhotoListFragment()
+                        fragment.arguments = bundle
+                        context.replaceFragment(fragment)
+                    }
                 view.rv_album.adapter = albumAdapter
             }
         })

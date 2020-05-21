@@ -1,16 +1,16 @@
-package com.example.damda
-import android.util.Log
+package com.example.damda.navigation.adapter
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
+import com.example.damda.R
 import com.example.damda.navigation.model.Album
 
 class AlbumAdapter(val albumList: Array<Album>, val itemClick: (Album) -> Unit) : RecyclerView.Adapter<AlbumAdapter.CustomViewHolder>()
 {
-    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): AlbumAdapter.CustomViewHolder {
+    override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_album, parent, false)
         return CustomViewHolder(view)
     }

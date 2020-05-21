@@ -1,6 +1,8 @@
-package com.example.damda
+package com.example.damda.retrofit.service
 
-import com.google.gson.JsonObject
+import com.example.damda.retrofit.model.KakaoLogin
+import com.example.damda.retrofit.model.Login
+import com.example.damda.retrofit.model.UserInfo
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -16,4 +18,8 @@ interface LoginService{
     @Headers("Accept: application/json")
     @POST("/api/accounts/rest-auth/kakao/")
     fun requestKakao(@Body parameters: HashMap<String, Any>): Call<KakaoLogin>
+
+    @GET("/api/accounts/user")
+    fun requestUser(@Header("Authorization") token: String): Call<UserInfo>
+
 }

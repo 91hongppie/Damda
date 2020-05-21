@@ -9,5 +9,8 @@ urlpatterns = [
     path('msg/', views.messaging),
     path('checkemail/',views.checkemail),
     path('signup/', views.signup),
-    path('rest-auth/kakao/', views.KakaoLogin.as_view())
+    path('rest-auth/kakao/', views.KakaoLogin.as_view()),
+    path('user/', views.UserInfo),
+    path('family/', views.Family),
+    path('family/<int:user_pk>/', views.JoinFamily)
 ]

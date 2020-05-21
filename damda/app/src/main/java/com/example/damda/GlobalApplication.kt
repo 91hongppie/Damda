@@ -1,6 +1,7 @@
 package com.example.damda
 
 import android.app.Application
+import com.example.damda.retrofit.adapter.KakaoSDKAdapter
 import com.kakao.auth.KakaoSDK
 
 class GlobalApplication : Application() {
