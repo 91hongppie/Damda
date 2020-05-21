@@ -58,15 +58,15 @@ class LoginActivity : AppCompatActivity() {
                     Log.v("response", login.toString())
 
                     GlobalApplication.prefs.token = login?.token
-                    if (login?.family_id === 0) {
-                        var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    } else {
+//                    if (login?.family_id === 0) {
+//                        var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
+//                        startActivity(intent)
+//                        finish()
+//                    } else {
                         var intent = Intent(this@LoginActivity, MainActivity::class.java)
                         startActivity(intent)
                         finish()
-                    }
+//                    }
                 }
             })
 
