@@ -1,5 +1,6 @@
 package com.example.damda.activity
 
+import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
@@ -40,14 +41,14 @@ class AddFamilyActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<Family>, response: Response<Family>) {
                     family_id = response.body()
                     Log.v("response", family_id.toString())
-//                    var intent = Intent(this@AddFamilyActivity, MainActivity::class.java)
-//                    startActivity(intent)
-//                    finish()
+                    var intent = Intent(this@AddFamilyActivity, MainActivity::class.java)
+                    startActivity(intent)
+                    finish()
                 }
             })
         }
         req_btn.setOnClickListener{
-            familyService.requestFamily(token, req.text.toString()).enqueue(object: Callback<WaitUser> {
+            familyService.requestFamily(token, 1, req.text.toString()).enqueue(object: Callback<WaitUser> {
                 override fun onFailure(call: Call<WaitUser>, t: Throwable) {
                     Log.e("LOGIN",t.message)
                     var dialog = AlertDialog.Builder(this@AddFamilyActivity)

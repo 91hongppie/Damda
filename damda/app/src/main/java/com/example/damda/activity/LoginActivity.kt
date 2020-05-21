@@ -62,15 +62,7 @@ class LoginActivity : AppCompatActivity() {
                     } else {
                         Log.v("response", login.toString())
                         GlobalApplication.prefs.token = login?.token
-                        if (login?.state == 0) {
-                            var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        } else {
-                            var intent = Intent(this@LoginActivity, MainActivity::class.java)
-                            startActivity(intent)
-                            finish()
-                        }
+                        moveActivity(login?.state!!.toInt())
                     }
                 }
             })
@@ -121,15 +113,7 @@ class LoginActivity : AppCompatActivity() {
                                 override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
                                     userInfo = response.body()
                                     Log.v("UserInfo",userInfo?.toString())
-                                    if (userInfo?.family_id == 0) {
-                                        var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
-                                        startActivity(intent)
-                                        finish()
-                                    } else {
-                                        var intent = Intent(this@LoginActivity, MainActivity::class.java)
-                                        startActivity(intent)
-                                        finish()
-                                    }
+                                    moveActivity(userInfo?.state!!.toInt())
                                 }
                             })
                         }
@@ -157,10 +141,16 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    private fun redirectSignupActivity() {
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
+    private fun moveActivity(state: Int) {
+        if (state < 2) {
+            var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
+            startActivity(intent)
+            finish()
+        } else {
+            var intent = Intent(this@LoginActivity, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 }
 

@@ -16,24 +16,26 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer
 
 # Create your views here.
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST', 'DELETE'])
 @permission_classes([IsAuthenticated])
 @authentication_classes((JSONWebTokenAuthentication,))
 def JoinFamily(request, user_pk):
     if request.method == 'GET':
         data = request.GET.get('req')
-        if data.isdigit():
+        user = get_object_or_404(get_user_model, pk=user_pk)
+        if user.state == 1:
+            return Response({'status': 403, 'error': '요청이 있습니다.'})
+        elif data.isdigit():
             family = get_object_or_404(Family, pk=data)
             serializer = JoinFamilySerializer(data={'main_member_id': family.main_user,'wait_user': request.user})
         else:
-            user = get_object_or_404(get_user_model, username=data)
-            if user.state == 3:
+            main_user = get_object_or_404(get_user_model, username=data)
+            if main_user.state == 3:
                 serializer = JoinFamilySerializer(data={'main_member_id': data,'wait_user': request.user})
             else:
-                return Response({'error': '메인 멤버가 아닙니다'})
+                return Response({'status': 403, 'error': '메인 멤버가 아닙니다'})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            user = get_object_or_404(get_user_model, pk=user_pk)
             userSerializers = UserSerializer(data={'state': 1}, instance=user)
             if userSerializers.is_valid(raise_exception=True):
                 userSerializers.save()
@@ -42,13 +44,17 @@ def JoinFamily(request, user_pk):
         User = get_user_model()
         user = get_object_or_404(User, pk=request.POST.get('id'))
         main_member = get_object_or_404(User, pk=user_pk)
-        serializer = UserSerializer(data={'state': 2, 'family_id': main_member.family_id}, instance=user)
+        serializer = UserSerializer(data={'state': 2, 'family': main_member.family_id}, instance=user)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             wait_user = get_object_or_404(User, wait_user=user.username)
             wait_user.delete()
         return Response(serializer.data)
+    elif request.method == 'DELETE':
+        user = get_object_or_404(get_user_model, pk=user_pk)
+        user.delete({'status': 204, 'message': '취소되었습니다.'})
     return Response(status=status.HTTP_400_BAD_REQUEST)
+
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
@@ -57,6 +63,8 @@ def Family(request):
     User = get_user_model()
     user = get_object_or_404(User, username=request.user)
     if not user.family_id:
+        if user.state == 1:
+            return Response({'error': '요청이 있습니다.'})
         familySerializer = FamilySerializer(data={'main_member': user.username})
         if familySerializer.is_valid(raise_exception=True):
             familySerializer.save()

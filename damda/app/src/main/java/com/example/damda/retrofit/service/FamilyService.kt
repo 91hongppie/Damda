@@ -23,5 +23,6 @@ interface FamilyService{
 
     @GET("/api/accounts/family/{id}")
     fun requestFamily(@Header("Authorization") token: String,
+                      @Path("id") id: Int,
                       @Query ("req") req:String): Call<WaitUser>
 }

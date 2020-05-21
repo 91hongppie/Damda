@@ -95,6 +95,7 @@ class SignupActivity : AppCompatActivity() {
                         dialog.show()
                         val intent = Intent(this@SignupActivity, LoginActivity::class.java)
                         startActivity(intent)
+                        finish()
                     }
                 })
             } else {
