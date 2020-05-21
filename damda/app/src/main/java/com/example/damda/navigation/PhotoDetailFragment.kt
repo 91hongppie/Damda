@@ -2,9 +2,12 @@ package com.example.damda.navigation
 
 import android.content.Context
 import android.content.Intent
+import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
@@ -19,14 +22,17 @@ import com.bumptech.glide.request.RequestOptions
 import com.example.damda.R
 import com.example.damda.helper.ZoomOutPageTransformer
 import com.example.damda.navigation.model.Photos
+import com.jakewharton.rxbinding2.view.clicks
+import kotlinx.android.synthetic.main.fragment_photo_detail.*
 import kotlinx.android.synthetic.main.fragment_photo_detail.view.*
+import kotlinx.android.synthetic.main.fragment_photo_detail.view.btn_photo
 import kotlinx.android.synthetic.main.image_fullscreen.view.*
+import java.io.ByteArrayOutputStream
 
 class PhotoDetailFragment: Fragment() {
 
     private var photoList = emptyArray<Photos>()
     private var selectedPosition: Int = 0
-    var index = 0
     lateinit var tvGalleryTitle: TextView
     lateinit var viewPager: ViewPager
 
@@ -37,6 +43,7 @@ class PhotoDetailFragment: Fragment() {
 
         viewPager = view.findViewById(R.id.vp_photo)
         tvGalleryTitle = view.findViewById(R.id.tvGalleryTitle)
+
 
         galleryPagerAdapter = GalleryPagerAdapter()
 
@@ -52,13 +59,30 @@ class PhotoDetailFragment: Fragment() {
         return view
     }
 
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+        var url = "https://newsimg.hankookilbo.com/2016/04/13/201604131460701467_1.jpg"
+
+        view.btn_photo.setOnClickListener { view ->
+            val share_intent = Intent().apply {
+                action = Intent.ACTION_SEND
+                putExtra(Intent.EXTRA_STREAM, "https://newsimg.hankookilbo.com/2016/04/13/201604131460701467_1.jpg")
+                type = "image/*"
+            }
+            val chooser = Intent.createChooser(share_intent, "친구에게 공유하기")
+//            intent.putExtra(Intent.EXTRA_STREAM, "http://10.0.2.2:8000${photoList[selectedPosition].pic_name}")
+            startActivity(chooser)
+        }
+    }
+
+
 //    override fun onCreate(savedInstanceState: Bundle?) {
 //        super.onCreate(savedInstanceState)
 //        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
 //    }
 
     private fun setCurrentItem(position: Int) {
-        viewPager.setCurrentItem(position, false)
+        viewPager.setCurrentItem(position, true)
     }
 
     // viewpager page change listener
@@ -67,7 +91,7 @@ class PhotoDetailFragment: Fragment() {
 
             override fun onPageSelected(position: Int) {
                 // set gallery title
-                index = position
+                selectedPosition = position
                 tvGalleryTitle.text = photoList.get(position).title
             }
 
@@ -107,24 +131,5 @@ class PhotoDetailFragment: Fragment() {
         override fun destroyItem(container: ViewGroup, position: Int, obj: Any) {
             container.removeView(obj as View)
         }
-    }
-    @RequiresApi(Build.VERSION_CODES.LOLLIPOP)
-    fun onNavigationItemSelected(p0: MenuItem): Boolean {
-
-        when(p0.itemId){
-            R.id.btn_photo -> {
-                share()
-            }
-        }
-        return true
-    }
-    private fun share() {
-
-        val intent = Intent(android.content.Intent.ACTION_SEND)
-        val chooser = Intent.createChooser(intent, "친구에게 공유하기")
-        intent.setType("image/*")
-        intent.putExtra(Intent.EXTRA_STREAM, "http://10.0.2.2:8000${photoList[index]}")
-        startActivity(chooser)
-
     }
 }
