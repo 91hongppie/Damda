@@ -2,7 +2,7 @@
     <string name="app_name">Damda</string>
     <string name="facebook_app_id">873009302900995</string>
     <string name="fb_login_protocol_scheme">fb873009302900995</string>
-    <string name="kakao_app_key">616dc1df9429625cf1bde6d4da9175a2</string>
+    <string name="kakao_app_key">1ecc00ce5effc6b1718425438d605126</string>
     <string name="kakao_scheme">kakao1ecc00ce5effc6b1718425438d605126</string>
     <string name="kakaolink_host">kakaolink</string>
 
@@ -75,7 +75,7 @@
     <string name="error_fail_login">아이디 혹은 비밀번호를 확인해주세요.</string>
     <string name="login_detail_title">로그인 성공</string>
     <string name="txtInputInfoID">최소 8자 이상</string>
-    <string name="txtInputInfoPWD">영문 대문자, 소문자, 숫자, 특수문자를 포함하여 8자 이상</string>
+    <string name="txtInputInfoPWD">영문, 숫자, 특수문자를 포함하여 8자 이상</string>
     <string name="txtInputInfoRePWD">비밀번호가 일치하지 않습니다.</string>
     <string name="txtInputInfoEmail">정확한 이메일이 아닙니다.</string>
     <string name="logout">로그아웃</string>
