@@ -40,7 +40,6 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
         login_button.setOnClickListener{
             var text1 = email.text.toString()
             var text2 = password.text.toString()
@@ -55,30 +54,36 @@ class LoginActivity : AppCompatActivity() {
                 }
                 override fun onResponse(call: Call<Login>, response: Response<Login>) {
                     login = response.body()
-                    Log.v("response", login.toString())
-
-                    GlobalApplication.prefs.token = login?.token
-                    if (login?.family_id === 0) {
-                        var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
-                        startActivity(intent)
-                        finish()
+                    if (response.code() == 400) {
+                        var dialog = AlertDialog.Builder(this@LoginActivity)
+                        dialog.setTitle("에러")
+                        dialog.setMessage("아이디와 비밀번호를 확인해주세요.")
+                        dialog.show()
                     } else {
-                        var intent = Intent(this@LoginActivity, MainActivity::class.java)
-                        startActivity(intent)
-                        finish()
+                        Log.v("response", login.toString())
+                        GlobalApplication.prefs.token = login?.token
+                        GlobalApplication.prefs.user_id = login?.id.toString()
+                        GlobalApplication.prefs.family_id = login?.family_id.toString()
+                        GlobalApplication.prefs.state = login?.state.toString()
+                        moveActivity(login?.state!!.toInt())
                     }
                 }
             })
-
         }
         signup_button.setOnClickListener {
             val intent = Intent(this, SignupActivity::class.java)
             startActivity(intent)
         }
         if (GlobalApplication.prefs.token !== "") {
-            var intent = Intent(this@LoginActivity, MainActivity::class.java)
-            startActivity(intent)
-            finish()
+            if (GlobalApplication.prefs.state == "1" || GlobalApplication.prefs.state == "0") {
+                var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                var intent = Intent(this@LoginActivity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
         } else {
         Session.getCurrentSession().addCallback(callback)}
     }
@@ -116,16 +121,11 @@ class LoginActivity : AppCompatActivity() {
                                 }
                                 override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
                                     userInfo = response.body()
-                                    Log.v("UserInfo",userInfo?.family_id.toString())
-                                    if (userInfo?.family_id == 0) {
-                                        var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
-                                        startActivity(intent)
-                                        finish()
-                                    } else {
-                                        var intent = Intent(this@LoginActivity, MainActivity::class.java)
-                                        startActivity(intent)
-                                        finish()
-                                    }
+                                    GlobalApplication.prefs.user_id = userInfo?.id.toString()
+                                    GlobalApplication.prefs.family_id = userInfo?.family_id.toString()
+                                    GlobalApplication.prefs.state = login?.state.toString()
+                                    Log.v("UserInfo",userInfo?.toString())
+                                    moveActivity(userInfo?.state!!.toInt())
                                 }
                             })
                         }
@@ -153,10 +153,16 @@ class LoginActivity : AppCompatActivity() {
 
     }
 
-    private fun redirectSignupActivity() {
-        val intent = Intent(this, LoginActivity::class.java)
-        startActivity(intent)
-        finish()
+    private fun moveActivity(state: Int) {
+        if (state < 2) {
+            var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
+            startActivity(intent)
+            finish()
+        } else {
+            var intent = Intent(this@LoginActivity, MainActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 }
 

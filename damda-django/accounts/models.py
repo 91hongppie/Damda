@@ -4,7 +4,7 @@ from django.contrib.auth.models import AbstractUser
 
 # Create your models here.
 class Family(models.Model):
-    main_member = models.EmailField(max_length=254)
+    main_member = models.IntegerField()
 
 # state 0: 가입만 1: 기다리는중 2: 가입 3: main_member
 class User(AbstractUser):
