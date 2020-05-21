@@ -5,6 +5,15 @@ from .models import WaitUser, Family
 from .models import User
 from django.contrib.auth import get_user_model
 
+class UserCreatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ['id', 'username', 'email', 'password']
+
+    def create(self, validated_data):
+        user = get_user_model().objects.create_user(**self.validated_data)
+        return user
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
