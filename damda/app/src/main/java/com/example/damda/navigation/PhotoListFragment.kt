@@ -5,12 +5,17 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.transition.TransitionInflater
+import android.graphics.Bitmap
+import android.os.Bundle
+import android.os.Environment
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
 import androidx.annotation.RequiresApi
 import androidx.core.app.SharedElementCallback
+import android.widget.Toast
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
@@ -19,10 +24,13 @@ import com.example.damda.navigation.adapter.PhotoAdapter
 import com.example.damda.navigation.model.Photos
 import com.example.damda.R
 import com.example.damda.activity.MainActivity
+import com.example.damda.URLtoBitmapTask
 import com.example.damda.navigation.model.Album
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_photo_list.view.*
 import okhttp3.*
+import java.io.File
+import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
 
@@ -36,7 +44,7 @@ class PhotoListFragment : Fragment() {
         val context = activity as MainActivity
         var view = LayoutInflater.from(activity).inflate(R.layout.fragment_photo_list, container, false)
         val album = arguments?.getParcelable<Album>("album")
-        val url = URL("http://10.0.2.2:8000/api/albums/photo/${album?.id}/")
+        var url = URL("http://10.0.2.2:8000/api/albums/photo/${album?.id}/")
         val jwt = GlobalApplication.prefs.token
         val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt")
             .build()
@@ -57,8 +65,8 @@ class PhotoListFragment : Fragment() {
             override fun onResponse(call: Call, response: Response) {
                 val body = response.body()?.string()
                 val gson = GsonBuilder().create()
-                var list = emptyArray<Photos>()
-                val photoList = gson.fromJson(body, list::class.java)
+                var photoList = emptyArray<Photos>()
+                result = gson.fromJson(body, photoList::class.java)
                 activity?.runOnUiThread(Runnable {
                     view.rv_photo?.adapter =
                         PhotoAdapter(photoList) { photo ->
@@ -69,6 +77,8 @@ class PhotoListFragment : Fragment() {
                             fragment.arguments = bundle
                             context.replaceFragment(fragment)
                         }
+                activity?.runOnUiThread(Runnable {
+                    view.rv_photo?.adapter = PhotoAdapter(result)
                 })
             }
         })
@@ -134,5 +144,19 @@ class PhotoListFragment : Fragment() {
         var currentPosition = 0
         private const val KEY_CURRENT_POSITION = "com.google.samples.gridtopager.key.currentPosition"
     }
+        view.saveAlbum.setOnClickListener{
+            var image_task: URLtoBitmapTask = URLtoBitmapTask()
+            for(photo in result){
+                image_task = URLtoBitmapTask().apply {
+                    imgurl = URL("http://10.0.2.2:8000${photo.pic_name}")
+                }
+                var bitmap: Bitmap = image_task.execute().get()
+                Log.e("ebtest",""+bitmap)
+            }
+        }
+
+        return view
+    }
+
 
 }
