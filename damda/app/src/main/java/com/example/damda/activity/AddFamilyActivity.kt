@@ -4,6 +4,7 @@ import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import com.example.damda.retrofit.model.Family
 import com.example.damda.retrofit.service.FamilyService
@@ -29,7 +30,6 @@ class AddFamilyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_family)
         val token = "JWT " + GlobalApplication.prefs.token
-        Log.v("asdf",GlobalApplication.prefs.user_id)
 
         make_family.setOnClickListener{
             familyService.makeFamily(token).enqueue(object: Callback<Family> {
@@ -41,16 +41,28 @@ class AddFamilyActivity : AppCompatActivity() {
                     dialog.show()
                 }
                 override fun onResponse(call: Call<Family>, response: Response<Family>) {
-                    family_id = response.body()
-                    Log.v("response", family_id.toString())
-                    var intent = Intent(this@AddFamilyActivity, MainActivity::class.java)
-                    startActivity(intent)
-                    finish()
+                    if (response.code() == 400) {
+                        Toast.makeText(
+                            this@AddFamilyActivity,
+                            "잘못된 요청입니다.",
+                            Toast.LENGTH_SHORT).show()
+                    } else if (response.code() == 403) {
+                        Toast.makeText(
+                            this@AddFamilyActivity,
+                            "대기중인 요청이 존재합니다.",
+                            Toast.LENGTH_SHORT).show()
+                    } else {
+                        family_id = response.body()
+                        Log.v("response", family_id.toString())
+                        var intent = Intent(this@AddFamilyActivity, MainActivity::class.java)
+                        startActivity(intent)
+                        finish()
+                    }
                 }
             })
         }
         req_btn.setOnClickListener{
-            familyService.requestFamily(token, 1, req.text.toString()).enqueue(object: Callback<WaitUser> {
+            familyService.requestFamily(token, GlobalApplication.prefs.user_id.toString(), req.text.toString()).enqueue(object: Callback<WaitUser> {
                 override fun onFailure(call: Call<WaitUser>, t: Throwable) {
                     Log.e("LOGIN",t.message)
                     var dialog = AlertDialog.Builder(this@AddFamilyActivity)
@@ -60,9 +72,6 @@ class AddFamilyActivity : AppCompatActivity() {
                 }
                 override fun onResponse(call: Call<WaitUser>, response: Response<WaitUser>) {
                     Log.v("response", response.body().toString())
-//                    var intent = Intent(this@AddFamilyActivity, MainActivity::class.java)
-//                    startActivity(intent)
-//                    finish()
                 }
             })
         }

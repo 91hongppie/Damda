@@ -1,5 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
-from .models import User
+from .models import User, Family, WaitUser
 from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework import status
@@ -22,21 +22,21 @@ from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer,
 def JoinFamily(request, user_pk):
     if request.method == 'GET':
         data = request.GET.get('req')
-        user = get_object_or_404(get_user_model, pk=user_pk)
-        if user.state == 1:
-            return Response({'status': 403, 'error': '요청이 있습니다.'})
+        user = get_object_or_404(get_user_model(), pk=user_pk)
+        if request.user.state == 1:
+            return Response(status=403, data={'error': '요청이 있습니다.'})
         elif data.isdigit():
             family = get_object_or_404(Family, pk=data)
-            serializer = JoinFamilySerializer(data={'main_member_id': family.main_user,'wait_user': request.user})
+            serializer = JoinFamilySerializer(data={'main_member': family.main_member,'wait_user': user.username})
         else:
-            main_user = get_object_or_404(get_user_model, username=data)
+            main_user = get_object_or_404(get_user_model(), username=data)
             if main_user.state == 3:
-                serializer = JoinFamilySerializer(data={'main_member_id': data,'wait_user': request.user})
+                serializer = JoinFamilySerializer(data={'main_member': main_user.pk,'wait_user': user.username})
             else:
-                return Response({'status': 403, 'error': '메인 멤버가 아닙니다'})
+                return Response(status=403, data={'error': '메인 멤버가 아닙니다'})
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            userSerializers = UserSerializer(data={'state': 1}, instance=user)
+            userSerializers = UserSerializer(data={'username': user.username, 'state': 1}, instance=user)
             if userSerializers.is_valid(raise_exception=True):
                 userSerializers.save()
         return Response(serializer.data)
@@ -59,13 +59,13 @@ def JoinFamily(request, user_pk):
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
 @authentication_classes((JSONWebTokenAuthentication,))
-def Family(request):
+def MakeFamily(request):
     User = get_user_model()
     user = get_object_or_404(User, username=request.user)
     if not user.family_id:
         if user.state == 1:
-            return Response({'error': '요청이 있습니다.'})
-        familySerializer = FamilySerializer(data={'main_member': user.username})
+            return Response(status=403, data={'error': '요청이 있습니다.'})
+        familySerializer = FamilySerializer(data={'main_member': user.id})
         if familySerializer.is_valid(raise_exception=True):
             familySerializer.save()
             userSerializer = UserSerializer(data={'username': user.username, 'state': 3, 'family': familySerializer.data['id']}, instance=user)

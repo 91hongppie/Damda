@@ -75,9 +75,15 @@ class LoginActivity : AppCompatActivity() {
             startActivity(intent)
         }
         if (GlobalApplication.prefs.token !== "") {
-            var intent = Intent(this@LoginActivity, MainActivity::class.java)
-            startActivity(intent)
-            finish()
+            if (GlobalApplication.prefs.state == "1" || GlobalApplication.prefs.state == "0") {
+                var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
+                startActivity(intent)
+                finish()
+            } else {
+                var intent = Intent(this@LoginActivity, MainActivity::class.java)
+                startActivity(intent)
+                finish()
+            }
         } else {
         Session.getCurrentSession().addCallback(callback)}
     }
