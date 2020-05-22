@@ -15,23 +15,23 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".activity.CropperActivity"></activity>
+        <activity android:name=".activity.AddMemberActivity" />
+
         <service
             android:name=".retrofit.service.SignupService"
             android:enabled="true"
-            android:exported="true">
-
-        </service>
+            android:exported="true" />
 
         <activity android:name=".activity.SignupActivity" /> <!-- 배포시 삭제  userCleartextTraffic -->
-
         <meta-data
             android:name="firebase_messaging_auto_init_enabled"
             android:value="false" />
         <meta-data
             android:name="firebase_analytics_collection_enabled"
             android:value="false" />
-        <activity android:name=".activity.AddFamilyActivity"></activity>
-        <!-- 배포시 삭제  userCleartextTraffic -->
+
+        <activity android:name=".activity.AddFamilyActivity" /> <!-- 배포시 삭제  userCleartextTraffic -->
         <meta-data
             android:name="com.kakao.sdk.AppKey"
             android:value="@string/kakao_app_key" />
@@ -73,6 +73,10 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVEN" />
             </intent-filter>
         </service>
+
+        <activity
+            android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
+            android:theme="@style/Base.Theme.AppCompat" />
     </application>
 
 </manifest>

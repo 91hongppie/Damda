@@ -28,7 +28,7 @@ def photo_delete(request):
 
 
 @api_view(['GET', 'POST', ])
-def album(request):
-    albums = Album.objects.all()
+def album(request, family_pk):
+    albums = Album.objects.filter(family=family_pk)
     serializers = AlbumSerializer(albums, many=True)
     return Response({"data": serializers.data})

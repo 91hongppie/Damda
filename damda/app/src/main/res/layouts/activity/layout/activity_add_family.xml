@@ -23,7 +23,7 @@
         <Button
             android:id="@+id/make_family"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="60dp"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="15dp"
             android:layout_marginRight="20dp"
@@ -45,9 +45,26 @@
             android:layout_height="40dp"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:layout_marginBottom="80dp"
             android:text="요청하기"
             android:textColor="@color/colorWhite" />
+        <Button
+            android:id="@+id/delete_btn"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="40dp"
+            android:text="요청취소하기"
+            android:textColor="@color/colorWhite" />
 
+        <Button
+            android:id="@+id/logout"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:layout_marginLeft="20dp"
+            android:layout_marginRight="20dp"
+            android:layout_marginBottom="70dp"
+            android:text="로그아웃"
+            android:textColor="@color/colorWhite" />
     </LinearLayout>
 </RelativeLayout>
