@@ -17,5 +17,4 @@ class WaitUser(models.Model):
     wait_user = models.EmailField(max_length=254)
 
 class Device(models.Model):
-    device_token = models.TextField(unique=True, max_length=100)
-    # device_owner = models.ForeignKey(User, on_delete=models.CASCADE)
+    device_token = models.CharField(unique=True, max_length=200)

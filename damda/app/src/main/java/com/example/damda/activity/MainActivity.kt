@@ -24,12 +24,14 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import androidx.fragment.app.Fragment
+import com.example.damda.GlobalApplication
 import com.example.damda.MyFirebaseInstanceIdService
 import com.example.damda.R
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
 import okhttp3.*
 import java.io.IOException
+import java.net.URL
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -60,57 +62,35 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
             })
 
-        bottom_navigation.selectedItemId = R.id.action_search
+        bottom_navigation.selectedItemId = R.id.action_photo_list
     }
 
     fun sendRegistrationToServer(token: String) {
-        var thread = NetworkThread()
-        thread.start()
+        val url = URL("http://10.0.2.2:8000/api/accounts/addtoken/")
+        val jwt = GlobalApplication.prefs.token
+        val formBody = FormBody.Builder()
+            .add("token", token)
+            .build()
+        val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt").method("POST", formBody)
+            .build()
+        val client = OkHttpClient()
+
+        val callback = Callback1()
+
+        client.newCall(request).enqueue(callback)
     }
 
-    inner class NetworkThread: Thread() {
-        override fun run() {
+    inner class Callback1: Callback {
+        override fun onFailure(call: okhttp3.Call, e: IOException) {
 
-            var token : String? = null
-
-            @SuppressLint("HandlerLeak")
-            val handler: Handler = object : Handler() {
-                override fun handleMessage(message: Message) {
-                    token = message.obj.toString()
-                }
-            }
-
-            var client = OkHttpClient()
-
-            var builder = Request.Builder()
-            var url = builder.url("http://10.0.2.2:8000/api/accounts/addtoken/")
-            var formBody = FormBody.Builder()
-
-            var body = formBody
-                .add("token", token!!)
-                .build()
-
-            var request = url
-                .post(body)
-                .build()
-
-            var callback = Callback1()
-
-            client.newCall(request).enqueue(callback)
-
+            Log.d("Server response", "error: ${e.message}")
         }
 
-        inner class Callback1: Callback {
-            override fun onFailure(call: okhttp3.Call, e: IOException) {
+        override fun onResponse(call: okhttp3.Call, response: Response) {
 
-            }
+            var result = response?.body()?.string()
 
-            override fun onResponse(call: okhttp3.Call, response: Response) {
-
-                var result = response?.body()?.string()
-
-                Log.d("Server response", "result: $result")
-            }
+            Log.d("Server response", "result: $result")
         }
     }
 
