@@ -16,6 +16,7 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, DeviceSerializer
 import requests, json
 import jwt
+from decouple import config
 
 # Create your views here.
 @api_view(['GET', 'POST', 'DELETE'])
@@ -138,15 +139,19 @@ def addtoken(request):
 def message(request):
     url = 'https://fcm.googleapis.com/fcm/send'
     data = {
-        'to': 'elA1WX_bQouDU8sS3mIMJl:APA91bGOr1raF-EmuM-TM1F_ekzTJrop3TL5oX8NkBKK6XhbO41_6FJFBjqEpT6rGyzNektbwbQGZ9iGepMI8vCE4a3BEhrJa0ln2h1j3tU21Zl46P1EvYftixw6zxhnxhjpLg5b3W-2',
+        'to': 'eLILv1MTSP2Dutg1opqIq0:APA91bH0E88fCN8RUMsVTKqcZZJunGoK3jEftVjylN3VZvqQ9vmgxtUx3IDQx7pNSnUBpDIsgdj2mU95HkaFaxCpNiAyOtK23jODr7_yhLThqwOFFgZFPhDwdTydQiHgwfPrutzXqyn0',
         'notification': {
-            'title': 'hi',
-            'body': 'hello'
+            'title': '좀',
+            'body': '보내줘!!'
         }
     }
     headers = {
         'Content-Type': 'application/json',
-        'Authorization': 'key=AAAAydWIVZs:APA91bG_cVkbO4v9PpRgkjylzN5eeUiJDsR6Iw2QRurFydgCt0-BjHJ-2WziDOUF6P8n372BaMZleqVmpBYPFfMnfdXevE_yG43OYzv28-MB7tIzjk9LbguWqGt5TMax3NWJ7TsSvnED'
+        'Authorization': f'key={config("AUTHORIZATION_TOKEN")}'
     }
-    requests.post(url, data=json.dumps(data), headers=headers)
-    return Response('good', status=status.HTTP_200_OK)
+    res = requests.post(url, data=json.dumps(data), headers=headers)
+    result = {
+        'status': res.status_code
+    }
+    
+    return JsonResponse(result)
