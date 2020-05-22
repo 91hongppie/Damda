@@ -14,6 +14,15 @@ class MySharedPreferences(context: Context) {
         set(value) = prefs.edit().putString(PREF_KEY_MY_EDITTEXT, value).apply()
     /* get/set 함수 임의 설정. get 실행 시 저장된 값을 반환하며 default 값은 ""
      * set(value) 실행 시 value로 값을 대체한 후 저장 */
-    var user_id: String? = "user_id"
-    var family_id: String? = "family_id"
+    var user_id: String?
+        get() = prefs.getString("user_id", "")
+        set(value) = prefs.edit().putString("user_id", value).apply()
+
+    var family_id: String?
+        get() = prefs.getString("family_id", "")
+        set(value) = prefs.edit().putString("family_id", value).apply()
+
+    var state: String?
+        get() = prefs.getString("state", "")
+        set(value) = prefs.edit().putString("state", value).apply()
 }

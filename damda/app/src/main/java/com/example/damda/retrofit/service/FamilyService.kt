@@ -1,6 +1,7 @@
 package com.example.damda.retrofit.service
 
 import com.example.damda.retrofit.model.Family
+import com.example.damda.retrofit.model.WaitUser
 import retrofit2.Call
 import retrofit2.http.*
 
@@ -18,5 +19,10 @@ interface FamilyService{
 //    fun requestKakao(@Body parameters: HashMap<String, Any>): Call<KakaoLogin>
 
     @POST("/api/accounts/family/")
-    fun requestUser(@Header("Authorization") token: String): Call<Family>
+    fun makeFamily(@Header("Authorization") token: String): Call<Family>
+
+    @GET("/api/accounts/family/{id}")
+    fun requestFamily(@Header("Authorization") token: String,
+                      @Path("id") id: String,
+                      @Query ("req") req:String): Call<WaitUser>
 }
