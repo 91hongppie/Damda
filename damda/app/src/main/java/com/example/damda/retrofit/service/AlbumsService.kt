@@ -6,7 +6,7 @@ import retrofit2.Call
 import retrofit2.http.*
 
 interface AlbumsService {
-    @GET("/api/albums/{id}")
+    @GET("/api/albums/{id}/")
     fun requestAlbums(@Header("Authorization") jwt:String,
                       @Path("id") id:String) : Call<Albums>
 }
