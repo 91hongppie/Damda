@@ -88,4 +88,10 @@
 
     <string name="saveAlbum">앨범저장</string>
 
+
+    <!-- Photo -->
+    <string name="savePhoto">저장</string>
+    <string name="deletePhoto">삭제</string>
+    <string name="sharePhoto">공유</string>
+
 </resources>
