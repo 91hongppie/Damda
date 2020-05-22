@@ -19,7 +19,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class AddFamilyActivity : AppCompatActivity() {
-    var family_id: Family? = null
+    var family_info: Family? = null
     var retrofit = Retrofit.Builder()
         .baseUrl("http://10.0.2.2:8000")
         .addConverterFactory(GsonConverterFactory.create())
@@ -52,8 +52,10 @@ class AddFamilyActivity : AppCompatActivity() {
                             "대기중인 요청이 존재합니다.",
                             Toast.LENGTH_SHORT).show()
                     } else {
-                        family_id = response.body()
-                        Log.v("response", family_id.toString())
+                        family_info = response.body()
+                        Log.v("response", family_info?.id.toString())
+                        GlobalApplication.prefs.family_id = family_info?.id.toString()
+                        GlobalApplication.prefs.state = "3"
                         var intent = Intent(this@AddFamilyActivity, MainActivity::class.java)
                         startActivity(intent)
                         finish()
