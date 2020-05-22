@@ -1,7 +1,8 @@
 package com.example.damda.activity
 
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.view.MenuItem
+import androidx.appcompat.app.AppCompatActivity
 import com.example.damda.R
 
 class AddMemberActivity : AppCompatActivity() {
@@ -13,5 +14,14 @@ class AddMemberActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
+    }
+    override fun onOptionsItemSelected(item: MenuItem): Boolean {
+        when (item.getItemId()) {
+            android.R.id.home -> {
+                finish()
+                return true
+            }
+        }
+        return super.onOptionsItemSelected(item)
     }
 }

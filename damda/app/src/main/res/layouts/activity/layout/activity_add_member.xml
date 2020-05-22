@@ -3,12 +3,12 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activity.AddMemberActivity">
 
     <androidx.appcompat.widget.Toolbar
-        xmlns:android="http://schemas.android.com/apk/res/android"
         android:id="@+id/toolbar"
+        app:title="가족 목록"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
@@ -20,9 +20,19 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="안녕"
+            android:text="@string/add_info"
             />
-
     </RelativeLayout>
 
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/floating_action_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/favorite"
+        app:backgroundTint="#009688"
+        android:layout_alignParentBottom="true"
+        android:layout_alignRight="@id/toolbar"
+        app:srcCompat="@drawable/baseline_add_black_24dp" />
 </RelativeLayout>
