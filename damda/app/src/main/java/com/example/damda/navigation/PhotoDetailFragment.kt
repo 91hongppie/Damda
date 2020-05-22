@@ -6,29 +6,44 @@ import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
+import android.system.Os.remove
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.core.view.isInvisible
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
+import com.example.damda.GlobalApplication
 import com.example.damda.R
 import com.example.damda.URLtoBitmapTask
+import com.example.damda.activity.MainActivity
 import com.example.damda.helper.ZoomOutPageTransformer
+import com.example.damda.navigation.model.Album
 import com.example.damda.navigation.model.Photos
+import com.google.gson.GsonBuilder
+import kotlinx.android.synthetic.main.fragment_photo_detail.*
 import kotlinx.android.synthetic.main.fragment_photo_detail.view.*
+import kotlinx.android.synthetic.main.fragment_photo_detail.view.et_update
 import kotlinx.android.synthetic.main.image_fullscreen.view.*
+import okhttp3.*
+import org.w3c.dom.Text
 import java.io.ByteArrayOutputStream
+import java.io.IOException
 import java.net.URL
+
 
 class PhotoDetailFragment: Fragment() {
 
     private var photoList = emptyArray<Photos>()
     private var selectedPosition: Int = 0
     lateinit var tvGalleryTitle: TextView
+    lateinit var et_update: EditText
     lateinit var viewPager: ViewPager
 
     lateinit var galleryPagerAdapter: GalleryPagerAdapter
@@ -38,6 +53,7 @@ class PhotoDetailFragment: Fragment() {
 
         viewPager = view!!.findViewById(R.id.vp_photo)
         tvGalleryTitle = view!!.findViewById(R.id.tvGalleryTitle)
+        et_update = view!!.findViewById(R.id.et_update)
 
 
         galleryPagerAdapter = GalleryPagerAdapter()
@@ -45,6 +61,7 @@ class PhotoDetailFragment: Fragment() {
 
         photoList = arguments?.getSerializable("photoList") as Array<Photos>
         selectedPosition = arguments!!.getInt("position")
+        tvGalleryTitle.text = photoList[selectedPosition].title
 //        view.findViewById<View>(R.id.ivFullscreenImage).transitionName = imageRes.toString()
 
         viewPager.adapter = galleryPagerAdapter
@@ -58,6 +75,7 @@ class PhotoDetailFragment: Fragment() {
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+        val context = activity as MainActivity
         var url = "https://newsimg.hankookilbo.com/2016/04/13/201604131460701467_1.jpg"
 
         view.btn_photo.setOnClickListener { view ->
@@ -78,19 +96,47 @@ class PhotoDetailFragment: Fragment() {
             startActivity(chooser)
         }
         view.btn_delete.setOnClickListener { view ->
+            val url = URL("http://10.0.2.2:8000/api/albums/photo/delete/")
+            val jwt = GlobalApplication.prefs.token
+            val payload = photoList[selectedPosition].id
+            val formBody = FormBody.Builder()
+                .add("photos", payload.toString())
+                .build()
+            val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt").method("POST", formBody)
+                .build()
+            val client = OkHttpClient()
+            val album = arguments?.getParcelable<Album>("album")
+            client.newCall(request).enqueue(object: Callback {
+                override fun onFailure(call: Call, e: IOException) {
+                    println("Failed to execute request!")
+                }
+
+                override fun onResponse(call: Call, response: Response) {
+                    val body = response.body()?.string()
+                    val gson = GsonBuilder().create()
+                    var list = emptyArray<Photos>()
+                    photoList= gson.fromJson(body, list::class.java)
+                    var bundle = Bundle()
+                    bundle.putSerializable("photoList", photoList)
+                    bundle.putInt("position", selectedPosition)
+                    bundle.putParcelable("album", album)
+                    var fragment = PhotoDetailFragment()
+                    fragment.arguments = bundle
+                    context.replaceFragment(fragment)
+                }
+            })
+        }
+        view.btn_update.setOnClickListener { view ->
+            tvGalleryTitle.visibility = View.INVISIBLE
+            et_update.visibility = View.VISIBLE
 
         }
     }
 
-
-//    override fun onCreate(savedInstanceState: Bundle?) {
-//        super.onCreate(savedInstanceState)
-//        setStyle(DialogFragment.STYLE_NORMAL, android.R.style.Theme_Black_NoTitleBar_Fullscreen)
-//    }
-
     private fun setCurrentItem(position: Int) {
-        viewPager.setCurrentItem(position, true)
+        viewPager.setCurrentItem(position, false)
     }
+
 
     // viewpager page change listener
     internal var viewPagerPageChangeListener: ViewPager.OnPageChangeListener =
@@ -99,7 +145,7 @@ class PhotoDetailFragment: Fragment() {
             override fun onPageSelected(position: Int) {
                 // set gallery title
                 selectedPosition = position
-                tvGalleryTitle.text = photoList.get(position).title
+                tvGalleryTitle.text = photoList.get(selectedPosition).title
             }
 
             override fun onPageScrolled(arg0: Int, arg1: Float, arg2: Int) {

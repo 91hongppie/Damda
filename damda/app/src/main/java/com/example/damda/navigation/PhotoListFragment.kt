@@ -64,6 +64,7 @@ class PhotoListFragment : Fragment() {
                 var bundle = Bundle()
                 bundle.putSerializable("photoList", photoList)
                 bundle.putInt("position", photoList.indexOf(photo))
+                bundle.putParcelable("album", album)
                 var fragment = PhotoDetailFragment()
                 fragment.arguments = bundle
                 context.replaceFragment(fragment)
@@ -85,6 +86,7 @@ class PhotoListFragment : Fragment() {
                             var bundle = Bundle()
                             bundle.putSerializable("photoList", photoList)
                             bundle.putInt("position", photoList.indexOf(photo))
+                            bundle.putParcelable("album", album)
                             var fragment = PhotoDetailFragment()
                             fragment.arguments = bundle
                             context.replaceFragment(fragment)
