@@ -8,5 +8,4 @@ urlpatterns = [
     path('photo/<int:album_pk>/', views.photo),
     path('<int:family_pk>/', views.album),
     path('photo/delete/', views.photo_delete),
-    path('', views.album),
 ]

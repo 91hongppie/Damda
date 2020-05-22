@@ -74,7 +74,7 @@ class LoginActivity : AppCompatActivity() {
                         Log.v("response", login.toString())
                         GlobalApplication.prefs.token = login?.token
                         GlobalApplication.prefs.user_id = login?.id.toString()
-                        GlobalApplication.prefs.family_id = login?.family_id.toString()
+                        GlobalApplication.prefs.family_id = login?.family.toString()
                         GlobalApplication.prefs.state = login?.state.toString()
                         moveActivity(login?.state!!.toInt())
                     }
@@ -133,7 +133,7 @@ class LoginActivity : AppCompatActivity() {
                                 override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
                                     userInfo = response.body()
                                     GlobalApplication.prefs.user_id = userInfo?.id.toString()
-                                    GlobalApplication.prefs.family_id = userInfo?.family_id.toString()
+                                    GlobalApplication.prefs.family_id = userInfo?.family.toString()
                                     GlobalApplication.prefs.state = login?.state.toString()
                                     Log.v("UserInfo",userInfo?.toString())
                                     moveActivity(userInfo?.state!!.toInt())
