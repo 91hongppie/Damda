@@ -1,10 +1,12 @@
 from django.db import models
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFit
+from accounts.serializers import Family
 
 # Create your models here.
 class Album(models.Model):
     title = models.TextField()
+    family = models.ForeignKey(Family, on_delete=models.CASCADE)
 
 
 class Photo(models.Model):

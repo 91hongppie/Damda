@@ -35,16 +35,12 @@
             app:layout_constraintTop_toTopOf="parent" />
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/selectionToolbar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:visibility="gone" />
-
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_photo"
-        android:layout_marginTop="44dp"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" />
+        android:layout_height="match_parent"
+        android:layout_marginTop="44dp" />
+
+
 
 </LinearLayout>

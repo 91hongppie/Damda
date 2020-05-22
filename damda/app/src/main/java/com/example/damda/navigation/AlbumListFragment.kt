@@ -1,5 +1,6 @@
 package com.example.damda.navigation
 
+import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.LayoutInflater
@@ -9,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.damda.*
+import com.example.damda.activity.AddMemberActivity
 import com.example.damda.activity.MainActivity
 import com.example.damda.navigation.model.Album
 import com.example.damda.navigation.adapter.AlbumAdapter
@@ -44,9 +46,10 @@ class AlbumListFragment : Fragment() {
             .build()
 
         val jwt = GlobalApplication.prefs.token
+        val family_id = GlobalApplication.prefs.family_id.toString()
         var albumsService: AlbumsService = retrofit.create(
             AlbumsService::class.java)
-        albumsService.requestAlbums("JWT $jwt").enqueue(object: Callback<Albums>{
+        albumsService.requestAlbums("JWT $jwt", family_id).enqueue(object: Callback<Albums>{
             override fun onFailure(call: Call<Albums>, t: Throwable) {
                 Log.e("Albu ", ""+t)
                 var dialog = AlertDialog.Builder(context)
@@ -58,18 +61,25 @@ class AlbumListFragment : Fragment() {
             override fun onResponse(call: Call<Albums>, response: Response<Albums>) {
                 albums = response.body()
                 albumList = albums!!.data
-                val albumAdapter =
-                    AlbumAdapter(albumList) { album ->
-                        var bundle = Bundle()
-                        bundle.putParcelable("album", album)
-                        var fragment = PhotoListFragment()
-                        fragment.arguments = bundle
-                        context.replaceFragment(fragment)
-                    }
-                view.rv_album.adapter = albumAdapter
+                if (albumList.size > 0) {
+                    view.add_member.visibility = View.GONE
+                    val albumAdapter =
+                        AlbumAdapter(albumList) { album ->
+                            var bundle = Bundle()
+                            bundle.putParcelable("album", album)
+                            var fragment = PhotoListFragment()
+                            fragment.arguments = bundle
+                            context.replaceFragment(fragment)
+                        }
+                    view.rv_album.adapter = albumAdapter
+                }
             }
         })
         view.rv_album.layoutManager = GridLayoutManager(activity, 3)
+        view.add_member_btn.setOnClickListener{
+            var intent = Intent(context, AddMemberActivity::class.java)
+            startActivity(intent)
+        }
         return view
     }
 }
