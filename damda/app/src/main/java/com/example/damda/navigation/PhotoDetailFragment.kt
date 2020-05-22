@@ -1,21 +1,25 @@
 package com.example.damda.navigation
 
+import android.Manifest
+import android.app.DownloadManager
 import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Bitmap
 import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
-import android.system.Os.remove
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.DrawableRes
-import androidx.core.view.isInvisible
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
@@ -29,31 +33,40 @@ import com.example.damda.navigation.model.Photos
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_photo_detail.*
 import kotlinx.android.synthetic.main.fragment_photo_detail.view.*
-import kotlinx.android.synthetic.main.fragment_photo_detail.view.et_update
+import kotlinx.android.synthetic.main.fragment_photo_detail.view.btn_share
 import kotlinx.android.synthetic.main.image_fullscreen.view.*
 import okhttp3.*
-import org.w3c.dom.Text
+import org.jetbrains.anko.find
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.net.URL
 
 
 class PhotoDetailFragment: Fragment() {
-
+    private val STORAGE_PERMISSION_CODE: Int = 1000
     private var photoList = emptyArray<Photos>()
     private var selectedPosition: Int = 0
+    private var album: Album? = null
     lateinit var tvGalleryTitle: TextView
     lateinit var et_update: EditText
+    lateinit var btn_share: Button
+    lateinit var btn_delete: Button
+    lateinit var btn_save: Button
     lateinit var viewPager: ViewPager
-
     lateinit var galleryPagerAdapter: GalleryPagerAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
-        var view = inflater.inflate(R.layout.fragment_photo_detail, container, false)
+        val view = inflater.inflate(R.layout.fragment_photo_detail, container, false)
 
         viewPager = view!!.findViewById(R.id.vp_photo)
-        tvGalleryTitle = view!!.findViewById(R.id.tvGalleryTitle)
-        et_update = view!!.findViewById(R.id.et_update)
+        tvGalleryTitle = view.findViewById(R.id.tvGalleryTitle)
+        et_update = view.findViewById(R.id.et_update)
+        btn_share = view.findViewById(R.id.btn_share)
+        btn_delete = view.findViewById(R.id.btn_delete)
+        btn_save = view.findViewById(R.id.btn_save)
+        album = arguments?.getParcelable<Album>("album")
+
+
 
 
         galleryPagerAdapter = GalleryPagerAdapter()
@@ -76,9 +89,8 @@ class PhotoDetailFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val context = activity as MainActivity
-        var url = "https://newsimg.hankookilbo.com/2016/04/13/201604131460701467_1.jpg"
 
-        view.btn_photo.setOnClickListener { view ->
+        btn_share.setOnClickListener {
             val share_intent = Intent().apply {
                 var url = "http://10.0.2.2:8000${photoList[selectedPosition].pic_name}"
                 var image_task: URLtoBitmapTask = URLtoBitmapTask()
@@ -86,7 +98,7 @@ class PhotoDetailFragment: Fragment() {
                     imgurl = URL(url)
                 }
                 var bitmap: Bitmap = image_task.execute().get()
-                var uri: Uri? = getImageUri(context!!, bitmap, photoList[selectedPosition].title)
+                var uri: Uri? = getImageUri(context, bitmap, photoList[selectedPosition].title)
                 action = Intent.ACTION_SEND
                 putExtra(Intent.EXTRA_STREAM, uri)
                 type = "image/*"
@@ -95,7 +107,7 @@ class PhotoDetailFragment: Fragment() {
 //            intent.putExtra(Intent.EXTRA_STREAM, "http://10.0.2.2:8000${photoList[selectedPosition].pic_name}")
             startActivity(chooser)
         }
-        view.btn_delete.setOnClickListener { view ->
+        btn_delete.setOnClickListener {
             val url = URL("http://10.0.2.2:8000/api/albums/photo/delete/")
             val jwt = GlobalApplication.prefs.token
             val payload = photoList[selectedPosition].id
@@ -117,24 +129,60 @@ class PhotoDetailFragment: Fragment() {
                     var list = emptyArray<Photos>()
                     photoList= gson.fromJson(body, list::class.java)
                     var bundle = Bundle()
-                    bundle.putSerializable("photoList", photoList)
-                    bundle.putInt("position", selectedPosition)
                     bundle.putParcelable("album", album)
-                    var fragment = PhotoDetailFragment()
+                    var fragment = PhotoListFragment()
                     fragment.arguments = bundle
+                    fragmentManager!!.beginTransaction().remove(this@PhotoDetailFragment).commit()
+                    fragmentManager!!.popBackStack()
+                    fragmentManager!!.popBackStack()
                     context.replaceFragment(fragment)
                 }
             })
         }
-        view.btn_update.setOnClickListener { view ->
-            tvGalleryTitle.visibility = View.INVISIBLE
-            et_update.visibility = View.VISIBLE
+        btn_save.setOnClickListener {
+            /*            var image_task: URLtoBitmapTask = URLtoBitmapTask()
+            for(photo in result){
+                image_task = URLtoBitmapTask().apply {
+                    imgurl = URL("http://10.0.2.2:8000${photo.pic_name}")
+                }
+                var bitmap: Bitmap = image_task.execute().get()
+                Log.e("ebtest",""+bitmap)
+          }
+*/
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                    PackageManager.PERMISSION_DENIED){
+                    requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
+                }
+                else{
+                    startDownloading()
+                }
 
+            }
+            else{
+                startDownloading()
+            }
         }
     }
 
     private fun setCurrentItem(position: Int) {
         viewPager.setCurrentItem(position, false)
+    }
+
+    private  fun startDownloading() {
+        val photo = photoList[selectedPosition]
+        val imgurl = "http://10.0.2.2:8000${photo.pic_name}"
+        val request = DownloadManager.Request(Uri.parse(imgurl))
+        val jwt = GlobalApplication.prefs.token
+        request.addRequestHeader("Authorization", "JWT $jwt")
+        request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
+        request.setTitle("${photo.title}")
+        request.setDescription("앨범 다운로드 중")
+        request.allowScanningByMediaScanner()
+        request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
+        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DCIM, "damda/${album?.title}/${photo.title}")
+        val manager = context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
+        manager.enqueue(request)
     }
 
 
