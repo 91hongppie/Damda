@@ -75,5 +75,14 @@ class AddFamilyActivity : AppCompatActivity() {
                 }
             })
         }
+        logout.setOnClickListener {
+            GlobalApplication.prefs.token = ""
+            GlobalApplication.prefs.user_id = ""
+            GlobalApplication.prefs.family_id = ""
+            GlobalApplication.prefs.state = ""
+            var intent = Intent(this@AddFamilyActivity, LoginActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
     }
 }

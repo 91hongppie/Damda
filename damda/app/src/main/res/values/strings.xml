@@ -87,5 +87,6 @@
     <string name="album_title">앨범이름</string>
 
     <string name="saveAlbum">앨범저장</string>
+    <string name="user_info">MyPage</string>
 
 </resources>
