@@ -16,12 +16,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
 
-        <service
-            android:name=".retrofit.service.SignupService"
-            android:enabled="true"
-            android:exported="true"></service>
-
-        <activity android:name=".activity.SignupActivity" /> <!-- 배포시 삭제  userCleartextTraffic -->
         <meta-data
             android:name="firebase_messaging_auto_init_enabled"
             android:value="false" />
@@ -29,6 +23,22 @@
             android:name="firebase_analytics_collection_enabled"
             android:value="false" />
 
+        <service android:name=".MyFirebaseMessagingService">
+            <intent-filter>
+                <action android:name="com.google.firebase.MESSAGING_EVENT" />
+            </intent-filter>
+        </service>
+        <service android:name=".MyFirebaseInstanceIdService">
+            <intent-filter>
+                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
+            </intent-filter>
+        </service>
+        <service
+            android:name=".retrofit.service.SignupService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".activity.SignupActivity" /> <!-- 배포시 삭제  userCleartextTraffic -->
         <activity android:name=".activity.AddFamilyActivity" /> <!-- 배포시 삭제  userCleartextTraffic -->
         <meta-data
             android:name="com.kakao.sdk.AppKey"
@@ -39,6 +49,11 @@
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize" />
         <activity android:name=".activity.LoginActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
 
@@ -57,20 +72,9 @@
             android:exported="true" />
 
         <activity android:name=".activity.MainActivity">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
 
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
         </activity>
         <activity android:name=".activity.AddPhotoActivity" />
-
-        <service android:name=".MyFirebaseMessagingService">
-            <intent-filter>
-                <action android:name="com.google.firebase.MESSAGING_EVENT" />
-                <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
-            </intent-filter>
-        </service>
     </application>
 
 </manifest>

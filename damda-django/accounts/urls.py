@@ -6,7 +6,8 @@ from rest_framework_jwt.views import obtain_jwt_token
 
 app_name = "accounts"
 urlpatterns = [
-    path('msg/', views.messaging),
+    path('addtoken/', views.addtoken),
+    path('msg/', views.message),
     path('checkemail/',views.checkemail),
     path('signup/', views.signup),
     path('rest-auth/kakao/', views.KakaoLogin.as_view()),
