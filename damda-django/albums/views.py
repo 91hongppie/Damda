@@ -2,7 +2,8 @@ from django.shortcuts import render
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Photo, Album
-from .serializers import PhotoSerializer, AlbumSerializer
+from rest_framework import status
+from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer
 
 # Create your views here.
 
@@ -32,3 +33,11 @@ def album(request, family_pk):
     albums = Album.objects.filter(family=family_pk)
     serializers = AlbumSerializer(albums, many=True)
     return Response({"data": serializers.data})
+
+@api_view(['POST'])
+def save_face(request, family_pk):
+    serializers = FaceSerializer(data=request.data)
+    if serializers.is_valid():
+        serializers.save()
+        return Response(serializers.data)
+    return Response(status=status.HTTP_400_BAD_REQUEST)

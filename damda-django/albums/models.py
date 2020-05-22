@@ -20,5 +20,12 @@ class Photo(models.Model):
     title = models.TextField()
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name="album_photo")
 
+class FaceImage(models.Model):
+    family = models.ForeignKey(Family, on_delete=models.CASCADE, null=True)
+    album = models.ForeignKey(Album, on_delete=models.CASCADE, null=True)
+    album_name = models.CharField(max_length=256)
+    image = models.ImageField(upload_to='faces')
+    
+
 
 
