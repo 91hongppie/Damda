@@ -42,7 +42,7 @@ import java.net.URL
 
 class PhotoListFragment : Fragment() {
     private val STORAGE_PERMISSION_CODE: Int = 1000
-    var result = emptyArray<Photos>()
+    var photoList = emptyArray<Photos>()
     var album: Album? = null
     @RequiresApi(Build.VERSION_CODES.KITKAT)
     override fun onCreateView(
@@ -58,7 +58,6 @@ class PhotoListFragment : Fragment() {
         val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt")
             .build()
         val client = OkHttpClient()
-        var photoList = emptyArray<Photos>()
         view.rv_photo?.adapter =
             PhotoAdapter(photoList) { photo ->
                 var bundle = Bundle()
@@ -77,8 +76,7 @@ class PhotoListFragment : Fragment() {
             override fun onResponse(call: Call, response: Response) {
                 val body = response.body()?.string()
                 val gson = GsonBuilder().create()
-                var list = emptyArray<Photos>()
-                photoList= gson.fromJson(body, list::class.java)
+                photoList= gson.fromJson(body, Array<Photos>::class.java)
                 activity?.runOnUiThread(Runnable {
                     view.rv_photo?.adapter =
                         PhotoAdapter(photoList) { photo ->
@@ -123,17 +121,17 @@ class PhotoListFragment : Fragment() {
         return view
     }
     private  fun startDownloading() {
-        for(photo in result){
+        for(photo in photoList){
             val imgurl = "http://10.0.2.2:8000${photo.pic_name}"
             val request = DownloadManager.Request(Uri.parse(imgurl))
             val jwt = GlobalApplication.prefs.token
             request.addRequestHeader("Authorization", "JWT $jwt")
             request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
-            request.setTitle("Download")
-            request.setDescription("the file is downloading...")
+            request.setTitle("${photo.title}")
+            request.setDescription("앨범 다운로드 중")
             request.allowScanningByMediaScanner()
             request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
-            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DCIM, "damda/${album?.title}/${System.currentTimeMillis()}")
+            request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DCIM, "damda/${album?.title}/${photo.title}")
             val manager = context?.getSystemService(DOWNLOAD_SERVICE) as DownloadManager
             manager.enqueue(request)
         }
@@ -150,7 +148,7 @@ class PhotoListFragment : Fragment() {
                     startDownloading()
                 }
                 else{
-                    Toast.makeText(this.context, "Permission denied", Toast.LENGTH_LONG).show()
+                    Toast.makeText(this.context, "필수 권한이 거부되었습니다.", Toast.LENGTH_LONG).show()
                 }
             }
         }
