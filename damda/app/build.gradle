@@ -9,7 +9,7 @@ android {
 
     defaultConfig {
         applicationId "com.example.damda"
-        minSdkVersion 16
+        minSdkVersion 23
         targetSdkVersion 29
         versionCode 1
         versionName "1.0"
@@ -70,6 +70,7 @@ dependencies {
     //noinspection GradleCompatible
 
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
+    api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
 }
 
 apply plugin: 'com.google.gms.google-services'
