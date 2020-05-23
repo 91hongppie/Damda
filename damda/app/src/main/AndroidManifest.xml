@@ -15,7 +15,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.RequestListActivity"></activity>
+        <activity android:name=".activity.RequestListActivity" />
         <activity android:name=".activity.CropperActivity" />
         <activity android:name=".activity.AddMemberActivity" />
 
@@ -44,11 +44,6 @@
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
             </intent-filter>
         </service>
-
-        <service
-            android:name=".retrofit.service.SignupService"
-            android:enabled="true"
-            android:exported="true" />
 
         <activity android:name=".activity.AddFamilyActivity" /> <!-- 배포시 삭제  userCleartextTraffic -->
      
