@@ -1,0 +1,35 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chat_message_item_layout"
+    android:layout_width="match_parent"
+    android:layout_height="60dp"
+    android:padding="10dp">
+
+    <TextView
+        android:id="@+id/search_fullname"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:layout_marginBottom="5dp"
+        android:text="제목"
+        android:textSize="15dp"
+        android:gravity="center_vertical"
+        android:textColor="@color/black"/>
+    <Button
+        android:id="@+id/button1"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="번호 선택"
+        android:layout_weight="0.1" />
+
+    <Button
+        android:id="@+id/button2"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:text="Toast에서 확인"
+        android:layout_weight="0.1" />
+<!--    <View-->
+<!--        android:layout_width="match_parent"-->
+<!--        android:layout_height="0.5dp"-->
+<!--        android:background="@color/black" />-->
+
+
+</LinearLayout>
