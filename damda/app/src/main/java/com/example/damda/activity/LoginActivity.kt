@@ -64,6 +64,7 @@ class LoginActivity : AppCompatActivity() {
                         GlobalApplication.prefs.token = login?.token
                         GlobalApplication.prefs.user_id = login?.id.toString()
                         GlobalApplication.prefs.family_id = login?.family_id.toString()
+                        Log.v("family_id",GlobalApplication.prefs.family_id)
                         GlobalApplication.prefs.state = login?.state.toString()
                         moveActivity(login?.state!!.toInt())
                     }
