@@ -38,4 +38,12 @@ class Migration(migrations.Migration):
             ],
             bases=('albums.photo',),
         ),
+        migrations.CreateModel(
+            name='FaceImage',
+            fields=[
+                ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
+                ('image', models.CharField(max_length=500)),
+                ('album', models.ForeignKey(on_delete=django.db.models.deletion.CASCADE, to='albums.Album')),
+            ],
+        ),
     ]

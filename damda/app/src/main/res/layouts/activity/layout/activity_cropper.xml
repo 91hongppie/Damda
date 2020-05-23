@@ -30,6 +30,8 @@
         android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
+        android:inputType="text"
+        android:maxLines="1"
         android:hint="이름을 입력해주세요." />
     <Button
         android:id="@+id/save_member"

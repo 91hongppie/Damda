@@ -45,7 +45,7 @@ class Migration(migrations.Migration):
             name='Device',
             fields=[
                 ('id', models.AutoField(auto_created=True, primary_key=True, serialize=False, verbose_name='ID')),
-                ('device_token', models.CharField(max_length=200, unique=True)),
+                ('device_token', models.TextField(max_length=100, unique=True)),
             ],
         ),
         migrations.CreateModel(

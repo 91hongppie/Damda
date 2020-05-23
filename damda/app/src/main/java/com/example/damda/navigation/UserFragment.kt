@@ -8,8 +8,7 @@ import android.view.ViewGroup
 import androidx.fragment.app.Fragment
 import com.example.damda.GlobalApplication
 import com.example.damda.R
-import com.example.damda.activity.AddFamilyActivity
-import com.example.damda.activity.LoginActivity
+import com.example.damda.activity.*
 import kotlinx.android.synthetic.main.fragment_user.*
 import kotlinx.android.synthetic.main.fragment_user.view.*
 
@@ -29,6 +28,12 @@ class UserFragment : Fragment() {
             GlobalApplication.prefs.family_id = ""
             GlobalApplication.prefs.state = ""
             var intent = Intent(activity, LoginActivity::class.java)
+            startActivity(intent)
+            activity?.finish()
+        }
+
+        view.list_request.setOnClickListener {
+            var intent = Intent(context, RequestListActivity::class.java)
             startActivity(intent)
         }
         return view
