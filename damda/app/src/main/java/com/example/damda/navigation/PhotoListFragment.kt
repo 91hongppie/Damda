@@ -42,6 +42,7 @@ import java.net.URL
 
 class PhotoListFragment : Fragment() {
     private val STORAGE_PERMISSION_CODE: Int = 1000
+
     var photoList = emptyArray<Photos>()
     var album: Album? = null
     @RequiresApi(Build.VERSION_CODES.KITKAT)

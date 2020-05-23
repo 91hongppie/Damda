@@ -108,7 +108,7 @@ class PhotoDetailFragment: Fragment() {
             startActivity(chooser)
         }
         btn_delete.setOnClickListener {
-            val url = URL("http://10.0.2.2:8000/api/albums/photo/delete/")
+            val url = URL("http://10.0.2.2:8000/api/albums/photo/")
             val jwt = GlobalApplication.prefs.token
             val payload = photoList[selectedPosition].id
             val formBody = FormBody.Builder()

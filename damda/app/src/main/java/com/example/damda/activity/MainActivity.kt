@@ -1,11 +1,16 @@
 package com.example.damda.activity
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import android.os.Handler
+import android.os.Message
+import android.util.Log
 import android.view.MenuItem
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.damda.navigation.AlarmFragment
@@ -13,14 +18,20 @@ import com.example.damda.navigation.PhotoListFragment
 import com.example.damda.navigation.AlbumListFragment
 import com.example.damda.navigation.UserFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.messaging.FirebaseMessaging
 import kotlinx.android.synthetic.main.activity_main.*
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import androidx.fragment.app.Fragment
+import com.example.damda.GlobalApplication
+import com.example.damda.MyFirebaseInstanceIdService
 import com.example.damda.R
+import com.google.android.gms.tasks.OnCompleteListener
+import com.google.firebase.iid.FirebaseInstanceId
+import okhttp3.*
+import java.io.IOException
+import java.net.URL
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
 
@@ -34,16 +45,55 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             1
         )
 
-        bottom_navigation.selectedItemId = R.id.action_album_list
+        FirebaseInstanceId.getInstance().instanceId
+            .addOnCompleteListener(OnCompleteListener { task ->
+                if (!task.isSuccessful) {
+                    Log.w(TAG, "getInstanceId failed", task.exception)
+                    return@OnCompleteListener
+                }
+
+                // Get new Instance ID token
+                val token = task.result?.token
+                sendRegistrationToServer(token!!)
+                // Log and toast
+                val msg = getString(R.string.msg_token_fmt, token)
+                Log.d(TAG, msg)
+
+                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
+            })
+
+        bottom_navigation.selectedItemId = R.id.action_photo_list
     }
 
-    fun runtimeEnableAutoInit() {
-        // [START fcm_runtime_enable_auto_init]
-        FirebaseMessaging.getInstance().isAutoInitEnabled = true
-        // [END fcm_runtime_enable_auto_init]
+    fun sendRegistrationToServer(token: String) {
+        val url = URL("http://10.0.2.2:8000/api/accounts/addtoken/")
+        val jwt = GlobalApplication.prefs.token
+        val formBody = FormBody.Builder()
+            .add("token", token)
+            .build()
+        val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt").method("POST", formBody)
+            .build()
+        val client = OkHttpClient()
 
-        // Set default screen
+        val callback = Callback1()
+
+        client.newCall(request).enqueue(callback)
     }
+
+    inner class Callback1: Callback {
+        override fun onFailure(call: okhttp3.Call, e: IOException) {
+
+            Log.d("Server response", "error: ${e.message}")
+        }
+
+        override fun onResponse(call: okhttp3.Call, response: Response) {
+
+            var result = response?.body()?.string()
+
+            Log.d("Server response", "result: $result")
+        }
+    }
+
     fun replaceFragment(fragment: Fragment){
         supportFragmentManager.beginTransaction().replace(R.id.main_content,fragment).addToBackStack(null).commit()
     }
@@ -94,4 +144,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         .build()
 
     val service = retrofit.create(RetrofitNetwork::class.java)
+
+    companion object {
+
+        private const val TAG = "MainActivity"
+    }
+
 }

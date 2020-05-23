@@ -15,3 +15,6 @@ class User(AbstractUser):
 class WaitUser(models.Model):
     main_member = models.ForeignKey(User, on_delete=models.CASCADE)
     wait_user = models.EmailField(max_length=254)
+
+class Device(models.Model):
+    device_token = models.CharField(unique=True, max_length=200)
