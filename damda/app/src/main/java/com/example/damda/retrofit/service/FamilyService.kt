@@ -21,7 +21,7 @@ interface FamilyService{
     @POST("/api/accounts/family/")
     fun makeFamily(@Header("Authorization") token: String): Call<Family>
 
-    @GET("/api/accounts/family/{id}")
+    @GET("/api/accounts/family/{id}/")
     fun requestFamily(@Header("Authorization") token: String,
                       @Path("id") id: String,
                       @Query ("req") req:String): Call<WaitUser>
