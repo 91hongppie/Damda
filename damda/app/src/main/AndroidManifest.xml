@@ -50,8 +50,6 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activity.SignupActivity" /> <!-- 배포시 삭제  userCleartextTraffic -->
-
         <activity android:name=".activity.AddFamilyActivity" /> <!-- 배포시 삭제  userCleartextTraffic -->
      
         <meta-data
