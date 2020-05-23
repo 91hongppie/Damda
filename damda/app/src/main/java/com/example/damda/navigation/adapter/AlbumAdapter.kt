@@ -32,6 +32,7 @@ class AlbumAdapter(val albumList: Array<Album>, val itemClick: (Album) -> Unit) 
         val image = itemView.findViewById<ImageView>(R.id.album_image)
         fun bind (album: Album) {
             name?.text = album.title
+            Log.e("dhodhodhdohdohdoho", ""+album.title)
             if (album.image !== "empty") {
                 Glide.with(itemView.context).load("http://10.0.2.2:8000/${album.image}").apply(RequestOptions().override(600, 600))
                     .apply(RequestOptions.centerCropTransform()).into(image)

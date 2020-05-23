@@ -41,7 +41,8 @@ def save_face(request, family_pk):
     image = fr.load_image_file(request.FILES['image'])
     top, right, bottom, left = fr.face_locations(image)[0]
     face = image[top:bottom, left:right]
-    albumSerializer = AlbumSerializer(data={'family':family_pk, 'title':request.data['album_name'], 'image': "empty"})
+    title = request.data['album_name'].replace('"',"")
+    albumSerializer = AlbumSerializer(data={'family':family_pk, 'title':title, 'image': "empty"})
     if albumSerializer.is_valid():
         albumSerializer.save()
 
@@ -58,7 +59,7 @@ def save_face(request, family_pk):
 
         album = get_object_or_404(Album, pk=albumSerializer.data['id'])
         albumSerializer2 = AlbumSerializer(
-            data={'family':family_pk, 'title':request.data['album_name'], 'image': image_path2}, instance=album)
+            data={'family':family_pk, 'title':title, 'image': image_path2}, instance=album)
         if albumSerializer2.is_valid():
             albumSerializer2.save()
         serializers = FaceSerializer(data={'album': albumSerializer.data['id'], 'image': image_path})
