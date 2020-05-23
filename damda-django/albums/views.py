@@ -1,4 +1,4 @@
-from django.shortcuts import render
+from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Photo, Album
@@ -41,14 +41,27 @@ def save_face(request, family_pk):
     image = fr.load_image_file(request.FILES['image'])
     top, right, bottom, left = fr.face_locations(image)[0]
     face = image[top:bottom, left:right]
-    albumSerializer = AlbumSerializer(data={'family':family_pk, 'title':request.data['album_name']})
+    title = request.data['album_name'].replace('"',"")
+    albumSerializer = AlbumSerializer(data={'family':family_pk, 'title':title, 'image': "empty"})
     if albumSerializer.is_valid():
         albumSerializer.save()
+
         ROOT_DIR = os.path.abspath("./")
         os.makedirs(os.path.join(ROOT_DIR, 'uploads/faces/{}'.format(family_pk)), exist_ok=True)
         image_path = 'uploads/faces/{}/{}_{}'.format(family_pk, albumSerializer.data['id'], request.FILES['image'])
         save_path = os.path.join(ROOT_DIR, image_path)
         skimage.io.imsave(save_path, face)
+
+        os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/{}/{}'.format(family_pk, albumSerializer.data['id'])), exist_ok=True)
+        image_path2 = 'uploads/albums/{}/{}/{}'.format(family_pk, albumSerializer.data['id'], request.FILES['image'])
+        save_path2 = os.path.join(ROOT_DIR, image_path2)
+        skimage.io.imsave(save_path2, image)
+
+        album = get_object_or_404(Album, pk=albumSerializer.data['id'])
+        albumSerializer2 = AlbumSerializer(
+            data={'family':family_pk, 'title':title, 'image': image_path2}, instance=album)
+        if albumSerializer2.is_valid():
+            albumSerializer2.save()
         serializers = FaceSerializer(data={'album': albumSerializer.data['id'], 'image': image_path})
         if serializers.is_valid():
             serializers.save()

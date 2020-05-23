@@ -96,15 +96,6 @@ class PhotoListFragment : Fragment() {
         view.albumTitle?.text = album?.title
         view.rv_photo?.layoutManager = GridLayoutManager(activity, 3)
         view.saveAlbum.setOnClickListener{
-/*            var image_task: URLtoBitmapTask = URLtoBitmapTask()
-            for(photo in result){
-                image_task = URLtoBitmapTask().apply {
-                    imgurl = URL("http://10.0.2.2:8000${photo.pic_name}")
-                }
-                var bitmap: Bitmap = image_task.execute().get()
-                Log.e("ebtest",""+bitmap)
-          }
-*/
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                     if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                         PackageManager.PERMISSION_DENIED){
