@@ -1,105 +1,64 @@
 package com.example.damda.activity
 
-import android.Manifest
 import android.app.Activity
-import android.content.ClipData
 import android.content.Intent
-import android.content.pm.PackageManager
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
-import android.media.Image
 import android.net.Uri
-import android.os.Bundle
-import android.util.Log
-import android.view.View
-import android.view.View.OnClickListener
-import android.widget.Button
-import android.widget.ImageView
 import androidx.appcompat.app.AppCompatActivity
-import androidx.core.app.ActivityCompat
+import android.os.Bundle
+import android.widget.Toast
 import com.example.damda.R
-import java.io.FileNotFoundException
-import java.io.InputStream
-
+import com.google.firebase.storage.FirebaseStorage
+import kotlinx.android.synthetic.main.activity_add_photo.*
+import java.text.SimpleDateFormat
+import java.util.*
 
 class AddPhotoActivity : AppCompatActivity() {
+    var PICK_IMAGE_FROM_ALBUM = 0
+    var storage : FirebaseStorage? = null
+    var photoUri : Uri? = null
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_photo)
 
-        val pickImage: Button = findViewById(R.id.addphoto_btn_upload)
+        // Initiate storage
+        storage = FirebaseStorage.getInstance()
 
-        pickImage.setOnClickListener(object : OnClickListener {
-            override fun onClick(view: View?) {
-                if (ActivityCompat.checkSelfPermission(
-                        this@AddPhotoActivity,
-                        Manifest.permission.READ_EXTERNAL_STORAGE
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    ActivityCompat.requestPermissions(
-                        this@AddPhotoActivity,
-                        arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
-                        100
-                    )
-                    return
-                }
-                val intent = Intent(Intent.ACTION_PICK)
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-                intent.type = "image/*"
-                startActivityForResult(intent, 1)
-            }
-        })
+        // Open the album
+        var photoPickerIntent = Intent(Intent.ACTION_PICK)
+        photoPickerIntent.type = "image/*"
+        startActivityForResult(photoPickerIntent, PICK_IMAGE_FROM_ALBUM)
+
+        // add image upload event
+        addphoto_btn_upload.setOnClickListener {
+            contentUpload()
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
-
-            val imageView: ImageView = findViewById(R.id.addphoto_image)
-
-            var bitmaps: Array<Bitmap> = arrayOf()
-            val clipdata: ClipData? = data?.clipData
-
-            if (clipdata != null) {
-                for (i in 0 until clipdata.itemCount) {
-                    var imageUri: Uri = clipdata.getItemAt(i).uri
-
-                    try {
-                        val iss: InputStream? = contentResolver.openInputStream(imageUri)
-                        val bitmap: Bitmap = BitmapFactory.decodeStream(iss)
-                        bitmaps.plus(bitmap)
-                    } catch (e: FileNotFoundException) {
-                        e.printStackTrace()
-                    }
-                }
-                Log.d("Image arraylist", "size: ${bitmaps.size}")
-            } else {
-                var imageUri: Uri? = data?.data
-                try {
-                    val iss: InputStream? = contentResolver.openInputStream(imageUri!!)
-                    val bitmap: Bitmap = BitmapFactory.decodeStream(iss)
-                    bitmaps.plus(bitmap)
-
-                } catch (e: FileNotFoundException) {
-                    e.printStackTrace()
-                }
+        if (requestCode == PICK_IMAGE_FROM_ALBUM) {
+            if (resultCode == Activity.RESULT_OK) {
+                // This is path to the selected image
+                photoUri = data?.data
+                addphoto_image.setImageURI(photoUri)
+            }else {
+                // Exit the addPhotoActivity if you leave the album without selecting it
+                finish()
             }
+        }
+    }
+    fun contentUpload() {
+        // Make file name
 
-            class ThreadClass : Thread() {
-                override fun run() {
-                    for (b in bitmaps) runOnUiThread { imageView.setImageBitmap(b) }
+        var timestamp = SimpleDateFormat("yyyyMMdd_HHmmss").format(Date())
+        var imageFileName = "IMAGE_" + timestamp + "_.png"
 
-                    try {
-                        sleep(3000)
-                    } catch (e: InterruptedException) {
-                        e.printStackTrace()
-                    }
-                }
-            }
+        var storageRef = storage?.reference?.child("images")?.child(imageFileName)
 
-            val tc = ThreadClass()
-            tc.start()
+        // File upload
+        storageRef?.putFile(photoUri!!)?.addOnSuccessListener {
+            Toast.makeText(this, getString(R.string.upload_success), Toast.LENGTH_LONG).show()
+
         }
     }
 }

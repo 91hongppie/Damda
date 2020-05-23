@@ -1,23 +1,45 @@
 package com.example.damda.activity
 
 import android.app.Activity
+import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.provider.FontsContract.Columns.RESULT_CODE
 import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import com.example.damda.GlobalApplication
 import com.example.damda.R
-import com.google.android.material.floatingactionbutton.FloatingActionButton
+import com.example.damda.retrofit.model.Face
+import com.example.damda.retrofit.service.AlbumsService
 import com.theartofdev.edmodo.cropper.CropImage
-import com.theartofdev.edmodo.cropper.CropImageView
+import kotlinx.android.synthetic.main.activity_cropper.*
+import okhttp3.MediaType
+import okhttp3.MultipartBody
+import okhttp3.RequestBody
+import retrofit2.Call
+import retrofit2.Callback
+import retrofit2.Response
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
+import java.io.File
 
 
 class CropperActivity : AppCompatActivity() {
     val PIC_CROP_REQUEST = 1
     val PICK_IMAGE_REQUEST = 2
     var imagePreview: ImageView?=null
+    var uri = ""
+    val token = "JWT " + GlobalApplication.prefs.token.toString()
+    val family_id = GlobalApplication.prefs.family_id.toString()
+    var retrofit = Retrofit.Builder()
+        .baseUrl("http://10.0.2.2:8000")
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+    var albumsService: AlbumsService = retrofit.create(
+        AlbumsService::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -28,6 +50,48 @@ class CropperActivity : AppCompatActivity() {
         actionBar?.setDisplayHomeAsUpEnabled(true)
         imagePreview = findViewById<ImageView>(R.id.imagePreview) as ImageView
         ImagePicker()
+        save_member.setOnClickListener {
+            val directory = getApplicationContext().cacheDir
+            val arr = uri.split("/")
+            val file_name = arr[arr.size - 1]
+            val file = File(directory, file_name)
+            val requestFile: RequestBody =
+                RequestBody.create(MediaType.parse("multipart/form-data"), file)
+            val body =
+                MultipartBody.Part.createFormData("image", file.getName(), requestFile)
+            albumsService.updateFace(token, family_id, member_name.text.toString(), body).enqueue(object:
+                Callback<Face> {
+                override fun onFailure(call: Call<Face>, t: Throwable) {
+                    Log.e("LOGIN",t.message)
+                    var dialog = AlertDialog.Builder(this@CropperActivity)
+                    dialog.setTitle("에러")
+                    dialog.setMessage("호출실패했습니다.")
+                    dialog.show()
+                }
+                override fun onResponse(call: Call<Face>, response: Response<Face>) {
+                    Log.v("result", response.body().toString())
+                    val builder = AlertDialog.Builder(this@CropperActivity)
+                    builder.setTitle("앨범 생성 완료!").setMessage("앨범으로 이동하시겠습니까?")
+                    builder.setPositiveButton(
+                        "앨범으로 가기"
+                    ) { dialog, id ->
+                        var intent = Intent(this@CropperActivity, MainActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        startActivity(intent)
+                        finish()
+                    }
+
+                    builder.setNegativeButton(
+                        "가족 목록으로"
+                    ) { dialog, id ->
+                        finish()
+                    }
+
+                    val alertDialog = builder.create()
+                    alertDialog.show()
+                }
+            })
+        }
     }
     private fun ImagePicker() {
         val intent = Intent()
@@ -48,6 +112,7 @@ class CropperActivity : AppCompatActivity() {
             val result = CropImage.getActivityResult(data)
             if (resultCode == RESULT_OK) {
                 Log.v("uri", result.getUri().toString())
+                uri = result.getUri().toString()
                 imagePreview?.setImageURI(result.getUri())
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 val error = result.getError()
