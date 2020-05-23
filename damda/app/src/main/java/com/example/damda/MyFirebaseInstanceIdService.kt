@@ -26,38 +26,21 @@ class MyFirebaseInstanceIdService : FirebaseMessagingService() {
         Log.d("New User", "Token: $token")
     }
 
-    fun sendRegistrationToServer(token: String) {
-        var thread = NetworkThread()
-        thread.start()
-    }
+    private fun sendRegistrationToServer(token: String) {
+        val client = OkHttpClient()
 
-    inner class NetworkThread: Thread() {
-        override fun run() {
+        val builder = Request.Builder()
+        val url = builder.url("http://10.0.2.2:8000/api/accounts/addtoken/")
+        val formBody = FormBody.Builder()
+        val body = formBody.add("token", token).build()
+        val request = url
+            .post(body)
+            .build()
 
-            var token : String? = null
+        val callback = Callback1()
 
-            @SuppressLint("HandlerLeak")
-            val handler: Handler = object : Handler() {
-                override fun handleMessage(message: Message) {
-                    token = message.obj.toString()
-                }
-            }
+        client.newCall(request).enqueue(callback)
 
-            var client = OkHttpClient()
-
-            var builder = Request.Builder()
-            var url = builder.url("http://10.0.2.2:8000/api/accounts/addtoken/")
-            var formBody = FormBody.Builder()
-            var body = formBody.add("token", token).build()
-            var request = url
-                .post(body)
-                .build()
-
-            var callback = Callback1()
-
-            client.newCall(request).enqueue(callback)
-
-        }
     }
 
     inner class Callback1: Callback {
@@ -67,7 +50,7 @@ class MyFirebaseInstanceIdService : FirebaseMessagingService() {
 
         override fun onResponse(call: Call, response: Response) {
 
-            var result = response?.body()?.string()
+            val result = response.body()?.string()
 
             Log.d("response", "result: $result")
         }
