@@ -15,7 +15,6 @@ from rest_framework.response import Response
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, DeviceSerializer
 import requests, json
-import jwt
 
 # Create your views here.
 @api_view(['GET', 'POST', 'DELETE'])
@@ -114,25 +113,15 @@ class KakaoLogin(SocialLoginView):
     adapter_class = KakaoOAuth2Adapter
 
 
-@api_view(['POST'])
-@permission_classes([AllowAny])
-@csrf_exempt
 def addtoken(request):
-
-    device_token = request.body.decode('UTF-8')[6:]
-    data = {
-        'device_token': device_token
-    }
-    target = Device.objects.filter(device_token=device_token)
-    if len(target) > 0:
-        return Response('Re-Hi!', status=status.HTTP_208_ALREADY_REPORTED)
-    else:
-        serializer = DeviceSerializer(data=data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
-            return Response('Welcome!', status=status.HTTP_201_CREATED)
-        else:
-            return Response('what!', status=status.HTTP_401_UNAUTHORIZED)
+    print(request.body)
+    return Response('hi', status=status.HTTP_200_OK)
+    # serializer = DeviceSerializer(data=request.data)
+    # if serializer.is_valid(raise_exception=True):
+    #     serializer.save()
+    #     return Response(serializer.data)
+    # else:
+    #     return Response(serializer.error, status=status.HTTP_403_FORBIDDEN)
 
 
 def message(request):
