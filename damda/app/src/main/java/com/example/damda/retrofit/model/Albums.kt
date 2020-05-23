@@ -8,6 +8,6 @@ data class Albums(
 
 data class Face(
     val id: Int,
-    val album_name: String,
-    val path: String
+    val album: String,
+    val image: String
 )

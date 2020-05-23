@@ -4,6 +4,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
+import android.provider.FontsContract.Columns.RESULT_CODE
 import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
@@ -69,6 +70,25 @@ class CropperActivity : AppCompatActivity() {
                 }
                 override fun onResponse(call: Call<Face>, response: Response<Face>) {
                     Log.v("result", response.body().toString())
+                    val builder = AlertDialog.Builder(this@CropperActivity)
+                    builder.setTitle("앨범 생성 완료!").setMessage("앨범으로 이동하시겠습니까?")
+                    builder.setPositiveButton(
+                        "앨범으로 가기"
+                    ) { dialog, id ->
+                        var intent = Intent(this@CropperActivity, MainActivity::class.java)
+                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                        startActivity(intent)
+                        finish()
+                    }
+
+                    builder.setNegativeButton(
+                        "가족 목록으로"
+                    ) { dialog, id ->
+                        finish()
+                    }
+
+                    val alertDialog = builder.create()
+                    alertDialog.show()
                 }
             })
         }
