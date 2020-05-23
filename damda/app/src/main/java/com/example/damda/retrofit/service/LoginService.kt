@@ -19,7 +19,7 @@ interface LoginService{
     @POST("/api/accounts/rest-auth/kakao/")
     fun requestKakao(@Body parameters: HashMap<String, Any>): Call<KakaoLogin>
 
-    @GET("/api/accounts/user")
+    @GET("/api/accounts/user/")
     fun requestUser(@Header("Authorization") token: String): Call<UserInfo>
 
 }

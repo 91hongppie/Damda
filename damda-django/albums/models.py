@@ -2,7 +2,6 @@ from django.db import models
 from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFit
 from accounts.serializers import Family
-
 # Create your models here.
 class Album(models.Model):
     title = models.TextField()
@@ -19,6 +18,11 @@ class Photo(models.Model):
     )
     title = models.TextField()
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name="album_photo")
+
+class FaceImage(models.Model):
+    album = models.ForeignKey(Album, on_delete=models.CASCADE)
+    image = models.CharField(max_length=500)
+    
 
 
 

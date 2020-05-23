@@ -11,6 +11,7 @@ import com.example.damda.retrofit.model.KakaoLogin
 import com.example.damda.retrofit.model.Login
 import com.example.damda.retrofit.model.UserInfo
 import com.example.damda.retrofit.service.LoginService
+import com.google.firebase.iid.FirebaseInstanceId
 import com.kakao.auth.ISessionCallback
 import com.kakao.auth.Session
 import com.kakao.network.ErrorResult
@@ -19,11 +20,14 @@ import com.kakao.usermgmt.callback.MeV2ResponseCallback
 import com.kakao.usermgmt.response.MeV2Response
 import com.kakao.util.exception.KakaoException
 import kotlinx.android.synthetic.main.activity_login.*
+import okhttp3.OkHttpClient
+import okhttp3.Request
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
 
 
 class LoginActivity : AppCompatActivity() {
@@ -40,6 +44,13 @@ class LoginActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
+
+        var token = FirebaseInstanceId.getInstance().token
+        if (token != null) {
+            sendRegistrationToServer(token)
+            Log.d("Exist token", "Token: $token")
+        }
+
         login_button.setOnClickListener{
             var text1 = email.text.toString()
             var text2 = password.text.toString()
@@ -123,7 +134,7 @@ class LoginActivity : AppCompatActivity() {
                                 override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
                                     userInfo = response.body()
                                     GlobalApplication.prefs.user_id = userInfo?.id.toString()
-                                    GlobalApplication.prefs.family_id = userInfo?.family_id.toString()
+                                    GlobalApplication.prefs.family_id = userInfo?.family.toString()
                                     GlobalApplication.prefs.state = login?.state.toString()
                                     Log.v("UserInfo",userInfo?.toString())
                                     moveActivity(userInfo?.state!!.toInt())
@@ -163,6 +174,40 @@ class LoginActivity : AppCompatActivity() {
             var intent = Intent(this@LoginActivity, MainActivity::class.java)
             startActivity(intent)
             finish()
+        }
+    }
+
+    fun sendRegistrationToServer(token: String) {
+        var thread = NetworkThread()
+        thread.start()
+    }
+
+    inner class NetworkThread: Thread() {
+        override fun run() {
+
+            var client = OkHttpClient()
+
+            var builder = Request.Builder()
+            var url = builder.url("http://google.com")
+            var request = url.build()
+
+            var callback = Callback1()
+
+            client.newCall(request).enqueue(callback)
+
+        }
+    }
+
+    inner class Callback1: okhttp3.Callback {
+        override fun onFailure(call: okhttp3.Call, e: IOException) {
+
+        }
+
+        override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+
+            var result = response?.body()?.string()
+
+            Log.d("response", "result: $result")
         }
     }
 }
