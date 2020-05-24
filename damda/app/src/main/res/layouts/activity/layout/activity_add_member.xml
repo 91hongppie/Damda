@@ -18,10 +18,15 @@
         android:layout_below="@+id/toolbar"
         >
         <TextView
+            android:id="@+id/member_info"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="@string/add_info"
             />
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/member_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"/>
     </RelativeLayout>
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton

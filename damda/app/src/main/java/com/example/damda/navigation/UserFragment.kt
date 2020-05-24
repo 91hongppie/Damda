@@ -36,6 +36,10 @@ class UserFragment : Fragment() {
             var intent = Intent(context, RequestListActivity::class.java)
             startActivity(intent)
         }
+        view.family_btn.setOnClickListener {
+            var intent = Intent(context, AddMemberActivity::class.java)
+            startActivity(intent)
+        }
         return view
     }
 }

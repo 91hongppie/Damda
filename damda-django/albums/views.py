@@ -1,7 +1,7 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Photo, Album
+from .models import Photo, Album, FaceImage
 from rest_framework import status
 from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer
 import face_recognition as fr
@@ -37,7 +37,7 @@ def album(request, family_pk):
     return Response({"data": serializers.data})
 
 @api_view(['POST'])
-def save_face(request, family_pk):
+def face(request, family_pk):
     image = fr.load_image_file(request.FILES['image'])
     top, right, bottom, left = fr.face_locations(image)[0]
     face = image[top:bottom, left:right]
