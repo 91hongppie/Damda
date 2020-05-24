@@ -37,10 +37,10 @@ class SignupActivity : AppCompatActivity() {
         set(value){
             when (value) {
                 true -> {
-                    btnCheckExistID.setBackgroundResource(R.drawable.round_green)
+                    btnCheckExistID.setBackgroundColor(resources.getColor(R.color.disableButton))
                 }
                 false -> {
-                    btnCheckExistID.setBackgroundResource(R.drawable.round_light_brown)
+                    btnCheckExistID.setBackgroundColor(resources.getColor(R.color.gray))
                 }
             }
             field = value
@@ -188,14 +188,14 @@ class SignupActivity : AppCompatActivity() {
     private fun reactiveCheckCorrectData() {
         for (check in isInputCorrectData) {
             if (!check) {
-                btnDone.setBackgroundColor(resources.getColor(R.color.disableButton))
-                btnDone.setTextColor(resources.getColor(R.color.gray))
+                btnDone.setBackgroundColor(resources.getColor(R.color.gray))
+                btnDone.setTextColor(resources.getColor(R.color.white))
                 btnDone.isEnabled = false
                 isSuccess = false
                 return
             }
         }
-        btnDone.setBackgroundColor(resources.getColor(R.color.enableButton))
+        btnDone.setBackgroundColor(resources.getColor(R.color.disableButton))
         btnDone.setTextColor(resources.getColor(R.color.white))
         btnDone.isEnabled = true
         isSuccess =true
