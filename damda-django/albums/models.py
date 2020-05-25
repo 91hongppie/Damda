@@ -6,6 +6,7 @@ from accounts.serializers import Family
 class Album(models.Model):
     title = models.TextField()
     family = models.ForeignKey(Family, on_delete=models.CASCADE)
+    image = models.CharField(max_length=500)
 
 
 class Photo(models.Model):

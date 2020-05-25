@@ -139,15 +139,6 @@ class PhotoDetailFragment: Fragment() {
             })
         }
         btn_save.setOnClickListener {
-            /*            var image_task: URLtoBitmapTask = URLtoBitmapTask()
-            for(photo in result){
-                image_task = URLtoBitmapTask().apply {
-                    imgurl = URL("http://10.0.2.2:8000${photo.pic_name}")
-                }
-                var bitmap: Bitmap = image_task.execute().get()
-                Log.e("ebtest",""+bitmap)
-          }
-*/
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                 if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                     PackageManager.PERMISSION_DENIED){
@@ -176,7 +167,7 @@ class PhotoDetailFragment: Fragment() {
         request.addRequestHeader("Authorization", "JWT $jwt")
         request.setAllowedNetworkTypes(DownloadManager.Request.NETWORK_WIFI or DownloadManager.Request.NETWORK_MOBILE)
         request.setTitle("${photo.title}")
-        request.setDescription("앨범 다운로드 중")
+        request.setDescription("사진 다운로드 중")
         request.allowScanningByMediaScanner()
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
         request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DCIM, "damda/${album?.title}/${photo.title}")

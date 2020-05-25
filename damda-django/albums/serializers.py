@@ -4,7 +4,7 @@ from .models import Photo, Album, FaceImage
 class AlbumSerializer(serializers.ModelSerializer):
     class Meta:
         model = Album
-        fields = ('id', 'title', 'family')
+        fields = ('id', 'title', 'family', 'image')
 
 class PhotoSerializer(serializers.ModelSerializer):
     class Meta:

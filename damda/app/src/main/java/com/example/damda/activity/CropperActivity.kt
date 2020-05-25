@@ -94,9 +94,9 @@ class CropperActivity : AppCompatActivity() {
         }
     }
     private fun ImagePicker() {
-        val intent = Intent()
+        val intent = Intent(Intent.ACTION_PICK)
         intent.type = "image/*"
-        intent.action = Intent.ACTION_GET_CONTENT
+//        intent.action = Intent.ACTION_GET_CONTENT
         intent.putExtra("crop", "true")
         startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST)
     }

@@ -7,8 +7,8 @@
     <string name="kakaolink_host">kakaolink</string>
 
     <!-- Sign In -->
-    <string name="email">Email</string>
-    <string name="password">Password</string>
+    <string name="email">이메일 주소</string>
+    <string name="password">비밀번호</string>
     <string name="signin_email">Signup or Signin by email</string>
     <string name="signin_google">Google login</string>
     <string name="signin_facebook">Facebook login</string>
@@ -84,11 +84,13 @@
     <string name="error_exist_email">중복된 이메일이 있습니다.</string>
     <string name="can_use_email">사용 가능한 이메일입니다.</string>
     <string name="error_do_not_check_id">아이디 중복 체크 확인해 주세요.</string>
-    <string name="album_title">앨범이름</string>
-    <string name="saveAlbum">앨범저장</string>
     <string name="add_info">얼굴을 등록하면 손쉽게 앨범을 관리 할 수 있습니다.</string>
     <string name="user_info">상세정보</string>
 
+    <!-- Album -->
+    <string name="album_title">앨범이름</string>
+    <string name="saveAlbum">앨범저장</string>
+    <string name="album_image">앨범이미지</string>
 
     <!-- Photo -->
     <string name="savePhoto">저장</string>
