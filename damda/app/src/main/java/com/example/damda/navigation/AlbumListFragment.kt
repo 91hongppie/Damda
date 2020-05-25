@@ -51,7 +51,6 @@ class AlbumListFragment : Fragment() {
             AlbumsService::class.java)
         albumsService.requestAlbums("JWT $jwt", family_id).enqueue(object: Callback<Albums>{
             override fun onFailure(call: Call<Albums>, t: Throwable) {
-                Log.e("Albu ", ""+t)
                 var dialog = AlertDialog.Builder(context)
                 dialog.setTitle("에러")
                 dialog.setMessage("호출실패했습니다.")
