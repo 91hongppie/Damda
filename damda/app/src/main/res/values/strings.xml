@@ -96,5 +96,6 @@
     <string name="savePhoto">저장</string>
     <string name="deletePhoto">삭제</string>
     <string name="sharePhoto">공유</string>
+    <string name="avatar">아바타</string>
 
 </resources>

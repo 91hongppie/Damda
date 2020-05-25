@@ -19,7 +19,7 @@ def photo(request, album_pk):
 def photo_delete(request):
     photos = request.data['photos']
     photo_id = int(photos)
-    print(photo_id)
+    # print(photo_id)
     # print(type(photos))
     # photo_ids = list(map(int, photos))
     photos = Photo.objects.filter(id=photo_id)

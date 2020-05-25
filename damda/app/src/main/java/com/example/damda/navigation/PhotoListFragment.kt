@@ -12,17 +12,22 @@ import android.os.Bundle
 import android.transition.TransitionInflater
 import android.graphics.Bitmap
 import android.os.Environment
+import android.provider.MediaStore
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.ImageView
+import android.widget.ListView
 import androidx.annotation.RequiresApi
 import androidx.core.app.SharedElementCallback
 import android.widget.Toast
 import androidx.core.content.ContextCompat
 import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.damda.GlobalApplication
@@ -31,10 +36,13 @@ import com.example.damda.navigation.model.Photos
 import com.example.damda.R
 import com.example.damda.activity.MainActivity
 import com.example.damda.URLtoBitmapTask
+import com.example.damda.activity.MainActivity.Companion.photoStatus
 import com.example.damda.navigation.model.Album
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_photo_list.view.*
+import kotlinx.android.synthetic.main.list_item_photo.*
 import okhttp3.*
+import java.io.ByteArrayOutputStream
 import java.io.File
 import java.io.FileOutputStream
 import java.io.IOException
@@ -42,7 +50,6 @@ import java.net.URL
 
 class PhotoListFragment : Fragment() {
     private val STORAGE_PERMISSION_CODE: Int = 1000
-
     var photoList = emptyArray<Photos>()
     var album: Album? = null
     @RequiresApi(Build.VERSION_CODES.KITKAT)
@@ -94,6 +101,11 @@ class PhotoListFragment : Fragment() {
                 }
             })
         view.albumTitle?.text = album?.title
+        if (MainActivity.photoStatus == 0) {
+            view.saveAlbum.visibility = View.VISIBLE
+        } else {
+            view.saveAlbum.visibility = View.INVISIBLE
+        }
         view.rv_photo?.layoutManager = GridLayoutManager(activity, 3)
         view.saveAlbum.setOnClickListener{
                 if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
@@ -109,6 +121,56 @@ class PhotoListFragment : Fragment() {
                 else{
                     startDownloading()
                 }
+        }
+        view.btn_download.setOnClickListener {
+            photoList = PhotoAdapter.photoArray.toTypedArray()
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                    PackageManager.PERMISSION_DENIED){
+                    requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
+                }
+                else{
+                    startDownloading()
+                }
+
+            }
+            else{
+                startDownloading()
+            }
+            photoStatus = 0
+            PhotoAdapter.photoArray = ArrayList<Photos>()
+            view.rv_photo.adapter?.notifyDataSetChanged()
+
+        }
+        view.btn_share.setOnClickListener {
+            photoList = PhotoAdapter.photoArray.toTypedArray()
+            photoStatus = 0
+            PhotoAdapter.photoArray = ArrayList<Photos>()
+            view.rv_photo.adapter?.notifyDataSetChanged()
+            var imageUris = ArrayList<Uri?>()
+            for (photo in photoList) {
+                var url = "http://10.0.2.2:8000${photo.pic_name}"
+                var image_task: URLtoBitmapTask = URLtoBitmapTask()
+                image_task = URLtoBitmapTask().apply {
+                    imgurl = URL(url)
+                }
+                var bitmap: Bitmap = image_task.execute().get()
+                var uri: Uri? = getImageUri(context, bitmap, photo.title)
+                imageUris.add(uri)
+            }
+
+            val share_intent = Intent().apply {
+                    action = Intent.ACTION_SEND_MULTIPLE
+                    putExtra(Intent.EXTRA_STREAM, imageUris)
+                    type = "image/*"
+                }
+            val chooser = Intent.createChooser(share_intent, "친구에게 공유하기")
+            startActivity(chooser)
+        }
+        view.btn_cancel.setOnClickListener {
+            view.saveAlbum.visibility = View.VISIBLE
+            view.btn_cancel.visibility = View.INVISIBLE
+
         }
         prepareTransitions()
         postponeEnterTransition()
@@ -192,6 +254,17 @@ class PhotoListFragment : Fragment() {
                     sharedElements[names[0]] = selectedViewHolder.itemView.findViewById(R.id.ivFullscreenImage)
                 }
             })
+    }
+    private fun getImageUri(context: Context, inImage: Bitmap, title: String?): Uri? {
+        val bytes = ByteArrayOutputStream()
+        inImage.compress(Bitmap.CompressFormat.JPEG, 100, bytes)
+        val path: String = MediaStore.Images.Media.insertImage(
+            context.contentResolver,
+            inImage,
+            title,
+            null
+        )
+        return Uri.parse(path)
     }
     companion object {
         /**
