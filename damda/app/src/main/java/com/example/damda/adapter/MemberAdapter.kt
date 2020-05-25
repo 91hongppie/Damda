@@ -10,14 +10,14 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.damda.R
 import com.example.damda.navigation.model.Album
 import com.example.damda.retrofit.model.Face
-import com.example.damda.retrofit.model.RequestData
+//import com.example.damda.retrofit.model.RequestData
 import kotlinx.android.synthetic.main.list_item_member.view.*
 import kotlinx.android.synthetic.main.list_item_request.view.*
 
 class MemberAdapter(val albumList: Array<Face>) : RecyclerView.Adapter<MemberAdapter.MainViewHolder>() {
 
-    var items: MutableList<RequestData> = mutableListOf(RequestData("Title1"),
-        RequestData("Title2"),RequestData("Title3"))
+//    var items: MutableList<RequestData> = mutableListOf(RequestData("Title1"),
+//        RequestData("Title2"),RequestData("Title3"))
 
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) = MainViewHolder(parent)
 

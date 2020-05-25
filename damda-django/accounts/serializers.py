@@ -34,3 +34,8 @@ class DeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Device
         fields = ('id', 'device_token')
+
+class WaitUserSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = WaitUser
+        fields = ('id','wait_user')
