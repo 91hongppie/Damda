@@ -31,12 +31,9 @@ import com.example.damda.helper.ZoomOutPageTransformer
 import com.example.damda.navigation.model.Album
 import com.example.damda.navigation.model.Photos
 import com.google.gson.GsonBuilder
-import kotlinx.android.synthetic.main.fragment_photo_detail.*
-import kotlinx.android.synthetic.main.fragment_photo_detail.view.*
-import kotlinx.android.synthetic.main.fragment_photo_detail.view.btn_share
+import kotlinx.android.synthetic.main.fragment_photo_list.*
 import kotlinx.android.synthetic.main.image_fullscreen.view.*
 import okhttp3.*
-import org.jetbrains.anko.find
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.net.URL
@@ -89,7 +86,6 @@ class PhotoDetailFragment: Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val context = activity as MainActivity
-
         btn_share.setOnClickListener {
             val share_intent = Intent().apply {
                 var url = "http://10.0.2.2:8000${photoList[selectedPosition].pic_name}"
@@ -208,6 +204,8 @@ class PhotoDetailFragment: Fragment() {
                 .into(view.ivFullscreenImage)
 
             container.addView(view)
+
+
 
             return view
         }
