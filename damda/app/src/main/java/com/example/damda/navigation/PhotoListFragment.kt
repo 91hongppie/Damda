@@ -17,6 +17,8 @@ import android.view.LayoutInflater
 import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
+import android.widget.CheckBox
+import android.widget.ListView
 import androidx.annotation.RequiresApi
 import androidx.core.app.SharedElementCallback
 import android.widget.Toast
@@ -34,6 +36,7 @@ import com.example.damda.URLtoBitmapTask
 import com.example.damda.navigation.model.Album
 import com.google.gson.GsonBuilder
 import kotlinx.android.synthetic.main.fragment_photo_list.view.*
+import kotlinx.android.synthetic.main.list_item_photo.*
 import okhttp3.*
 import java.io.File
 import java.io.FileOutputStream
@@ -42,7 +45,6 @@ import java.net.URL
 
 class PhotoListFragment : Fragment() {
     private val STORAGE_PERMISSION_CODE: Int = 1000
-
     var photoList = emptyArray<Photos>()
     var album: Album? = null
     @RequiresApi(Build.VERSION_CODES.KITKAT)

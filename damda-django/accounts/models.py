@@ -17,4 +17,4 @@ class WaitUser(models.Model):
     wait_user = models.EmailField(max_length=254)
 
 class Device(models.Model):
-    device_token = models.TextField(unique=True, max_length=250)
+    device_token = models.CharField(unique=True, max_length=250)

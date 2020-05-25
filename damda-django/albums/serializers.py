@@ -2,12 +2,12 @@ from rest_framework import serializers
 from .models import Photo, Album, FaceImage
 
 class AlbumSerializer(serializers.ModelSerializer):
-    class Meta(Album):
+    class Meta:
         model = Album
         fields = ('id', 'title', 'family')
 
 class PhotoSerializer(serializers.ModelSerializer):
-    class Meta(Photo):
+    class Meta:
         model = Photo
         fields = ('id', 'pic_name', 'title')
     
