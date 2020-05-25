@@ -7,7 +7,7 @@ app_name = "albums"
 urlpatterns = [
     path('photo/<int:album_pk>/', views.photo),
     path('<int:family_pk>/', views.album),
-    path('album/<int:album_pk>/', views.albumImage)
+    path('album/<int:album_pk>/', views.albumImage),
     path('photo/', views.photo_delete),
     path('<int:family_pk>/face/', views.face)
 ]

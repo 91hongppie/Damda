@@ -1,12 +1,17 @@
 package com.example.damda.navigation
 
+import android.Manifest
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
+import android.widget.AdapterView
+import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.damda.*
@@ -26,6 +31,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class AlbumListFragment : Fragment() {
 
+    private val STORAGE_PERMISSION_CODE: Int = 1000
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
         val context = activity as MainActivity
         var view = LayoutInflater.from(activity).inflate(R.layout.fragment_album_list, container, false)
@@ -33,7 +39,7 @@ class AlbumListFragment : Fragment() {
         var albums: Albums? = null
         var albumList = emptyArray<Album>()
         view.rv_album.adapter =
-            AlbumAdapter(albumList) { album ->
+            AlbumAdapter(albumList, this) { album ->
                 var bundle = Bundle()
                 bundle.putParcelable("album", album)
                 var fragment = PhotoListFragment()
@@ -63,7 +69,7 @@ class AlbumListFragment : Fragment() {
                 if (albumList.size > 0) {
                     view.add_member.visibility = View.GONE
                     val albumAdapter =
-                        AlbumAdapter(albumList) { album ->
+                        AlbumAdapter(albumList, this@AlbumListFragment) { album ->
                             var bundle = Bundle()
                             bundle.putParcelable("album", album)
                             var fragment = PhotoListFragment()
@@ -80,5 +86,43 @@ class AlbumListFragment : Fragment() {
             startActivity(intent)
         }
         return view
+    }
+    fun perm(): Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+            if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                PackageManager.PERMISSION_DENIED){
+                requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
+                if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                    PackageManager.PERMISSION_DENIED){
+                    return false
+                }
+                return true
+
+            }
+            else{
+                return true
+            }
+
+        }
+        else{
+            return true
+        }
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        when(requestCode){
+            STORAGE_PERMISSION_CODE -> {
+                if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
+                    return
+                }
+                else{
+                    Toast.makeText(this.context, "필수 권한이 거부되었습니다.", Toast.LENGTH_LONG).show()
+                }
+            }
+        }
     }
 }
