@@ -62,7 +62,6 @@ class AlbumListFragment : Fragment() {
                 albums = response.body()
                 albumList = albums!!.data
                 if (albumList.size > 0) {
-                    view.add_member.visibility = View.GONE
                     val albumAdapter =
                         AlbumAdapter(albumList) { album ->
                             var bundle = Bundle()
@@ -72,6 +71,8 @@ class AlbumListFragment : Fragment() {
                             context.replaceFragment(fragment)
                         }
                     view.rv_album.adapter = albumAdapter
+                } else {
+                    view.add_member.visibility = View.VISIBLE
                 }
             }
         })

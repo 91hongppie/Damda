@@ -19,6 +19,7 @@
         android:id="@+id/add_member"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:visibility="gone"
         tools:layout_editor_absoluteX="-195dp"
         tools:layout_editor_absoluteY="-270dp">
 

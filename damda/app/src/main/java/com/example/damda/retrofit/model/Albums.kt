@@ -9,5 +9,11 @@ data class Albums(
 data class Face(
     val id: Int,
     val album: String,
-    val image: String
+    val image: String,
+    val name: String
 )
+
+data class Faces(
+    val data: Array<Face>
+)
+
