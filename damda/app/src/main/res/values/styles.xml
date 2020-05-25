@@ -5,17 +5,19 @@
         <!-- Customize your theme here. -->
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
-        <item name="colorAccent">@color/colorAccent</item>
+        <item name="colorAccent">@color/bluebell</item>
     </style>
 
     <style name="ButtonStyle" parent="Widget.AppCompat.Button.Colored">
-        <item name="colorButtonNormal">@color/colorPrimary</item>
+        <item name="colorButtonNormal">@color/bluebell</item>
     </style>
     <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
         <item name="windowNoTitle">true</item>
     </style>
-
+    <style name="SplashTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="android:windowBackground">@drawable/splash</item>
+    </style>
 
     <style name="Widget.Design.TextInputLayout" parent="AppTheme">
         <item name="hintTextAppearance">@style/AppTheme.TextFloatLabelAppearance</item>
@@ -25,7 +27,7 @@
     </style>
     <style name="AppTheme.TextFloatLabelAppearance" parent="TextAppearance.Design.Hint">
         <!-- Floating label appearance here -->
-        <item name="android:textColor">#C3FBD3</item>
+        <item name="android:textColor">@color/gray</item>
         <item name="android:textSize">15sp</item>
     </style>
 
@@ -39,6 +41,5 @@
         <item name="colorControlActivated">@color/enableButton</item>
         <item name="colorSwitchThumbNormal">@color/gray</item>
         <item name="android:colorForeground">#757575</item>
-
     </style>
 </resources>

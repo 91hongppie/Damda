@@ -16,8 +16,9 @@
     <!-- Sign In-->
     <color name="pink">#FF4081</color>
     <color name="enableButton">#0E637E</color>
-    <color name="disableButton">#A7A27F</color>
+    <color name="disableButton">#92B5D9</color>
     <color name="black">#444444</color>
     <color name="gray">#D5D5D5</color>
     <color name="white">#ffffff</color>
+    <color name="bluebell">#92B5D9</color>
 </resources>

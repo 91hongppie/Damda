@@ -7,8 +7,8 @@
     <string name="kakaolink_host">kakaolink</string>
 
     <!-- Sign In -->
-    <string name="email">Email</string>
-    <string name="password">Password</string>
+    <string name="email">이메일 주소</string>
+    <string name="password">비밀번호</string>
     <string name="signin_email">Signup or Signin by email</string>
     <string name="signin_google">Google login</string>
     <string name="signin_facebook">Facebook login</string>
