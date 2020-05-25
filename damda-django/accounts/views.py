@@ -13,6 +13,8 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.response import Response
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, DeviceSerializer
+from albums.models import FaceImage
+from albums.serializers import EditFaceSerializer
 import requests, json
 import jwt
 from decouple import config
@@ -74,6 +76,23 @@ def MakeFamily(request):
             if userSerializer.is_valid(raise_exception=True):
                 userSerializer.save()
                 return Response(familySerializer.data)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+def GetFamily(request, family_pk):
+    if request.method == 'GET':
+        users = User.objects.filter(family=family_pk)
+        serializer = UserSerializer(users, many=True)
+        return Response({'data': serializer.data})
+    elif request.method == 'POST':
+        face = get_object_or_404(FaceImage, pk=request.data.get('face_id'))
+        member_id = request.data.get('member_id')
+        if member_id == 0:
+            member_id = None
+        serializer = EditFaceSerializer(data={'member': member_id}, instance=face)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET'])
@@ -154,3 +173,4 @@ def message(request):
     }
     
     return JsonResponse(result)
+
