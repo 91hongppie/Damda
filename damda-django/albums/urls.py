@@ -6,8 +6,8 @@ from rest_framework_swagger.views import get_swagger_view
 app_name = "albums"
 urlpatterns = [
     path('photo/<int:album_pk>/', views.photo),
-    path('<int:family_pk>/', views.album),
-    path('album/<int:album_pk>/', views.albumImage),
+    path('<int:family_pk>/', views.albums),
+    path('album/<int:album_pk>/', views.album),
     path('photo/', views.photo_delete),
     path('<int:family_pk>/face/', views.face)
 ]

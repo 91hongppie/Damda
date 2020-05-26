@@ -11,3 +11,6 @@ data class Face(
     val album: String,
     val image: String
 )
+data class DeleteAlbum(
+    val data: String
+)

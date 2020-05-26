@@ -31,18 +31,24 @@ def photo_delete(request):
 
 
 @api_view(['GET', 'POST', ])
-def album(request, family_pk):
+def albums(request, family_pk):
     albums = Album.objects.filter(family=family_pk)
     serializers = AlbumSerializer(albums, many=True)
     return Response({"data": serializers.data})
 
-@api_view(['PUT'])
-def albumImage(request, album_pk):
-    album = get_object_or_404(Album, pk=album_pk)
-    serializers = AlbumPutSerializer(data=request.data, instance=album)
-    if serializers.is_valid():
-        serializers.save()
-        return Response(serializers.data)
+@api_view(['PUT', 'DELETE'])
+def album(request, album_pk):
+    if request.method == 'PUT':
+        album = get_object_or_404(Album, pk=album_pk)
+        serializers = AlbumPutSerializer(data=request.data, instance=album)
+        if serializers.is_valid():
+            serializers.save()
+            return Response(serializers.data)
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+    elif request.method == 'DELETE':
+        album = get_object_or_404(Album, pk=album_pk)
+        album.delete()
+        return Response({"data": "삭제완료"})
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 

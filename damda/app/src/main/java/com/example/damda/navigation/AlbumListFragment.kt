@@ -39,7 +39,7 @@ class AlbumListFragment : Fragment() {
         var albums: Albums? = null
         var albumList = emptyArray<Album>()
         view.rv_album.adapter =
-            AlbumAdapter(albumList, this) { album ->
+            AlbumAdapter(albumList, context, this) { album ->
                 var bundle = Bundle()
                 bundle.putParcelable("album", album)
                 var fragment = PhotoListFragment()
@@ -69,7 +69,7 @@ class AlbumListFragment : Fragment() {
                 if (albumList.size > 0) {
                     view.add_member.visibility = View.GONE
                     val albumAdapter =
-                        AlbumAdapter(albumList, this@AlbumListFragment) { album ->
+                        AlbumAdapter(albumList, context,this@AlbumListFragment) { album ->
                             var bundle = Bundle()
                             bundle.putParcelable("album", album)
                             var fragment = PhotoListFragment()
