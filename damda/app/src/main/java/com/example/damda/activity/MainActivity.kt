@@ -1,7 +1,6 @@
 package com.example.damda.activity
 
 import android.Manifest
-import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager
 import androidx.appcompat.app.AppCompatActivity
@@ -25,7 +24,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import androidx.fragment.app.Fragment
 import com.example.damda.GlobalApplication
-import com.example.damda.MyFirebaseInstanceIdService
 import com.example.damda.R
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
