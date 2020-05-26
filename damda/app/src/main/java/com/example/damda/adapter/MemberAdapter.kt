@@ -12,6 +12,8 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.damda.GlobalApplication
 import com.example.damda.R
 import com.example.damda.navigation.model.Album
+import com.example.damda.retrofit.model.Face
+//import com.example.damda.retrofit.model.RequestData
 import com.example.damda.retrofit.model.*
 import com.example.damda.retrofit.service.FamilyService
 import com.example.damda.retrofit.service.SignupService
@@ -27,6 +29,12 @@ import java.lang.reflect.Member
 
 class MemberAdapter(val albumList: Array<Face>) : RecyclerView.Adapter<MemberAdapter.MainViewHolder>() {
 
+<<<<<<< damda/app/src/main/java/com/example/damda/adapter/MemberAdapter.kt
+//    var items: MutableList<RequestData> = mutableListOf(RequestData("Title1"),
+//        RequestData("Title2"),RequestData("Title3"))
+
+=======
+>>>>>>> damda/app/src/main/java/com/example/damda/adapter/MemberAdapter.kt
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) = MainViewHolder(parent)
 
 

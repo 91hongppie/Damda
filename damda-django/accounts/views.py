@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, DeviceSerializer
+from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, DeviceSerializer, WaitUserSerializer
 from albums.models import FaceImage
 from albums.serializers import EditFaceSerializer
 import requests, json
@@ -44,21 +44,29 @@ def JoinFamily(request, user_pk):
             if userSerializers.is_valid(raise_exception=True):
                 userSerializers.save()
         return Response(serializer.data)
-    elif request.method == 'POST': 
+    elif request.method == 'POST':
         User = get_user_model()
-        user = get_object_or_404(User, pk=request.POST.get('id'))
+        user = get_object_or_404(User, username=request.data.get('username'))
         main_member = get_object_or_404(User, pk=user_pk)
-        serializer = UserSerializer(data={'state': 2, 'family': main_member.family_id}, instance=user)
+        serializer = UserSerializer(data={'username': user.username, 'state': 2, 'family': main_member.family_id}, instance=user)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
-            wait_user = get_object_or_404(User, wait_user=user.username)
+            print(serializer.data)
+            wait_user = get_object_or_404(WaitUser, wait_user=user.username)
             wait_user.delete()
         return Response(serializer.data)
     elif request.method == 'DELETE':
-        user = get_object_or_404(get_user_model, pk=user_pk)
-        user.delete({'status': 204, 'message': '취소되었습니다.'})
+        user = get_object_or_404(WaitUser, wait_user=request.DELETE.get('username'))
+        user.delete()
+        return Response({'status': 204, 'message': '취소되었습니다.'})
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET',])
+def UserList(request,user_pk):
+    print(request)
+    wait_users = WaitUser.objects.filter(main_member=user_pk)
+    serializers = WaitUserSerializer(wait_users,many=True)
+    return Response({"data": serializers.data})
 
 @api_view(['POST'])
 @permission_classes([IsAuthenticated])
