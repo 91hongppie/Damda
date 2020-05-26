@@ -15,6 +15,14 @@
       },
       "oauth_client": [
         {
+          "client_id": "896903437846-8ik5naem52n8pt504nmq1lgrq2mto7kr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.damda",
+            "certificate_hash": "9b6d5825e25e42f1a7a65bf4f21859a448217bc8"
+          }
+        },
+        {
           "client_id": "896903437846-mbn4ljripqo9abjf6mondv4htu19siff.apps.googleusercontent.com",
           "client_type": 3
         }

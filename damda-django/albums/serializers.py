@@ -15,3 +15,8 @@ class FaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = FaceImage
         fields = ('id', 'album', 'image')
+
+class AlbumPutSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Album
+        fields = ('id', 'image')
