@@ -10,7 +10,7 @@ import os
 # Create your views here.
 
 @api_view(['GET', ])
-def photo(request, album_pk):
+def photo(request, family_pk, album_pk):
     photos = Photo.objects.filter(album=album_pk)
     serializers = PhotoSerializer(photos, many=True)
     return Response(serializers.data)
@@ -83,3 +83,19 @@ def face(request, family_pk):
             serializers.save()
             return Response(serializers.data)
     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', ])
+def all_photo(request, family_pk):
+    albums = Album.objects.filter(family=family_pk)
+    return_list = []
+    for album in albums:
+        photos = Photo.objects.filter(album=album.id)
+        serializers = PhotoSerializer(photos, many=True)
+        return_list += serializers.data
+        # for serializer in serializers.data:
+        #     return_list.append(serializer)
+    return Response(return_list)
+
+
+
+

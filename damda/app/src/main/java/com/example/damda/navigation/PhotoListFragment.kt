@@ -3,48 +3,40 @@ package com.example.damda.navigation
 import android.Manifest
 import android.app.DownloadManager
 import android.content.Context
-import android.content.Context.*
-import android.content.pm.PackageManager
+import android.content.Context.DOWNLOAD_SERVICE
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.transition.TransitionInflater
-import android.graphics.Bitmap
 import android.os.Environment
+import android.os.Handler
 import android.provider.MediaStore
-import android.util.Log
 import android.view.LayoutInflater
-import android.view.MenuItem
 import android.view.View
 import android.view.ViewGroup
-import android.widget.CheckBox
-import android.widget.ImageView
-import android.widget.ListView
+import android.widget.Button
+import android.widget.Toast
 import androidx.annotation.RequiresApi
 import androidx.core.app.SharedElementCallback
-import android.widget.Toast
 import androidx.core.content.ContextCompat
-import androidx.core.content.ContextCompat.getSystemService
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentTransaction
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.example.damda.GlobalApplication
-import com.example.damda.navigation.adapter.PhotoAdapter
-import com.example.damda.navigation.model.Photos
 import com.example.damda.R
-import com.example.damda.activity.MainActivity
 import com.example.damda.URLtoBitmapTask
+import com.example.damda.activity.MainActivity
 import com.example.damda.activity.MainActivity.Companion.photoStatus
+import com.example.damda.navigation.adapter.PhotoAdapter
 import com.example.damda.navigation.model.Album
+import com.example.damda.navigation.model.Photos
 import com.google.gson.GsonBuilder
+import kotlinx.android.synthetic.main.fragment_photo_list.*
 import kotlinx.android.synthetic.main.fragment_photo_list.view.*
-import kotlinx.android.synthetic.main.list_item_photo.*
 import okhttp3.*
+import retrofit2.http.Url
 import java.io.ByteArrayOutputStream
-import java.io.File
-import java.io.FileOutputStream
 import java.io.IOException
 import java.net.URL
 
@@ -61,11 +53,19 @@ class PhotoListFragment : Fragment() {
         val context = activity as MainActivity
         var view = LayoutInflater.from(activity).inflate(R.layout.fragment_photo_list, container, false)
         album = arguments?.getParcelable<Album>("album")
-        var url = URL("http://10.0.2.2:8000/api/albums/photo/${album?.id}/")
+        val family_id = GlobalApplication.prefs.family_id?.toInt()
+        println("새로고침 된검미까!!!!!")
+        var url = URL("http://10.0.2.2:8000/api/albums/photo/${family_id}/")
+        if (album?.id != null) {
+            url = URL("http://10.0.2.2:8000/api/albums/photo/${family_id}/${album?.id}/")
+        } else {
+            url = URL("http://10.0.2.2:8000/api/albums/photo/${family_id}/")
+        }
         val jwt = GlobalApplication.prefs.token
         val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt")
             .build()
         val client = OkHttpClient()
+        photoArray = ArrayList<Photos>()
         view.rv_photo?.adapter =
             PhotoAdapter(photoList) { photo ->
                 var bundle = Bundle()
@@ -75,7 +75,6 @@ class PhotoListFragment : Fragment() {
                 var fragment = PhotoDetailFragment()
                 fragment.arguments = bundle
                 context.replaceFragment(fragment)
-
             }
         client.newCall(request).enqueue(object: Callback {
             override fun onFailure(call: Call, e: IOException) {
@@ -101,7 +100,7 @@ class PhotoListFragment : Fragment() {
                 }
             })
         view.albumTitle?.text = album?.title
-        if (MainActivity.photoStatus == 0) {
+        if (photoStatus == 0) {
             view.saveAlbum.visibility = View.VISIBLE
         } else {
             view.saveAlbum.visibility = View.INVISIBLE
@@ -123,7 +122,7 @@ class PhotoListFragment : Fragment() {
                 }
         }
         view.btn_download.setOnClickListener {
-            photoList = PhotoAdapter.photoArray.toTypedArray()
+            photoList = photoArray.toTypedArray()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
                 if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
                     PackageManager.PERMISSION_DENIED){
@@ -138,14 +137,14 @@ class PhotoListFragment : Fragment() {
                 startDownloading()
             }
             photoStatus = 0
-            PhotoAdapter.photoArray = ArrayList<Photos>()
+            photoArray = ArrayList<Photos>()
             view.rv_photo.adapter?.notifyDataSetChanged()
 
         }
         view.btn_share.setOnClickListener {
-            photoList = PhotoAdapter.photoArray.toTypedArray()
+            photoList = photoArray.toTypedArray()
             photoStatus = 0
-            PhotoAdapter.photoArray = ArrayList<Photos>()
+            photoArray = ArrayList<Photos>()
             view.rv_photo.adapter?.notifyDataSetChanged()
             var imageUris = ArrayList<Uri?>()
             for (photo in photoList) {
@@ -168,13 +167,20 @@ class PhotoListFragment : Fragment() {
             startActivity(chooser)
         }
         view.btn_cancel.setOnClickListener {
-            view.saveAlbum.visibility = View.VISIBLE
-            view.btn_cancel.visibility = View.INVISIBLE
+            btnInvisible()
+            photoStatus = 0
+            photoArray = ArrayList<Photos>()
+            view.rv_photo.adapter?.notifyDataSetChanged()
 
         }
-        prepareTransitions()
-        postponeEnterTransition()
+//        prepareTransitions()
+//        postponeEnterTransition()
+        Handler().postDelayed(Runnable { view.rv_photo?.scrollToPosition(currentPosition) }, 100)
         return view
+    }
+    fun btnInvisible() {
+        fragmentManager?.beginTransaction()?.detach(this)?.attach(this)?.commit()
+
     }
     private  fun startDownloading() {
         for(photo in photoList){
@@ -192,7 +198,6 @@ class PhotoListFragment : Fragment() {
             manager.enqueue(request)
         }
     }
-
     override fun onRequestPermissionsResult(
         requestCode: Int,
         permissions: Array<out String>,
@@ -209,34 +214,7 @@ class PhotoListFragment : Fragment() {
             }
         }
     }
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-        scrollToPosition()
-    }
 
-    private fun scrollToPosition() {
-        view?.rv_photo!!.addOnLayoutChangeListener(object : View.OnLayoutChangeListener {
-            override fun onLayoutChange(v: View,
-                                        left: Int,
-                                        top: Int,
-                                        right: Int,
-                                        bottom: Int,
-                                        oldLeft: Int,
-                                        oldTop: Int,
-                                        oldRight: Int,
-                                        oldBottom: Int) {
-                view?.rv_photo!!.removeOnLayoutChangeListener(this)
-                val layoutManager = view?.rv_photo!!.layoutManager
-                val viewAtPosition = layoutManager!!.findViewByPosition(PhotoListFragment.currentPosition)
-                // Scroll to position if the view for the current position is null (not currently part of
-                // layout manager children), or it's not completely visible.
-                if (viewAtPosition == null || layoutManager
-                        .isViewPartiallyVisible(viewAtPosition, false, true)) {
-                    view?.rv_photo!!.post { layoutManager.scrollToPosition(PhotoListFragment.currentPosition) }
-                }
-            }
-        })
-    }
     private fun prepareTransitions() {
 //        exitTransition.TransitionInflater.from(context).inflateTransition(R.transition.grid_exit_transition)
 
@@ -275,5 +253,6 @@ class PhotoListFragment : Fragment() {
          */
         var currentPosition = 0
         private const val KEY_CURRENT_POSITION = "com.google.samples.gridtopager.key.currentPosition"
+        var photoArray = ArrayList<Photos>()
     }
  }
