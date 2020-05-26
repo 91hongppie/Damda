@@ -28,4 +28,8 @@ data class User(
 //    val username: String,
 //    val state: Int,
 //    val family: Int
-//)
+//
+
+data class Members(
+    val data: Array<UserInfo>
+)

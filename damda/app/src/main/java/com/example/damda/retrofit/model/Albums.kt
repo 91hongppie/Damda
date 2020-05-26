@@ -10,7 +10,8 @@ data class Face(
     val id: Int,
     val album: String,
     val image: String,
-    val name: String
+    val name: String,
+    val member: Int
 )
 
 data class Faces(

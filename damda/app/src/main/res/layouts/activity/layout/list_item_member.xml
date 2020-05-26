@@ -5,7 +5,6 @@
     android:padding="10dp"
     android:paddingBottom="0dp"
     android:background="?attr/selectableItemBackground"
-    android:orientation="vertical"
     >
 
     <TextView

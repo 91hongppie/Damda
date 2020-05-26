@@ -14,4 +14,9 @@ class PhotoSerializer(serializers.ModelSerializer):
 class FaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = FaceImage
-        fields = ('id', 'album', 'image', 'name', 'family')
+        fields = ('id', 'album', 'image', 'name', 'family', 'member')
+
+class EditFaceSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FaceImage
+        fields = ('id', 'member')
