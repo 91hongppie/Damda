@@ -28,7 +28,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import java.lang.reflect.Member
 
 class MemberAdapter(val albumList: Array<Face>) : RecyclerView.Adapter<MemberAdapter.MainViewHolder>() {
-    
+
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) = MainViewHolder(parent)
 
 
