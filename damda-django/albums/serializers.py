@@ -20,3 +20,8 @@ class EditFaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = FaceImage
         fields = ('id', 'member')
+
+class AlbumPutSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Album
+        fields = ('id', 'image')

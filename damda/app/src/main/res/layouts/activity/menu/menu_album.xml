@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:id="@+id/album_menu_item1"
+        android:title="@string/saveAlbum" />
+    <item
+        android:id="@+id/album_menu_item2"
+        android:title="@string/albumImageChange"/>
+    <item
+        android:id="@+id/album_menu_item3"
+        android:title="@string/deleteAlbum" />
+</menu>

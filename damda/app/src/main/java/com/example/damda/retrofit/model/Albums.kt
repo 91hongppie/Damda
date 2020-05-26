@@ -18,3 +18,6 @@ data class Faces(
     val data: Array<Face>
 )
 
+data class DeleteAlbum(
+    val data: String
+)
