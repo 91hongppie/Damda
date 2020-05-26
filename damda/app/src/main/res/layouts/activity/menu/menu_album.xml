@@ -4,11 +4,11 @@
 
     <item
         android:id="@+id/album_menu_item1"
-        android:title="저장" />
+        android:title="@string/saveAlbum" />
     <item
         android:id="@+id/album_menu_item2"
-        android:title="대표이미지바꾸기" />
+        android:title="@string/albumImageChange"/>
     <item
         android:id="@+id/album_menu_item3"
-        android:title="삭제" />
+        android:title="@string/deleteAlbum" />
 </menu>

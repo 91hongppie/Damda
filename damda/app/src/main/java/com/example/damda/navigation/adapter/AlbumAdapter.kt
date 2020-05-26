@@ -1,8 +1,10 @@
 package com.example.damda.navigation.adapter
 import android.Manifest
 import android.app.Activity
+import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.Context
+import android.content.DialogInterface
 import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Build
@@ -11,9 +13,6 @@ import android.os.Environment
 import android.util.Log
 import android.view.*
 import android.widget.*
-import androidx.core.app.ActivityCompat
-import androidx.core.app.ActivityCompat.requestPermissions
-import androidx.core.content.ContextCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -21,17 +20,18 @@ import com.example.damda.GlobalApplication
 import com.example.damda.R
 import com.example.damda.activity.MainActivity
 import com.example.damda.navigation.AlbumListFragment
-import com.example.damda.navigation.PhotoDetailFragment
 import com.example.damda.navigation.model.Album
 import com.example.damda.navigation.model.Photos
+import com.example.damda.retrofit.model.DeleteAlbum
+import com.example.damda.retrofit.service.AlbumsService
 import com.google.gson.GsonBuilder
-import kotlinx.android.synthetic.main.fragment_photo_list.view.*
 import okhttp3.*
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.IOException
 import java.net.URL
-import java.util.prefs.NodeChangeListener
 
-class AlbumAdapter(val albumList: Array<Album>, val fragment: AlbumListFragment, val itemClick: (Album) -> Unit) : RecyclerView.Adapter<AlbumAdapter.CustomViewHolder>()
+class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val fragment: AlbumListFragment, val itemClick: (Album) -> Unit) : RecyclerView.Adapter<AlbumAdapter.CustomViewHolder>()
 {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.list_item_album, parent, false)
@@ -55,7 +55,8 @@ class AlbumAdapter(val albumList: Array<Album>, val fragment: AlbumListFragment,
                 .apply(RequestOptions.centerCropTransform()).into(image)
 
             image.setOnLongClickListener{
-                val pop = PopupMenu(itemView.context, it)
+                val wrapper = ContextThemeWrapper(itemView.context, R.style.BasePopupMenu)
+                val pop = PopupMenu(wrapper, it)
                 pop.inflate(R.menu.menu_album)
                 pop.setOnMenuItemClickListener { item ->
                     when(item.itemId){
@@ -93,7 +94,7 @@ class AlbumAdapter(val albumList: Array<Album>, val fragment: AlbumListFragment,
                                             downrequest.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED)
                                             downrequest.setDestinationInExternalPublicDir(
                                                 Environment.DIRECTORY_DCIM,
-                                                "damda/${album?.title}/${photo.title}"
+                                                "damda/${album.title}/${photo.title}"
                                             )
                                             val manager =
                                                 fragment.context?.getSystemService(Context.DOWNLOAD_SERVICE) as DownloadManager
@@ -104,7 +105,41 @@ class AlbumAdapter(val albumList: Array<Album>, val fragment: AlbumListFragment,
                             }
                         }
                         R.id.album_menu_item3 -> {
+                            var dialogBuilder = AlertDialog.Builder(itemView.context)
+                            dialogBuilder.setTitle("앨범 삭제")
+                            dialogBuilder.setMessage("앨범을 삭제하시겠습니까?")
+                            var dialogListener = object:DialogInterface.OnClickListener{
+                                override fun onClick(dialog: DialogInterface?, which: Int) {
+                                    when(which){
+                                        DialogInterface.BUTTON_NEUTRAL -> {
+                                            var retrofit = Retrofit.Builder()
+                                                .baseUrl("http://10.0.2.2:8000")
+                                                .addConverterFactory(GsonConverterFactory.create())
+                                                .build()
 
+                                            val jwt = GlobalApplication.prefs.token
+                                            var albumsService: AlbumsService = retrofit.create(AlbumsService::class.java)
+                                            albumsService.deleteAlbum("JWT $jwt", album.id).enqueue(object:
+                                                retrofit2.Callback<DeleteAlbum> {
+                                                override fun onFailure(call: retrofit2.Call<DeleteAlbum>, t: Throwable) {
+                                                    var deletedialog = androidx.appcompat.app.AlertDialog.Builder(itemView.context)
+                                                    deletedialog.setTitle("에러")
+                                                    deletedialog.setMessage("호출실패했습니다.")
+                                                    deletedialog.show()
+                                                }
+
+                                                override fun onResponse(call: retrofit2.Call<DeleteAlbum>, response: retrofit2.Response<DeleteAlbum>) {
+                                                    var albumListFragment = AlbumListFragment()
+                                                    activity.replaceFragment(albumListFragment)
+                                                }
+                                            })
+                                        }
+                                    }
+                                }
+                            }
+                            dialogBuilder.setPositiveButton("취소", dialogListener)
+                            dialogBuilder.setNeutralButton("삭제", dialogListener)
+                            dialogBuilder.show()
                         }
                     }
                     true
