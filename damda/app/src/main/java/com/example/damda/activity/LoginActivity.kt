@@ -134,7 +134,7 @@ class LoginActivity : AppCompatActivity() {
                                     userInfo = response.body()
                                     GlobalApplication.prefs.user_id = userInfo?.id.toString()
                                     GlobalApplication.prefs.family_id = userInfo?.family.toString()
-                                    GlobalApplication.prefs.state = login?.state.toString()
+                                    GlobalApplication.prefs.state = userInfo?.state.toString()
                                     Log.v("UserInfo",userInfo?.toString())
                                     moveActivity(userInfo?.state!!.toInt())
                                 }

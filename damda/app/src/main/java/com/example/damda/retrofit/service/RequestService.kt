@@ -7,7 +7,7 @@ import retrofit2.http.*
 
 
 interface RequestService {
-    @GET("/api/accounts/user/{id}/")
+    @GET("/api/accounts/family/{id}/")
     fun requestWaitUser(@Header("Authorization") jwt:String,
                       @Path("id") id:String) : Call<WaitUsers>
 

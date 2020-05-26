@@ -29,12 +29,6 @@ import java.lang.reflect.Member
 
 class MemberAdapter(val albumList: Array<Face>) : RecyclerView.Adapter<MemberAdapter.MainViewHolder>() {
 
-<<<<<<< damda/app/src/main/java/com/example/damda/adapter/MemberAdapter.kt
-//    var items: MutableList<RequestData> = mutableListOf(RequestData("Title1"),
-//        RequestData("Title2"),RequestData("Title3"))
-
-=======
->>>>>>> damda/app/src/main/java/com/example/damda/adapter/MemberAdapter.kt
     override fun onCreateViewHolder(parent: ViewGroup, p1: Int) = MainViewHolder(parent)
 
 
