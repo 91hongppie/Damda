@@ -99,14 +99,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         when (p0.itemId) {
             R.id.action_album_list -> {
-                var gridFragment = AlbumListFragment()
-                supportFragmentManager.beginTransaction().replace(R.id.main_content, gridFragment)
+                var albumListFragment = AlbumListFragment()
+                supportFragmentManager.beginTransaction().replace(R.id.main_content, albumListFragment)
                     .commit()
                 return true
             }
             R.id.action_photo_list -> {
-                var gridFragment = PhotoListFragment()
-                supportFragmentManager.beginTransaction().replace(R.id.main_content, gridFragment)
+                var photoListFragment = PhotoListFragment()
+                supportFragmentManager.beginTransaction().replace(R.id.main_content, photoListFragment)
                     .commit()
                 return true
             }

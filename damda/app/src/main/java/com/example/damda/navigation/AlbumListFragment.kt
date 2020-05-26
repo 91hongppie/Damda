@@ -37,7 +37,6 @@ class AlbumListFragment : Fragment() {
         val context = activity as MainActivity
         var view = LayoutInflater.from(activity).inflate(R.layout.fragment_album_list, container, false)
 
-        var albums: Albums? = null
         var albumList = emptyArray<Album>()
         photoStatus = 0
         view.rv_album.adapter =
@@ -66,7 +65,7 @@ class AlbumListFragment : Fragment() {
             }
 
             override fun onResponse(call: Call<Albums>, response: Response<Albums>) {
-                albums = response.body()
+                val albums = response.body()
                 albumList = albums!!.data
                 if (albumList.size > 0) {
                     val albumAdapter =

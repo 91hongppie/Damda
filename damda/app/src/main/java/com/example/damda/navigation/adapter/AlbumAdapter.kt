@@ -63,8 +63,7 @@ class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val f
                         R.id.album_menu_item1->
                         {
                             if (fragment.perm()) {
-                                var photoList = emptyArray<Photos>()
-                                var url = URL("http://10.0.2.2:8000/api/albums/photo/${album.id}/")
+                                val url = URL("http://10.0.2.2:8000/api/albums/photo/${album.id}/")
                                 val jwt = GlobalApplication.prefs.token
                                 val request = Request.Builder().url(url)
                                     .addHeader("Authorization", "JWT $jwt")
@@ -78,7 +77,7 @@ class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val f
                                     override fun onResponse(call: Call, response: Response) {
                                         val body = response.body()?.string()
                                         val gson = GsonBuilder().create()
-                                        photoList = gson.fromJson(body, Array<Photos>::class.java)
+                                        val photoList = gson.fromJson(body, Array<Photos>::class.java)
                                         for (photo in photoList) {
                                             val imgurl = "http://10.0.2.2:8000${photo.pic_name}"
                                             val downrequest =

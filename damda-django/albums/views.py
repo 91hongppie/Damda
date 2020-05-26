@@ -6,7 +6,9 @@ from rest_framework import status
 from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer, AlbumPutSerializer
 import face_recognition as fr
 import skimage.io
+from django.conf import settings
 import os
+import shutil
 # Create your views here.
 
 @api_view(['GET', ])
@@ -48,6 +50,9 @@ def album(request, album_pk):
         return Response(status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         album = get_object_or_404(Album, pk=album_pk)
+        file_path = settings.MEDIA_ROOT + '/albums/' + str(album.family.id) + '/' + str(album_pk)
+        if os.path.isdir(file_path):
+            shutil.rmtree(file_path)
         album.delete()
         return Response({"data": "삭제완료"})
     return Response(status=status.HTTP_400_BAD_REQUEST)
