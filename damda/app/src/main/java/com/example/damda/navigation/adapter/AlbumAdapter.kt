@@ -1,18 +1,13 @@
 package com.example.damda.navigation.adapter
-import android.Manifest
-import android.app.Activity
 import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.Context
 import android.content.DialogInterface
-import android.content.pm.PackageManager
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
 import android.os.Environment
-import android.util.Log
 import android.view.*
 import android.widget.*
+import androidx.core.content.res.TypedArrayUtils.getString
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -51,7 +46,7 @@ class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val f
         var image = itemView.findViewById<ImageView>(R.id.album_image)
         fun bind (album: Album) {
             name?.text = album.title
-            Glide.with(itemView.context).load("http://10.0.2.2:8000/${album.image}").error(R.drawable.album).apply(RequestOptions().override(600, 600))
+            Glide.with(itemView.context).load(fragment.getString(R.string.damda_server) +"/${album.image}").error(R.drawable.album).apply(RequestOptions().override(600, 600))
                 .apply(RequestOptions.centerCropTransform()).into(image)
 
             image.setOnLongClickListener{
@@ -63,7 +58,7 @@ class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val f
                         R.id.album_menu_item1->
                         {
                             if (fragment.perm()) {
-                                val url = URL("http://10.0.2.2:8000/api/albums/photo/${album.id}/")
+                                val url = URL(fragment.getString(R.string.damda_server)+"/api/albums/photo/${album.id}/")
                                 val jwt = GlobalApplication.prefs.token
                                 val request = Request.Builder().url(url)
                                     .addHeader("Authorization", "JWT $jwt")
@@ -79,7 +74,7 @@ class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val f
                                         val gson = GsonBuilder().create()
                                         val photoList = gson.fromJson(body, Array<Photos>::class.java)
                                         for (photo in photoList) {
-                                            val imgurl = "http://10.0.2.2:8000${photo.pic_name}"
+                                            val imgurl = fragment.getString(R.string.damda_server)+"${photo.pic_name}"
                                             val downrequest =
                                                 DownloadManager.Request(Uri.parse(imgurl))
                                             downrequest.addRequestHeader(
@@ -112,10 +107,9 @@ class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val f
                                     when(which){
                                         DialogInterface.BUTTON_NEUTRAL -> {
                                             var retrofit = Retrofit.Builder()
-                                                .baseUrl("http://10.0.2.2:8000")
+                                                .baseUrl(fragment.getString(R.string.damda_server))
                                                 .addConverterFactory(GsonConverterFactory.create())
                                                 .build()
-
                                             val jwt = GlobalApplication.prefs.token
                                             var albumsService: AlbumsService = retrofit.create(AlbumsService::class.java)
                                             albumsService.deleteAlbum("JWT $jwt", album.id).enqueue(object:
