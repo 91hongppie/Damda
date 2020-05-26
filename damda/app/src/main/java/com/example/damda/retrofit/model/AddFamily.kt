@@ -12,9 +12,6 @@ data class WaitUser(
     val wait_user: String
 )
 
-//data class UserInfo(
-//    val id: Int,
-//    val username: String,
-//    val state: Int,
-//    val family: Int
-//)
+data class Members(
+    val data: Array<UserInfo>
+)

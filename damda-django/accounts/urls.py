@@ -13,5 +13,6 @@ urlpatterns = [
     path('rest-auth/kakao/', views.KakaoLogin.as_view()),
     path('user/', views.UserInfo),
     path('family/', views.MakeFamily),
-    path('family/<int:user_pk>/', views.JoinFamily)
+    path('family/<int:user_pk>/', views.JoinFamily),
+    path('family_info/<int:family_pk>/', views.GetFamily)
 ]
