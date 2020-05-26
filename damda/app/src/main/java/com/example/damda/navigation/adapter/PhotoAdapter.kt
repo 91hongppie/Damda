@@ -12,9 +12,11 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.damda.R
 import com.example.damda.activity.MainActivity
+import com.example.damda.activity.MainActivity.Companion.navStatus
 import com.example.damda.activity.MainActivity.Companion.photoStatus
 import com.example.damda.navigation.PhotoListFragment
 import com.example.damda.navigation.PhotoListFragment.Companion.currentPosition
+import com.example.damda.navigation.PhotoListFragment.Companion.deleteArray
 import com.example.damda.navigation.PhotoListFragment.Companion.photoArray
 import com.example.damda.navigation.model.Photos
 import com.google.android.material.bottomnavigation.BottomNavigationView
@@ -22,7 +24,7 @@ import com.jakewharton.rxbinding2.widget.checked
 import com.jakewharton.rxbinding2.widget.checkedChanges
 
 
-class PhotoAdapter (val photoList: Array<Photos>, val itemClick: (Photos) -> Unit) : RecyclerView.Adapter<PhotoAdapter.CustomViewHolder>() {
+class PhotoAdapter (val photoList: Array<Photos>, val activity: MainActivity, val fragment: PhotoListFragment, val itemClick: (Photos) -> Unit) : RecyclerView.Adapter<PhotoAdapter.CustomViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.list_item_photo, parent, false)
@@ -51,38 +53,40 @@ class PhotoAdapter (val photoList: Array<Photos>, val itemClick: (Photos) -> Uni
             }
             checkbox.isChecked = photoArray.contains(photo)
             image.setOnLongClickListener {
-                PhotoListFragment().btnInvisible()
+                PhotoListFragment().btnInvisible(fragment)
+                navStatus = 1
                 photoStatus = 1
+                activity.replaceNavbar()
                 notifyDataSetChanged()
                 true
             }
             image.setOnClickListener {
-                PhotoListFragment().btnInvisible()
-                println("click image")
                 if (photoStatus == 0) {
                     itemClick(photo)
                 } else {
                     if (photoArray.contains(photo)) {
                         checkbox.isChecked = false
                         photoArray.remove(photo)
+                        deleteArray.remove(photo.id)
                     } else {
                         checkbox.isChecked = true
                         photoArray.add(photo)
+                        deleteArray.add(photo.id)
                     }
                 }
             }
             checkbox.setOnClickListener {
-                println("click checkbox")
                 if (photoArray.contains(photo)) {
                     checkbox.isChecked = false
                     photoArray.remove(photo)
+                    deleteArray.remove(photo.id)
                 } else {
                     checkbox.isChecked = true
                     photoArray.add(photo)
+                    deleteArray.add(photo.id)
                 }
             }
         }
     }
-
 }
 

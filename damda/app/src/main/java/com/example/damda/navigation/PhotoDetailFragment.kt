@@ -12,11 +12,10 @@ import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
 import android.transition.TransitionInflater
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.*
 import android.widget.Button
 import android.widget.EditText
+import android.widget.PopupMenu
 import android.widget.TextView
 import androidx.annotation.DrawableRes
 import androidx.core.app.SharedElementCallback
@@ -34,6 +33,9 @@ import com.example.damda.navigation.PhotoListFragment.Companion.currentPosition
 import com.example.damda.navigation.model.Album
 import com.example.damda.navigation.model.Photos
 import com.google.gson.GsonBuilder
+import kotlinx.android.synthetic.main.fragment_photo_detail.*
+import kotlinx.android.synthetic.main.fragment_photo_detail.view.*
+import kotlinx.android.synthetic.main.fragment_photo_detail.view.btn_option
 import kotlinx.android.synthetic.main.fragment_photo_list.*
 import kotlinx.android.synthetic.main.image_fullscreen.view.*
 import okhttp3.*
@@ -48,21 +50,15 @@ class PhotoDetailFragment: Fragment() {
     private var selectedPosition: Int = 0
     private var album: Album? = null
     lateinit var tvGalleryTitle: TextView
-    lateinit var et_update: EditText
-    lateinit var btn_share: Button
-    lateinit var btn_delete: Button
-    lateinit var btn_save: Button
+    lateinit var btn_option: Button
     lateinit var viewPager: ViewPager
     lateinit var galleryPagerAdapter: GalleryPagerAdapter
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_photo_detail, container, false)
-        viewPager = view!!.findViewById(R.id.vp_photo)
-        tvGalleryTitle = view.findViewById(R.id.tvGalleryTitle)
-        et_update = view.findViewById(R.id.et_update)
-        btn_share = view.findViewById(R.id.btn_share)
-        btn_delete = view.findViewById(R.id.btn_delete)
-        btn_save = view.findViewById(R.id.btn_save)
+        viewPager = view!!.vp_photo
+        tvGalleryTitle = view.tvGalleryTitle
+        btn_option = view.btn_option
         album = arguments?.getParcelable<Album>("album")
 
 
@@ -84,81 +80,163 @@ class PhotoDetailFragment: Fragment() {
         if (savedInstanceState == null) {
             postponeEnterTransition()
         }
+
+
+        var moveX = 0f
+        var moveY = 0f
+        view.setOnTouchListener { v, event ->
+            when(event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    moveX = v.x - event.rawX
+                    moveY = v.y - event.rawY
+                    println(v.y)
+                    if (v.y > 200) {
+                        fragmentManager?.beginTransaction()?.remove(this)?.commit()
+                        fragmentManager!!.popBackStack()
+                    }
+                }
+                MotionEvent.ACTION_UP -> {
+                    moveX = v.x - event.rawX
+                    moveY = v.y - event.rawY
+                    if (v.y < -200) {
+                        fragmentManager?.beginTransaction()?.remove(this)?.commit()
+                        fragmentManager!!.popBackStack()
+                    }
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    v.animate()
+                        .y(event.rawY + moveY)
+                        .setDuration(0)
+                        .start()
+                }
+            }
+
+            true
+        }
+        view.vp_photo.setOnTouchListener { v, event ->
+            when(event.action) {
+                MotionEvent.ACTION_DOWN -> {
+                    moveX = v.x - event.rawX
+                    moveY = v.y - event.rawY
+                    println(v.y)
+                    if (v.y > 500) {
+                        fragmentManager?.beginTransaction()?.remove(this)?.commit()
+                        fragmentManager!!.popBackStack()
+                    }
+                }
+                MotionEvent.ACTION_UP -> {
+                    moveX = v.x - event.rawX
+                    moveY = v.y - event.rawY
+                    println(v.y)
+                    if (v.y < 100) {
+                        fragmentManager?.beginTransaction()?.remove(this)?.commit()
+                        fragmentManager!!.popBackStack()
+                    }
+                }
+
+                MotionEvent.ACTION_MOVE -> {
+                    v.animate()
+                        .y(event.rawY + moveY)
+                        .setDuration(0)
+                }
+            }
+            true
+        }
         return view
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val context = activity as MainActivity
-        btn_share.setOnClickListener {
-            val share_intent = Intent().apply {
-                var url = "http://10.0.2.2:8000${photoList[selectedPosition].pic_name}"
-                var image_task: URLtoBitmapTask = URLtoBitmapTask()
-                image_task = URLtoBitmapTask().apply {
-                    imgurl = URL(url)
-                }
-                var bitmap: Bitmap = image_task.execute().get()
-                var uri: Uri? = getImageUri(context, bitmap, photoList[selectedPosition].title)
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_STREAM, uri)
-                type = "image/*"
-            }
-            val chooser = Intent.createChooser(share_intent, "친구에게 공유하기")
+        btn_option.setOnClickListener {
+            val wrapper = ContextThemeWrapper(this.context, R.style.BasePopupMenu)
+            val pop = PopupMenu(wrapper, it)
+            pop.inflate(R.menu.menu_photo)
+            pop.setOnMenuItemClickListener { item ->
+                when(item.itemId){
+                    R.id.delete-> {
+                        val album = arguments?.getParcelable<Album>("album")
+                        val family_id = GlobalApplication.prefs.family_id?.toInt()
+                        var url = URL("http://10.0.2.2:8000/api/albums/photo/${family_id}/")
+                        if (album?.id != null) {
+                            url = URL("http://10.0.2.2:8000/api/albums/photo/${family_id}/${album?.id}/")
+                        }
+                        val jwt = GlobalApplication.prefs.token
+                        val payload = photoList[selectedPosition].id
+                        val formBody = FormBody.Builder()
+                            .add("photos", payload.toString())
+                            .build()
+                        val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt").method("POST", formBody)
+                            .build()
+                        val client = OkHttpClient()
+                        client.newCall(request).enqueue(object: Callback {
+                            override fun onFailure(call: Call, e: IOException) {
+                                println("Failed to execute request!")
+                            }
+
+                            override fun onResponse(call: Call, response: Response) {
+                                val body = response.body()?.string()
+                                val gson = GsonBuilder().create()
+                                var list = emptyArray<Photos>()
+                                photoList= gson.fromJson(body, list::class.java)
+                                var bundle = Bundle()
+                                bundle.putParcelable("album", album)
+                                var fragment = PhotoListFragment()
+                                fragment.arguments = bundle
+                                fragmentManager!!.beginTransaction().remove(this@PhotoDetailFragment).commit()
+                                fragmentManager!!.popBackStack()
+                                fragmentManager!!.popBackStack()
+                                context.replaceFragment(fragment)
+                            }
+                        })
+                    }
+                    R.id.save -> {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                            if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                                PackageManager.PERMISSION_DENIED){
+                                requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
+                            }
+                            else{
+                                startDownloading()
+                            }
+
+                        }
+                        else {
+                            startDownloading()
+                        }
+                    }
+                    R.id.share -> {
+                        val share_intent = Intent().apply {
+                            var url = "http://10.0.2.2:8000${photoList[selectedPosition].pic_name}"
+                            var image_task: URLtoBitmapTask = URLtoBitmapTask()
+                            image_task = URLtoBitmapTask().apply {
+                                imgurl = URL(url)
+                            }
+                            var bitmap: Bitmap = image_task.execute().get()
+                            var uri: Uri? = getImageUri(context, bitmap, photoList[selectedPosition].title)
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_STREAM, uri)
+                            type = "image/*"
+                        }
+                        val chooser = Intent.createChooser(share_intent, "친구에게 공유하기")
 //            intent.putExtra(Intent.EXTRA_STREAM, "http://10.0.2.2:8000${photoList[selectedPosition].pic_name}")
-            startActivity(chooser)
-        }
-        btn_delete.setOnClickListener {
-            val url = URL("http://10.0.2.2:8000/api/albums/photo/")
-            val jwt = GlobalApplication.prefs.token
-            val payload = photoList[selectedPosition].id
-            val formBody = FormBody.Builder()
-                .add("photos", payload.toString())
-                .build()
-            val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt").method("POST", formBody)
-                .build()
-            val client = OkHttpClient()
-            val album = arguments?.getParcelable<Album>("album")
-            client.newCall(request).enqueue(object: Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    println("Failed to execute request!")
+                        startActivity(chooser)
+                    }
                 }
-
-                override fun onResponse(call: Call, response: Response) {
-                    val body = response.body()?.string()
-                    val gson = GsonBuilder().create()
-                    var list = emptyArray<Photos>()
-                    photoList= gson.fromJson(body, list::class.java)
-                    var bundle = Bundle()
-                    bundle.putParcelable("album", album)
-                    var fragment = PhotoListFragment()
-                    fragment.arguments = bundle
-                    fragmentManager!!.beginTransaction().remove(this@PhotoDetailFragment).commit()
-                    fragmentManager!!.popBackStack()
-                    fragmentManager!!.popBackStack()
-                    context.replaceFragment(fragment)
-                }
-            })
-        }
-        btn_save.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                    PackageManager.PERMISSION_DENIED){
-                    requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
-                }
-                else{
-                    startDownloading()
-                }
-
+                true
             }
-            else{
-                startDownloading()
-            }
+            pop.show()
         }
     }
 
     private fun setCurrentItem(position: Int) {
         viewPager.setCurrentItem(position, false)
     }
+
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        super.onCreateOptionsMenu(menu, inflater)
+//        inflater.inflate(R.menu.menu_photo, menu)
+//    }
 
     private  fun startDownloading() {
         val photo = photoList[selectedPosition]

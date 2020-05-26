@@ -17,6 +17,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.damda.*
 import com.example.damda.activity.AddMemberActivity
 import com.example.damda.activity.MainActivity
+import com.example.damda.activity.MainActivity.Companion.navStatus
 import com.example.damda.activity.MainActivity.Companion.photoStatus
 import com.example.damda.navigation.model.Album
 import com.example.damda.navigation.adapter.AlbumAdapter
@@ -34,7 +35,9 @@ class AlbumListFragment : Fragment() {
 
     private val STORAGE_PERMISSION_CODE: Int = 1000
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
+        navStatus = 0
         val context = activity as MainActivity
+        context.replaceNavbar()
         var view = LayoutInflater.from(activity).inflate(R.layout.fragment_album_list, container, false)
 
         var albums: Albums? = null
