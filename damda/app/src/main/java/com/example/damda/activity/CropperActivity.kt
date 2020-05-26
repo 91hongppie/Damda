@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.provider.FontsContract.Columns.RESULT_CODE
 import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
@@ -34,12 +33,6 @@ class CropperActivity : AppCompatActivity() {
     var uri = ""
     val token = "JWT " + GlobalApplication.prefs.token.toString()
     val family_id = GlobalApplication.prefs.family_id.toString()
-    var retrofit = Retrofit.Builder()
-        .baseUrl("http://10.0.2.2:8000")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    var albumsService: AlbumsService = retrofit.create(
-        AlbumsService::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,6 +41,12 @@ class CropperActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
+        var retrofit = Retrofit.Builder()
+            .baseUrl(getString(R.string.damda_server))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        var albumsService: AlbumsService = retrofit.create(
+            AlbumsService::class.java)
         imagePreview = findViewById<ImageView>(R.id.imagePreview) as ImageView
         ImagePicker()
         save_member.setOnClickListener {

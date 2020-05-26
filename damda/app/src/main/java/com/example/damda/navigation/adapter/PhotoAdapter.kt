@@ -20,13 +20,15 @@ import com.example.damda.navigation.model.Photos
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.jakewharton.rxbinding2.widget.checked
 import com.jakewharton.rxbinding2.widget.checkedChanges
+import java.net.URL
 
 
 class PhotoAdapter (val photoList: Array<Photos>, val itemClick: (Photos) -> Unit) : RecyclerView.Adapter<PhotoAdapter.CustomViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.list_item_photo, parent, false)
-        return CustomViewHolder(view)
+        val url = parent.context.getString(R.string.damda_server)
+        return CustomViewHolder(view, url)
     }
 
     override fun getItemCount(): Int {
@@ -37,11 +39,11 @@ class PhotoAdapter (val photoList: Array<Photos>, val itemClick: (Photos) -> Uni
         holder.bind(photoList[position])
     }
 
-    inner class CustomViewHolder(val view: View) : RecyclerView.ViewHolder(view) {
+    inner class CustomViewHolder(val view: View, val url: String) : RecyclerView.ViewHolder(view) {
         val image = view.findViewById<ImageView>(R.id.iv_image)
         var checkbox = view.findViewById<CheckBox>(R.id.cb_photo)
         fun bind(photo: Photos) {
-            Glide.with(view.context).load("http://10.0.2.2:8000${photo.pic_name}")
+            Glide.with(view.context).load(url+"${photo.pic_name}")
                 .apply(RequestOptions().override(600, 600))
                 .apply(RequestOptions.centerCropTransform()).into(image)
             if (photoStatus == 1) {

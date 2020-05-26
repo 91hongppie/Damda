@@ -92,7 +92,7 @@ class PhotoDetailFragment: Fragment() {
         val context = activity as MainActivity
         btn_share.setOnClickListener {
             val share_intent = Intent().apply {
-                var url = "http://10.0.2.2:8000${photoList[selectedPosition].pic_name}"
+                var url = getString(R.string.damda_server)+"${photoList[selectedPosition].pic_name}"
                 var image_task: URLtoBitmapTask = URLtoBitmapTask()
                 image_task = URLtoBitmapTask().apply {
                     imgurl = URL(url)
@@ -104,11 +104,11 @@ class PhotoDetailFragment: Fragment() {
                 type = "image/*"
             }
             val chooser = Intent.createChooser(share_intent, "친구에게 공유하기")
-//            intent.putExtra(Intent.EXTRA_STREAM, "http://10.0.2.2:8000${photoList[selectedPosition].pic_name}")
+//            intent.putExtra(Intent.EXTRA_STREAM, getString(R.string.damda_server)+"${photoList[selectedPosition].pic_name}")
             startActivity(chooser)
         }
         btn_delete.setOnClickListener {
-            val url = URL("http://10.0.2.2:8000/api/albums/photo/")
+            val url = URL(getString(R.string.damda_server)+"/api/albums/photo/")
             val jwt = GlobalApplication.prefs.token
             val payload = photoList[selectedPosition].id
             val formBody = FormBody.Builder()
@@ -162,7 +162,7 @@ class PhotoDetailFragment: Fragment() {
 
     private  fun startDownloading() {
         val photo = photoList[selectedPosition]
-        val imgurl = "http://10.0.2.2:8000${photo.pic_name}"
+        val imgurl = getString(R.string.damda_server)+"${photo.pic_name}"
         val request = DownloadManager.Request(Uri.parse(imgurl))
         val jwt = GlobalApplication.prefs.token
         request.addRequestHeader("Authorization", "JWT $jwt")
@@ -205,7 +205,7 @@ class PhotoDetailFragment: Fragment() {
             val photo = photoList.get(position)
             // load image
             Glide.with(context!!)
-                .load("http://10.0.2.2:8000${photo.pic_name}")
+                .load(getString(R.string.damda_server)+"${photo.pic_name}")
                 .into(view.ivFullscreenImage)
 
             container.addView(view)

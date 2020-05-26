@@ -20,15 +20,15 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 class AddFamilyActivity : AppCompatActivity() {
     var family_info: Family? = null
-    var retrofit = Retrofit.Builder()
-        .baseUrl("http://10.0.2.2:8000")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    var familyService: FamilyService = retrofit.create(
-        FamilyService::class.java)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_family)
+        var retrofit = Retrofit.Builder()
+            .baseUrl(getString(R.string.damda_server))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        var familyService: FamilyService = retrofit.create(
+            FamilyService::class.java)
         val token = "JWT " + GlobalApplication.prefs.token
 
         make_family.setOnClickListener{
