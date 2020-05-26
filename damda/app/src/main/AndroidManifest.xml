@@ -15,7 +15,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.SplashActivity" android:theme="@style/SplashTheme">
+        <service
+            android:name=".retrofit.service.RequestService"
+            android:enabled="true"
+            android:exported="true"></service>
+
+        <activity
+            android:name=".activity.SplashActivity"
+            android:theme="@style/SplashTheme">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
 
         </activity>
         <activity android:name=".activity.RequestListActivity" />

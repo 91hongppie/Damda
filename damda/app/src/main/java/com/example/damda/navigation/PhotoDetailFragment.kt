@@ -11,6 +11,7 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
+import android.transition.TransitionInflater
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -18,6 +19,7 @@ import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import androidx.annotation.DrawableRes
+import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.PagerAdapter
@@ -28,15 +30,13 @@ import com.example.damda.R
 import com.example.damda.URLtoBitmapTask
 import com.example.damda.activity.MainActivity
 import com.example.damda.helper.ZoomOutPageTransformer
+import com.example.damda.navigation.PhotoListFragment.Companion.currentPosition
 import com.example.damda.navigation.model.Album
 import com.example.damda.navigation.model.Photos
 import com.google.gson.GsonBuilder
-import kotlinx.android.synthetic.main.fragment_photo_detail.*
-import kotlinx.android.synthetic.main.fragment_photo_detail.view.*
-import kotlinx.android.synthetic.main.fragment_photo_detail.view.btn_share
+import kotlinx.android.synthetic.main.fragment_photo_list.*
 import kotlinx.android.synthetic.main.image_fullscreen.view.*
 import okhttp3.*
-import org.jetbrains.anko.find
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.net.URL
@@ -57,7 +57,6 @@ class PhotoDetailFragment: Fragment() {
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
         val view = inflater.inflate(R.layout.fragment_photo_detail, container, false)
-
         viewPager = view!!.findViewById(R.id.vp_photo)
         tvGalleryTitle = view.findViewById(R.id.tvGalleryTitle)
         et_update = view.findViewById(R.id.et_update)
@@ -80,16 +79,17 @@ class PhotoDetailFragment: Fragment() {
         viewPager.adapter = galleryPagerAdapter
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener)
         viewPager.setPageTransformer(true, ZoomOutPageTransformer())
-
         setCurrentItem(selectedPosition)
-
+        prepareSharedElementTransition()
+        if (savedInstanceState == null) {
+            postponeEnterTransition()
+        }
         return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val context = activity as MainActivity
-
         btn_share.setOnClickListener {
             val share_intent = Intent().apply {
                 var url = "http://10.0.2.2:8000${photoList[selectedPosition].pic_name}"
@@ -184,6 +184,7 @@ class PhotoDetailFragment: Fragment() {
             override fun onPageSelected(position: Int) {
                 // set gallery title
                 selectedPosition = position
+                currentPosition = position
                 tvGalleryTitle.text = photoList.get(selectedPosition).title
             }
 
@@ -208,6 +209,8 @@ class PhotoDetailFragment: Fragment() {
                 .into(view.ivFullscreenImage)
 
             container.addView(view)
+
+
 
             return view
         }
@@ -244,5 +247,26 @@ class PhotoDetailFragment: Fragment() {
             fragment.arguments = argument
             return fragment
         }
+    }
+    private fun prepareSharedElementTransition() {
+        val transition = TransitionInflater.from(context)
+            .inflateTransition(R.transition.image_shared_element_transition)
+        sharedElementEnterTransition = transition
+
+        // A similar mapping is set at the GridFragment with a setExitSharedElementCallback.
+        setEnterSharedElementCallback(
+            object : SharedElementCallback() {
+                override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
+                    // Locate the image view at the primary fragment (the ImageFragment that is currently
+                    // visible). To locate the fragment, call instantiateItem with the selection position.
+                    // At this stage, the method will simply return the fragment at the position and will
+                    // not create a new one.
+                    val currentFragment = viewPager!!.adapter?.instantiateItem(viewPager!!, currentPosition) as Fragment
+                    val view = currentFragment.view ?: return
+
+                    // Map the first shared element name to the child ImageView.
+                    sharedElements[names[0]] = view.findViewById(R.id.image)
+                }
+            })
     }
 }

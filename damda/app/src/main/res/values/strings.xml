@@ -88,13 +88,16 @@
     <string name="user_info">상세정보</string>
 
     <!-- Album -->
-    <string name="album_title">앨범이름</string>
-    <string name="saveAlbum">앨범저장</string>
-    <string name="album_image">앨범이미지</string>
+    <string name="album_title">앨범 이름</string>
+    <string name="saveAlbum">저장</string>
+    <string name="album_image">앨범 이미지</string>
+    <string name="albumImageChange">대표 이미지 변경</string>
+    <string name="deleteAlbum">삭제</string>
 
     <!-- Photo -->
     <string name="savePhoto">저장</string>
     <string name="deletePhoto">삭제</string>
     <string name="sharePhoto">공유</string>
+    <string name="avatar">아바타</string>
 
 </resources>

@@ -6,6 +6,7 @@
         <item name="colorPrimary">@color/colorPrimary</item>
         <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
         <item name="colorAccent">@color/bluebell</item>
+        <item name="colorControlHighlight">@color/bluebell</item>
     </style>
 
     <style name="ButtonStyle" parent="Widget.AppCompat.Button.Colored">
@@ -41,5 +42,11 @@
         <item name="colorControlActivated">@color/enableButton</item>
         <item name="colorSwitchThumbNormal">@color/gray</item>
         <item name="android:colorForeground">#757575</item>
+    </style>
+    <style name="BasePopupMenu" parent="Widget.AppCompat.PopupMenu">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/bluebell</item>
     </style>
 </resources>
