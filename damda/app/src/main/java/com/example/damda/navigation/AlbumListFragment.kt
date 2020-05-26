@@ -12,6 +12,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.example.damda.*
 import com.example.damda.activity.AddMemberActivity
 import com.example.damda.activity.MainActivity
+import com.example.damda.activity.MainActivity.Companion.photoStatus
 import com.example.damda.navigation.model.Album
 import com.example.damda.navigation.adapter.AlbumAdapter
 import com.example.damda.retrofit.model.Albums
@@ -32,6 +33,7 @@ class AlbumListFragment : Fragment() {
 
         var albums: Albums? = null
         var albumList = emptyArray<Album>()
+        photoStatus = 0
         view.rv_album.adapter =
             AlbumAdapter(albumList) { album ->
                 var bundle = Bundle()

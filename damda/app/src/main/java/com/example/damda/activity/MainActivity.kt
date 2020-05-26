@@ -105,7 +105,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 return true
             }
             R.id.action_photo_list -> {
-                var gridFragment = AlbumListFragment()
+                var gridFragment = PhotoListFragment()
                 supportFragmentManager.beginTransaction().replace(R.id.main_content, gridFragment)
                     .commit()
                 return true
