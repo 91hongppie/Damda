@@ -3,7 +3,9 @@ from imagekit.models import ProcessedImageField
 from imagekit.processors import ResizeToFit
 from accounts.serializers import Family
 from django.contrib.auth import get_user_model
-
+import uuid
+from django.db import models
+ 
 # Create your models here.
 class Album(models.Model):
     title = models.TextField()
@@ -30,5 +32,11 @@ class FaceImage(models.Model):
     member = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="family_member", null=True)
     
 
-
-
+def get_file_name(instance, filename):
+    ext = filename.split('.')[-1]
+    return "%s.%s" % (uuid.uuid4(), ext)
+ 
+class Video(models.Model):
+    file = models.FileField(upload_to=get_file_name)
+    family = models.ForeignKey(Family,on_delete=models.CASCADE,related_name=family_video)
+    title = models.TextField()

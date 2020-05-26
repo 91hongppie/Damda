@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Photo, Album, FaceImage
+from .models import Photo, Album, FaceImage, Video
 
 class AlbumSerializer(serializers.ModelSerializer):
     class Meta:
@@ -20,3 +20,9 @@ class EditFaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = FaceImage
         fields = ('id', 'member')
+
+    
+class VideoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Video
+        fields = ('file', 'family', 'title')

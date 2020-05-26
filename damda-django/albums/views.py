@@ -1,9 +1,10 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
 from rest_framework.decorators import api_view
-from .models import Photo, Album, FaceImage
+from .models import Photo, Album, FaceImage, Video
 from rest_framework import status
-from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer
+from .forms import UploadFileForm
+from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer, VideoSerializer
 import face_recognition as fr
 import skimage.io
 import os
@@ -77,3 +78,26 @@ def face(request, family_pk):
                 serializers.save()
                 return Response(serializers.data)
     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST', ])
+def video(request,family_pk):
+    if request.method == 'GET':
+        videos = Video.objects.filter(family=family_pk)
+        serializers = VideoSerializer(videos, many=True)
+        return Response({"data": serializers.data})
+    elif request.method == 'POST':
+        serializer = VideoSerializer(data={'file':request.FILES,'family':family_pk,'title':request.data['title']})
+        if serializer.is_valid():
+            serializer.save()
+            # data = {
+            #     'uploadPath': uploaded_file.file.url
+            # }
+            return Response(serializer.data)
+    return JsonResponse(data)
+
+@api_view(['DELETE'])
+def detail_video(request,family_pk,video_pk):
+    if request.method == 'DELETE':
+        video = get_object_or_404(Video,pk=video_pk)
+        video.delete()
+        return Response({'asdf':'asdf'})
