@@ -5,6 +5,7 @@ import android.content.Context
 import android.content.DialogInterface
 import android.net.Uri
 import android.os.Environment
+import android.util.Log
 import android.view.*
 import android.widget.*
 import androidx.core.content.res.TypedArrayUtils.getString
@@ -58,8 +59,9 @@ class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val f
                         R.id.album_menu_item1->
                         {
                             if (fragment.perm()) {
-                                val url = URL(fragment.getString(R.string.damda_server)+"/api/albums/photo/${album.id}/")
                                 val jwt = GlobalApplication.prefs.token
+                                val family_id = GlobalApplication.prefs.family_id?.toInt()
+                                val url = URL(fragment.getString(R.string.damda_server)+"/api/albums/photo/${family_id}/${album.id}/")
                                 val request = Request.Builder().url(url)
                                     .addHeader("Authorization", "JWT $jwt")
                                     .build()
