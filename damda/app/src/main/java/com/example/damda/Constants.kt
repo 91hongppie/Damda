@@ -18,5 +18,19 @@ class Constants {
 
 
         val USER_TABLE_ID = "id"
+
+        val TAG = "Damda-photo"
+        val MODE = "mode"
+        val IP = "ip"
+        val DATE = "date"
+        val SERVER_IP = "server_ip"
+        val LAST_DATE = "last_date"
+        val DIR_NAME = "dir_name"
+        val MODE_ALL = 0
+        val MODE_SELECT = 1
+        val TYPE_IMAGE = 0
+        val TYPE_VIDEO = 1
+        val CONNECT_PORT = 8000
+        val FILE_SEND_PORT = 8000
     }
 }
