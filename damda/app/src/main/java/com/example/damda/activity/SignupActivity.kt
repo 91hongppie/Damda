@@ -1,9 +1,11 @@
 package com.example.damda.activity
 
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.DatePicker
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +24,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.regex.Pattern
+import javax.xml.datatype.DatatypeConstants.MONTHS
 
 
 class SignupActivity : AppCompatActivity() {
@@ -78,6 +81,10 @@ class SignupActivity : AppCompatActivity() {
             var text2 = editPWD.text.toString()
             params.put("username", text1)
             params.put("password",text2)
+            params.put("first_name", name.text.toString())
+            params.put("birth", "${dataPicker.year}-${dataPicker.month + 1}-${dataPicker.dayOfMonth}")
+            params.put("is_lunar", is_lunar.isChecked)
+
             if (isCheckID) {
                 signupService.signUp(params).enqueue(object:Callback<SignUp>{
                     override fun onFailure(call: Call<SignUp>, t: Throwable) {

@@ -11,6 +11,7 @@
 
     <style name="ButtonStyle" parent="Widget.AppCompat.Button.Colored">
         <item name="colorButtonNormal">@color/bluebell</item>
+        <item name="android:textSize">16sp</item>
     </style>
     <style name="AppTheme.NoActionBar" parent="AppTheme">
         <item name="windowActionBar">false</item>
