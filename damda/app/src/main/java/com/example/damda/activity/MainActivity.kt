@@ -15,6 +15,8 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
+import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
 import com.example.damda.GlobalApplication
 import com.example.damda.R
 import com.example.damda.navigation.AlarmFragment
@@ -37,6 +39,7 @@ import java.io.IOException
 import java.net.URL
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
+    var mBackWait:Long = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -113,6 +116,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         when (p0.itemId) {
             R.id.action_album_list -> {
                 var albumListFragment = AlbumListFragment()
+                supportFragmentManager.popBackStack(null, POP_BACK_STACK_INCLUSIVE)
                 supportFragmentManager.beginTransaction().replace(R.id.main_content, albumListFragment)
                     .commit()
                 photoStatus = 0
@@ -120,12 +124,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
             R.id.action_photo_list -> {
                 var photoListFragment = PhotoListFragment()
+                supportFragmentManager.popBackStack(null, POP_BACK_STACK_INCLUSIVE)
                 supportFragmentManager.beginTransaction().replace(R.id.main_content, photoListFragment)
                     .commit()
                 photoStatus = 0
                 return true
             }
             R.id.action_add_photo -> {
+                supportFragmentManager.popBackStack(null, POP_BACK_STACK_INCLUSIVE)
                 if (ContextCompat.checkSelfPermission(
                         this,
                         Manifest.permission.READ_EXTERNAL_STORAGE
@@ -137,12 +143,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
             R.id.action_favorite_alarm -> {
                 var alarmFragment = AlarmFragment()
+                supportFragmentManager.popBackStack(null, POP_BACK_STACK_INCLUSIVE)
                 supportFragmentManager.beginTransaction().replace(R.id.main_content, alarmFragment)
                     .commit()
                 return true
             }
             R.id.action_account -> {
                 var userFragment = UserFragment()
+                supportFragmentManager.popBackStack(null, POP_BACK_STACK_INCLUSIVE)
                 supportFragmentManager.beginTransaction().replace(R.id.main_content, userFragment)
                     .commit()
                 return true
@@ -163,5 +171,17 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         var photoStatus = 0
         private const val TAG = "MainActivity"
     }
-
+    override fun onBackPressed() {
+        // 뒤로가기 버튼 클릭
+        if(supportFragmentManager.backStackEntryCount==0) {
+            if (System.currentTimeMillis() - mBackWait >= 2000) {
+                mBackWait = System.currentTimeMillis()
+                Toast.makeText(this, "뒤로가기 버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show()
+            } else {
+                super.onBackPressed()
+            }
+        }else {
+            super.onBackPressed()
+        }
+    }
 }
