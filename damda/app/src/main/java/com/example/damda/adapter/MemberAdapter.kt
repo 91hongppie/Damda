@@ -1,31 +1,21 @@
 package com.example.damda.adapter
 
 import android.app.AlertDialog
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.Toast
-import androidx.recyclerview.widget.DividerItemDecoration
-import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.damda.GlobalApplication
 import com.example.damda.R
-import com.example.damda.navigation.model.Album
 import com.example.damda.retrofit.model.Face
 //import com.example.damda.retrofit.model.RequestData
 import com.example.damda.retrofit.model.*
 import com.example.damda.retrofit.service.FamilyService
-import com.example.damda.retrofit.service.SignupService
-import kotlinx.android.synthetic.main.activity_add_member.*
 import kotlinx.android.synthetic.main.list_item_member.view.*
-import kotlinx.android.synthetic.main.list_item_request.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import java.lang.reflect.Member
 
 class MemberAdapter(val albumList: Array<Face>) : RecyclerView.Adapter<MemberAdapter.MainViewHolder>() {
 
@@ -49,13 +39,13 @@ class MemberAdapter(val albumList: Array<Face>) : RecyclerView.Adapter<MemberAda
         val content = itemView.list_item_memeber_layout
         val builder = AlertDialog.Builder(parent.context)
         var members: Members? = null
-
+        val url = parent.context.getString(R.string.damda_server)
         fun bind (chk: Int, face_id: Int) {
             content.setOnClickListener {
                 val jwt = GlobalApplication.prefs.token
                 val family_id = GlobalApplication.prefs.family_id.toString()
                 var retrofit = Retrofit.Builder()
-                    .baseUrl("http://10.0.2.2:8000")
+                    .baseUrl(url)
                     .addConverterFactory(GsonConverterFactory.create())
                     .build()
                 var familyService: FamilyService = retrofit.create(

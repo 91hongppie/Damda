@@ -1,12 +1,9 @@
 package com.example.damda.adapter
 
-import android.app.AlertDialog
-import android.content.Intent
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import android.widget.Button
-import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.damda.GlobalApplication
 import com.example.damda.R
@@ -49,7 +46,7 @@ class RequestAdapter(val requestList: Array<WaitUser>) : RecyclerView.Adapter<Re
         val user_id =  GlobalApplication.prefs.user_id
         var params:HashMap<String, Any> = HashMap<String, Any>()
         var retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8000")
+            .baseUrl(parent.context.getString(R.string.damda_server))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         var requestService: RequestService = retrofit.create(
