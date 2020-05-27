@@ -23,58 +23,67 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/my_toolbar"
-        android:orientation="horizontal"/>
+        android:orientation="horizontal" />
+
     <ScrollView
+        android:id="@+id/image_scroll"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"
+        android:layout_height="wrap_content"
         android:layout_below="@id/top_division"
         android:gravity="center"
-        android:orientation="vertical">
+        android:orientation="horizontal">
 
-        <LinearLayout
+        <ImageView
+            android:id="@+id/addphoto_image"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:orientation="vertical">
+            android:layout_margin="8dp"
+            android:adjustViewBounds="true"
+            android:contentDescription="사진을 등록해주세요"
+            android:minHeight="400dp"
+            android:scaleType="fitCenter"
+            android:autofillHints="사진"/>
 
-            <ImageView
-                android:id="@+id/addphoto_image"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="fitCenter"
-                android:adjustViewBounds="true"
-                android:layout_margin="8dp"
-                android:contentDescription="사진을 등록해주세요" />
-
-            <LinearLayout
-                android:id="@+id/image_division"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:orientation="horizontal" />
-
-            <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/editText"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content">
-
-                <EditText
-                    android:id="@+id/addphoto_edit_explain"
-                    android:layout_width="match_parent"
-                    android:layout_height="100dp"
-                    android:autofillHints="사진 설명"
-                    android:gravity="top"
-                    android:hint="@string/hint_image_content" />
-            </com.google.android.material.textfield.TextInputLayout>
-
-            <Button
-                android:id="@+id/addphoto_btn_upload"
-                android:layout_width="match_parent"
-                android:layout_height="50dp"
-                android:layout_marginTop="20dp"
-                android:layout_marginBottom="35dp"
-                android:layout_marginLeft="15dp"
-                android:layout_marginRight="15dp"
-                android:text="@string/upload_image"
-                android:theme="@style/ButtonStyle" />
-        </LinearLayout>
     </ScrollView>
+
+    <LinearLayout
+        android:id="@+id/image_division"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_below="@+id/image_scroll"/>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@+id/image_division"
+        android:orientation="vertical"
+        android:gravity="center">
+
+        <Button
+            android:id="@+id/select_photo_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="15dp"
+            android:text="@string/select_image"
+            android:theme="@style/ButtonStyle"
+            android:textColor="@color/colorWhite"
+            android:background="@color/enableButton"/>
+
+        <Button
+            android:id="@+id/upload_photo_button"
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:layout_marginLeft="15dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="15dp"
+            android:layout_marginBottom="35dp"
+            android:text="@string/upload_image"
+            android:textColor="@color/colorWhite"
+            android:background="@color/disableButton"/>
+    </LinearLayout>
+
+
 </RelativeLayout>
