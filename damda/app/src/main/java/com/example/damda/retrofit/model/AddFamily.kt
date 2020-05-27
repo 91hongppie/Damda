@@ -1,5 +1,8 @@
 package com.example.damda.retrofit.model
 
+import com.kakao.usermgmt.response.model.BirthdayType
+import java.util.*
+
 // response 구조
 data class Family(
     val id: Int,
@@ -20,7 +23,9 @@ data class User(
     val id: Int,
     val username : String,
     val state : Int,
-    val family : Int
+    val family : Int,
+    val first_name: String,
+    val birth: String
 )
 
 //data class UserInfo(
@@ -36,4 +41,10 @@ data class Members(
 
 data class Message(
     val message: String
+)
+
+data class  DetailFamily(
+    val id: Int,
+    val main_member: String,
+    val members: Array<User>
 )

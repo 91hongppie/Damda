@@ -47,9 +47,12 @@ class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val f
         var image = itemView.findViewById<ImageView>(R.id.album_image)
         fun bind (album: Album) {
             name?.text = album.title
-            Glide.with(itemView.context).load(fragment.getString(R.string.damda_server) +"/${album.image}").error(R.drawable.album).apply(RequestOptions().override(600, 600))
-                .apply(RequestOptions.centerCropTransform()).into(image)
-
+            if (album.image != "empty") {
+                Glide.with(itemView.context)
+                    .load(fragment.getString(R.string.damda_server) + "/${album.image}")
+                    .error(R.drawable.album).apply(RequestOptions().override(600, 600))
+                    .apply(RequestOptions.centerCropTransform()).into(image)
+            }
             image.setOnLongClickListener{
                 val wrapper = ContextThemeWrapper(itemView.context, R.style.BasePopupMenu)
                 val pop = PopupMenu(wrapper, it)

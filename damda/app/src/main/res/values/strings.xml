@@ -23,10 +23,10 @@
     <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
 
     <!-- Bottom Navigation View -->
-    <string name="home">home</string>
-    <string name="search">Search</string>
+    <string name="home">Album</string>
+    <string name="search">Photos</string>
     <string name="gallery">Gallery</string>
-    <string name="favorite">Favorite</string>
+    <string name="favorite">Video</string>
     <string name="account">Account</string>
 
     <!-- Account -->
@@ -87,7 +87,7 @@
     <string name="error_exist_email">중복된 이메일이 있습니다.</string>
     <string name="can_use_email">사용 가능한 이메일입니다.</string>
     <string name="error_do_not_check_id">아이디 중복 체크 확인해 주세요.</string>
-    <string name="add_info">얼굴을 등록하면 손쉽게 앨범을 관리 할 수 있습니다.</string>
+    <string name="add_info">앨범과 계정을 연결하면 연결된 계정의 얼굴은 자동 업로드에서 제외됩니다.</string>
     <string name="user_info">상세정보</string>
     <string name="wait">진행중인 요청이 있습니다.\n담장이 수락하면 가족 앨범을 이용할 수 있습니다.</string>
 
