@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.example.damda.GlobalApplication
 import com.example.damda.R
 import com.example.damda.retrofit.model.Face
+import com.example.damda.retrofit.model.Message
 import com.example.damda.retrofit.model.User
 import com.example.damda.retrofit.model.WaitUser
 import com.example.damda.retrofit.service.RequestService
@@ -20,6 +21,7 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.lang.reflect.Member
 
 class RequestAdapter(val requestList: Array<WaitUser>) : RecyclerView.Adapter<RequestAdapter.MainViewHolder>() {
 
@@ -33,9 +35,9 @@ class RequestAdapter(val requestList: Array<WaitUser>) : RecyclerView.Adapter<Re
             with(holer) {
                 Log.v("asdf", item.toString())
                 tvTitle.text = item.wait_user
+                holer.bind(item.id)
             }
         }
-        holer.bind()
     }
 
     inner class MainViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
@@ -52,7 +54,7 @@ class RequestAdapter(val requestList: Array<WaitUser>) : RecyclerView.Adapter<Re
             .build()
         var requestService: RequestService = retrofit.create(
             RequestService::class.java)
-        fun bind () {
+        fun bind (waitUser: Int) {
             button1.setOnClickListener {
                 params.put("username",tvTitle.text.toString())
                 Log.v("asdf1", params.toString())
@@ -69,9 +71,20 @@ class RequestAdapter(val requestList: Array<WaitUser>) : RecyclerView.Adapter<Re
                     }
                 })
             }
-//            button2.setOnClickListener {
-//                Log.v("asdf2]", tvTitle.toString())
-//            }
+            button2.setOnClickListener {
+                requestService.requestDelete(token, waitUser).enqueue(object: Callback<Message> {
+                    override fun onFailure(call: Call<Message>, t: Throwable) {
+                        Log.e("LOGIN",t.message)
+                    }
+                    override fun onResponse(call: Call<Message>, response: Response<Message>) {
+                        if (response.code() == 400) {
+                            Log.v("400", response.body().toString())
+                        } else {
+                            Log.v("good",response.body().toString())
+                        }
+                    }
+                })
+            }
         }
     }
 }

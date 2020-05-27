@@ -39,11 +39,14 @@ def JoinFamily(request, user_pk):
             wait_user.delete()
         return Response(serializer.data)
     elif request.method == 'DELETE':
-        user = get_object_or_404(WaitUser, wait_user=request.DELETE.get('username'))
-        user.delete()
+        wait_user = get_object_or_404(WaitUser, pk=user_pk)
+        user = get_object_or_404(get_user_model(), username=wait_user.wait_user)
         serializer = UserSerializer(data={'username': user.username, 'state': 0}, instance=user)
+        serializer.is_valid()
+        print(serializer.errors)
         if serializer.is_valid(raise_exception=True):
             serializer.save()
+            wait_user.delete()
             return Response({'message': '요청이 취소되었습니다.'})
     return Response(status=status.HTTP_400_BAD_REQUEST)
     

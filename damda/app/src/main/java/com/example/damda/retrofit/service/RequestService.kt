@@ -15,4 +15,8 @@ interface RequestService {
     fun requestAccept(@Header("Authorization") token: String,
                       @Path("id") id: String,
                       @Body parameters: HashMap<String, Any>): Call<User>
+
+    @DELETE("/api/accounts/family/{id}/")
+    fun requestDelete(@Header("Authorization") jwt:String,
+                      @Path("id") id: Int) : Call<Message>
 }
