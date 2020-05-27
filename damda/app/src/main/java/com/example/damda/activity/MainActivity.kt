@@ -14,11 +14,8 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
-import com.example.damda.GlobalApplication
-import com.example.damda.R
 import com.example.damda.navigation.AlarmFragment
 import com.example.damda.navigation.AlbumListFragment
 import com.example.damda.navigation.PhotoListFragment

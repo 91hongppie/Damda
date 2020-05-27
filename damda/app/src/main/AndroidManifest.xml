@@ -18,27 +18,6 @@
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
         <service
-            android:name=".ProgressNotificationService"
-            android:enabled="true"
-            android:exported="true" />
-
-        <activity android:name=".activity.ProgressActivity" />
-
-        <service
-            android:name=".SendSelectedItemService"
-            android:enabled="true"
-            android:exported="true" />
-
-        <activity android:name=".activity.SendSelectedItemActivity" />
-
-        <service
-            android:name=".SendAutoItemService"
-            android:enabled="true"
-            android:exported="true" />
-
-        <activity android:name=".activity.SendAutoItemActivity" />
-
-        <service
             android:name=".retrofit.service.RequestService"
             android:enabled="true"
             android:exported="true" />
@@ -106,7 +85,6 @@
         <activity android:name=".activity.MainActivity">
         </activity>
         <activity android:name=".activity.AddPhotoActivity">
-
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />

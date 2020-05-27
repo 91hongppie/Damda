@@ -163,6 +163,9 @@ def addphoto(request):
         print('Family is NOT FOUND')
 
     for item in image_list:
+        if len(Photo.objects.filter(title=item.name, album=album)):
+            print('이미 있는 사진입니다')
+            continue
         image = Photo.objects.create(pic_name=item, title=item.name, album=album)
         
 
