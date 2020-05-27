@@ -29,7 +29,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 class AlbumListFragment : Fragment() {
-
     private val STORAGE_PERMISSION_CODE: Int = 1000
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
         navStatus = 0
