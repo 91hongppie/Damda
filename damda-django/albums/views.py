@@ -1,7 +1,11 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
-from rest_framework.decorators import api_view
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated, AllowAny
+from django.views.decorators.csrf import csrf_exempt
+from django.contrib.auth import get_user_model
 from .models import Photo, Album, FaceImage
+from accounts.models import Family
 from rest_framework import status
 from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer, AlbumPutSerializer
 import face_recognition as fr
@@ -136,3 +140,34 @@ def all_photo(request, family_pk):
 
 
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@csrf_exempt
+def addphoto(request):
+    User = get_user_model()
+    image_list = request.FILES.getlist('uploadImages')
+    user_id = None
+    
+    try:
+        user_id = int(request.POST.get('user_id'))
+    except:
+        user_id = 1
+        print('Who are you?')
+    
+    user = get_object_or_404(User, id=user_id)
+    try:
+        print(user.family_id)
+        albums = Album.objects.filter(family_id=user.family_id)
+        album = albums[0]
+    except:
+        album = Album.objects.get(id=1)
+        print('Family is NOT FOUND')
+
+    for item in image_list:
+        if len(Photo.objects.filter(title=item.name, album=album)):
+            print('이미 있는 사진입니다')
+            continue
+        image = Photo.objects.create(pic_name=item, title=item.name, album=album)
+        
+
+    return Response(status=status.HTTP_200_OK)

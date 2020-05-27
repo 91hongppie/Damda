@@ -33,3 +33,7 @@ data class User(
 data class Members(
     val data: Array<UserInfo>
 )
+
+data class Message(
+    val message: String
+)
