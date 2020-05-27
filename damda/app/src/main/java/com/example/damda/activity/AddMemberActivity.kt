@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -12,12 +11,9 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.damda.GlobalApplication
 import com.example.damda.R
 import com.example.damda.adapter.MemberAdapter
-import com.example.damda.navigation.model.Album
-import com.example.damda.retrofit.model.Albums
 import com.example.damda.retrofit.model.Face
 import com.example.damda.retrofit.model.Faces
 import com.example.damda.retrofit.service.AlbumsService
-import com.google.android.material.floatingactionbutton.FloatingActionButton
 import kotlinx.android.synthetic.main.activity_add_member.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -43,10 +39,9 @@ class AddMemberActivity : AppCompatActivity() {
         var faces: Faces? = null
         var facesList = emptyArray<Face>()
         var retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8000")
+            .baseUrl(getString(R.string.damda_server))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
         val jwt = GlobalApplication.prefs.token
         val family_id = GlobalApplication.prefs.family_id.toString()
         var albumsService: AlbumsService = retrofit.create(

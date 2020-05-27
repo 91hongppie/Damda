@@ -81,7 +81,6 @@ class PhotoDetailFragment: Fragment() {
             postponeEnterTransition()
         }
 
-
         var moveX = 0f
         var moveY = 0f
         view.setOnTouchListener { v, event ->
@@ -103,7 +102,6 @@ class PhotoDetailFragment: Fragment() {
                         fragmentManager!!.popBackStack()
                     }
                 }
-
                 MotionEvent.ACTION_MOVE -> {
                     v.animate()
                         .y(event.rawY + moveY)
@@ -157,9 +155,9 @@ class PhotoDetailFragment: Fragment() {
                     R.id.delete-> {
                         val album = arguments?.getParcelable<Album>("album")
                         val family_id = GlobalApplication.prefs.family_id?.toInt()
-                        var url = URL("http://10.0.2.2:8000/api/albums/photo/${family_id}/")
+                        var url = URL(getString(R.string.damda_server)+"/api/albums/photo/${family_id}/")
                         if (album?.id != null) {
-                            url = URL("http://10.0.2.2:8000/api/albums/photo/${family_id}/${album?.id}/")
+                            url = URL(getString(R.string.damda_server)+"/api/albums/photo/${family_id}/${album?.id}/")
                         }
                         val jwt = GlobalApplication.prefs.token
                         val payload = photoList[selectedPosition].id
@@ -207,7 +205,7 @@ class PhotoDetailFragment: Fragment() {
                     }
                     R.id.share -> {
                         val share_intent = Intent().apply {
-                            var url = "http://10.0.2.2:8000${photoList[selectedPosition].pic_name}"
+                            var url = getString(R.string.damda_server)+"${photoList[selectedPosition].pic_name}"
                             var image_task: URLtoBitmapTask = URLtoBitmapTask()
                             image_task = URLtoBitmapTask().apply {
                                 imgurl = URL(url)
@@ -240,7 +238,7 @@ class PhotoDetailFragment: Fragment() {
 
     private  fun startDownloading() {
         val photo = photoList[selectedPosition]
-        val imgurl = "http://10.0.2.2:8000${photo.pic_name}"
+        val imgurl = getString(R.string.damda_server)+"${photo.pic_name}"
         val request = DownloadManager.Request(Uri.parse(imgurl))
         val jwt = GlobalApplication.prefs.token
         request.addRequestHeader("Authorization", "JWT $jwt")
@@ -283,7 +281,7 @@ class PhotoDetailFragment: Fragment() {
             val photo = photoList.get(position)
             // load image
             Glide.with(context!!)
-                .load("http://10.0.2.2:8000${photo.pic_name}")
+                .load(getString(R.string.damda_server)+"${photo.pic_name}")
                 .into(view.ivFullscreenImage)
 
             container.addView(view)

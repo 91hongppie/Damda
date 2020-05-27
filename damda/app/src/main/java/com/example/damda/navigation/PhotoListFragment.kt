@@ -69,10 +69,10 @@ class PhotoListFragment : Fragment() {
         }
         album = arguments?.getParcelable<Album>("album")
         val family_id = GlobalApplication.prefs.family_id?.toInt()
-        var url = URL("http://10.0.2.2:8000/api/albums/photo/${family_id}/")
+        var url = URL(getString(R.string.damda_server)+"/api/albums/photo/${family_id}/")
         view.albumTitle?.text = "전체 보기"
         if (album?.id != null) {
-            url = URL("http://10.0.2.2:8000/api/albums/photo/${family_id}/${album?.id}/")
+            url = URL(getString(R.string.damda_server)+"/api/albums/photo/${family_id}/${album?.id}/")
             view.albumTitle?.text = album?.title
         }
         val jwt = GlobalApplication.prefs.token
@@ -161,7 +161,7 @@ class PhotoListFragment : Fragment() {
             view.rv_photo.adapter?.notifyDataSetChanged()
             var imageUris = ArrayList<Uri?>()
             for (photo in photoList) {
-                var url = "http://10.0.2.2:8000${photo.pic_name}"
+                var url = getString(R.string.damda_server)+"${photo.pic_name}"
                 var image_task: URLtoBitmapTask = URLtoBitmapTask()
                 image_task = URLtoBitmapTask().apply {
                     imgurl = URL(url)
@@ -248,7 +248,7 @@ class PhotoListFragment : Fragment() {
 
     private  fun startDownloading() {
         for(photo in photoList){
-            val imgurl = "http://10.0.2.2:8000${photo.pic_name}"
+            val imgurl = getString(R.string.damda_server)+"${photo.pic_name}"
             val request = DownloadManager.Request(Uri.parse(imgurl))
             val jwt = GlobalApplication.prefs.token
             request.addRequestHeader("Authorization", "JWT $jwt")

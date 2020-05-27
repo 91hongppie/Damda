@@ -30,7 +30,7 @@ class MyFirebaseInstanceIdService : FirebaseMessagingService() {
         val client = OkHttpClient()
 
         val builder = Request.Builder()
-        val url = builder.url("http://10.0.2.2:8000/api/accounts/addtoken/")
+        val url = builder.url(getString(R.string.damda_server)+"/api/accounts/addtoken/")
         val formBody = FormBody.Builder()
         val body = formBody.add("token", token).build()
         val request = url

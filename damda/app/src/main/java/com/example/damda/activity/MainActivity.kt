@@ -37,7 +37,6 @@ import java.io.IOException
 import java.net.URL
 
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -52,7 +51,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
             1
         )
-
         FirebaseInstanceId.getInstance().instanceId
             .addOnCompleteListener(OnCompleteListener { task ->
                 if (!task.isSuccessful) {
@@ -74,7 +72,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     private fun sendRegistrationToServer(token: String) {
-        val url = URL("http://10.0.2.2:8000/api/accounts/addtoken/")
+        val url = URL(getString(R.string.damda_server)+"/api/accounts/addtoken/")
         val jwt = GlobalApplication.prefs.token
         val formBody = FormBody.Builder()
             .add("token", token)
@@ -114,15 +112,15 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         when (p0.itemId) {
             R.id.action_album_list -> {
-                var gridFragment = AlbumListFragment()
-                supportFragmentManager.beginTransaction().replace(R.id.main_content, gridFragment)
+                var albumListFragment = AlbumListFragment()
+                supportFragmentManager.beginTransaction().replace(R.id.main_content, albumListFragment)
                     .commit()
                 photoStatus = 0
                 return true
             }
             R.id.action_photo_list -> {
-                var gridFragment = PhotoListFragment()
-                supportFragmentManager.beginTransaction().replace(R.id.main_content, gridFragment)
+                var photoListFragment = PhotoListFragment()
+                supportFragmentManager.beginTransaction().replace(R.id.main_content, photoListFragment)
                     .commit()
                 photoStatus = 0
                 return true
