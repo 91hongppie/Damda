@@ -6,14 +6,26 @@ from rest_framework import status
 from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer, AlbumPutSerializer
 import face_recognition as fr
 import skimage.io
+from django.conf import settings
 import os
+import shutil
 # Create your views here.
 
-@api_view(['GET', ])
+@api_view(['GET', 'POST'])
 def photo(request, family_pk, album_pk):
-    photos = Photo.objects.filter(album=album_pk)
-    serializers = PhotoSerializer(photos, many=True)
-    return Response(serializers.data)
+    if request.method == 'GET':
+        photos = Photo.objects.filter(album=album_pk)
+        serializers = PhotoSerializer(photos, many=True)
+        return Response(serializers.data)
+    elif request.method == 'POST':
+        photos = request.data['photos']
+        photo_ids = list(map(int, photos.split(', ')))
+        photos = Photo.objects.filter(id__in=photo_ids)
+        album_id = photos[0].album
+        photos.delete()
+        photo_list = Photo.objects.filter(album=album_id)
+        serializers = PhotoSerializer(photo_list, many=True)
+        return Response(serializers.data)
 
 @api_view(['POST', ])
 def photo_delete(request):
@@ -48,6 +60,9 @@ def album(request, album_pk):
         return Response(status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         album = get_object_or_404(Album, pk=album_pk)
+        file_path = settings.MEDIA_ROOT + '/albums/' + str(album.family.id) + '/' + str(album_pk)
+        if os.path.isdir(file_path):
+            shutil.rmtree(file_path)
         album.delete()
         return Response({"data": "삭제완료"})
     return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -95,17 +110,27 @@ def face(request, family_pk):
                 return Response(serializers.data)
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET', ])
+@api_view(['GET', 'POST', ])
 def all_photo(request, family_pk):
-    albums = Album.objects.filter(family=family_pk)
     return_list = []
-    for album in albums:
-        photos = Photo.objects.filter(album=album.id)
-        serializers = PhotoSerializer(photos, many=True)
-        return_list += serializers.data
-        # for serializer in serializers.data:
-        #     return_list.append(serializer)
-    return Response(return_list)
+    if request.method == 'GET':
+        albums = Album.objects.filter(family=family_pk)
+        for album in albums:
+            photos = Photo.objects.filter(album=album.id)
+            serializers = PhotoSerializer(photos, many=True)
+            return_list += serializers.data
+        return Response(return_list)
+    elif request.method == 'POST':
+        photos = request.data['photos']
+        photo_ids = list(map(int, photos.split(', ')))
+        photos = Photo.objects.filter(id__in=photo_ids)
+        photos.delete()
+        albums = Album.objects.filter(family=family_pk)
+        for album in albums:
+            photos = Photo.objects.filter(album=album.id)
+            serializers = PhotoSerializer(photos, many=True)
+            return_list += serializers.data
+        return Response(return_list)
 
 
 

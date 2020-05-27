@@ -9,6 +9,5 @@ urlpatterns = [
     path('photo/<int:family_pk>/', views.all_photo),
     path('<int:family_pk>/', views.albums),
     path('album/<int:album_pk>/', views.album),
-    path('photo/', views.photo_delete),
     path('<int:family_pk>/face/', views.face)
 ]
