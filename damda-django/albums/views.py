@@ -57,7 +57,8 @@ def albums(request, family_pk):
 def album(request, album_pk):
     if request.method == 'PUT':
         album = get_object_or_404(Album, pk=album_pk)
-        serializers = AlbumPutSerializer(data=request.data, instance=album)
+        image = request.data['image'].replace('"',"")[1::]
+        serializers = AlbumPutSerializer(data={'id': album_pk, 'image': image}, instance=album)
         if serializers.is_valid():
             serializers.save()
             return Response(serializers.data)

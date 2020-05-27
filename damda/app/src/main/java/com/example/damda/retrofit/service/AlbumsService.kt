@@ -1,10 +1,7 @@
 package com.example.damda.retrofit.service
 
 import com.example.damda.navigation.model.Album
-import com.example.damda.retrofit.model.Albums
-import com.example.damda.retrofit.model.DeleteAlbum
-import com.example.damda.retrofit.model.Face
-import com.example.damda.retrofit.model.Faces
+import com.example.damda.retrofit.model.*
 import okhttp3.MultipartBody
 import retrofit2.Call
 import retrofit2.http.*
@@ -28,13 +25,14 @@ interface AlbumsService {
         @Part img_name: MultipartBody.Part?
     ): Call<Face>
 
+    @Multipart
     @PUT("/api/albums/album/{album_id}/")
     fun changeAlbumImage(
         @Header("Authorization") jwt:String,
-        @Path("album_id") album_id: String,
-        @Part("id") id: String,
+        @Path("album_id") album_id: Int,
+        @Part("id") id: Int,
         @Part("image") image: String
-    ): Call<Album>
+    ): Call<PutAlbum>
 
     @DELETE("/api/albums/album/{album_id}/")
     fun deleteAlbum(
