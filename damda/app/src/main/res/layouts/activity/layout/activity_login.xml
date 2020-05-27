@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".LoginActivity">
+    tools:context=".activity.LoginActivity">
     <ImageView
         android:layout_above="@+id/signin_layout"
         android:layout_alignParentTop="true"
@@ -18,59 +18,68 @@
         android:layout_height="wrap_content"
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="-9dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
         android:orientation="vertical">
 
-        <EditText
-            android:id="@+id/email"
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/emailLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:maxLength="20"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:hint="@string/email"
-            android:inputType="text"/>
+            android:layout_height="wrap_content">
 
-        <EditText
-            android:id="@+id/password"
+            <EditText
+                android:hint="@string/email"
+                android:id="@+id/email"
+                android:layout_width="match_parent"
+                android:maxLines="1"
+                android:maxLength="20"
+                android:inputType="text"
+                android:layout_height="wrap_content"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
+
+        <com.google.android.material.textfield.TextInputLayout
+            android:id="@+id/PWDLayout"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:maxLines="1"
-            android:maxLength="20"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:hint="@string/password"
-            android:inputType="textPassword" />
+            android:hint="@string/pwd"
+            android:layout_marginTop="5dp"
+            android:layout_height="wrap_content">
+
+            <EditText
+                android:id="@+id/password"
+                android:layout_width="match_parent"
+                android:maxLines="1"
+                android:maxLength="20"
+                android:inputType="textPassword"
+                android:layout_height="wrap_content"
+                />
+        </com.google.android.material.textfield.TextInputLayout>
 
         <Button
             android:id="@+id/login_button"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="5dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="13dp"
             android:text="로그인"
-            android:theme="@style/ButtonStyle" />
+            android:textColor="@color/white"
+            android:background="@color/bluebell" />
 
         <Button
             android:id="@+id/signup_button"
             android:layout_width="match_parent"
             android:layout_height="40dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="30dp"
+            android:layout_marginBottom="35dp"
             android:text="회원가입"
-            android:textColor="@color/colorWhite" />
+            android:background="@drawable/round_green"
+            android:textColor="@color/bluebell" />
 
 
         <com.kakao.usermgmt.LoginButton
             android:id="@+id/kakao_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="70dp"
+            android:layout_marginBottom="50dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />

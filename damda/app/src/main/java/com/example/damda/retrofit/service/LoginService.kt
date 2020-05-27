@@ -9,7 +9,7 @@ import retrofit2.http.*
 
 interface LoginService{
     @FormUrlEncoded
-    @POST("/api-token-auth/")
+    @POST("/api/api-token-auth/")
     fun requestLogin(
         @Field("username") email:String,
         @Field("password") password:String

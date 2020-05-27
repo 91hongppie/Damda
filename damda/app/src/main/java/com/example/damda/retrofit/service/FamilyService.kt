@@ -1,6 +1,8 @@
 package com.example.damda.retrofit.service
 
+import com.example.damda.retrofit.model.Face
 import com.example.damda.retrofit.model.Family
+import com.example.damda.retrofit.model.Members
 import com.example.damda.retrofit.model.WaitUser
 import retrofit2.Call
 import retrofit2.http.*
@@ -25,4 +27,13 @@ interface FamilyService{
     fun requestFamily(@Header("Authorization") token: String,
                       @Path("id") id: String,
                       @Query ("req") req:String): Call<WaitUser>
+
+    @GET("/api/accounts/family_info/{id}/")
+    fun requestFamilyMember(@Header("Authorization") token: String,
+                      @Path("id") id: String): Call<Members>
+
+    @POST("/api/accounts/family_info/{id}/")
+    fun requestSelectMember(@Header("Authorization") token: String,
+                            @Path("id") id: String,
+                            @Body parameters: HashMap<String, Any>): Call<Face>
 }
