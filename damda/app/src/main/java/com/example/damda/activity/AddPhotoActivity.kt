@@ -145,14 +145,14 @@ class AddPhotoActivity : AppCompatActivity() {
             } catch (ex: Exception) {
                 ex.printStackTrace()
             }
-            synchronized(this) {
-                mSharedData.threadCount = mSharedData.threadCount + 1
-
-                if (mSharedData.threadCount == 5) {
-                    mSearchDialogHandler?.sendEmptyMessage(1)
-                    mSharedData.threadCount = 0
-                }
-            }
+//            synchronized(this) {
+//                mSharedData.threadCount = mSharedData.threadCount + 1
+//
+//                if (mSharedData.threadCount == 5) {
+//                    mSearchDialogHandler?.sendEmptyMessage(1)
+//                    mSharedData.threadCount = 0
+//                }
+//            }
         }
     }
 

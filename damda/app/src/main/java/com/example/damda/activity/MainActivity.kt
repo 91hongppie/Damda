@@ -14,17 +14,12 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
-import com.example.damda.GlobalApplication
-import com.example.damda.R
 import com.example.damda.navigation.AlarmFragment
 import com.example.damda.navigation.AlbumListFragment
 import com.example.damda.navigation.PhotoListFragment
 import com.example.damda.navigation.PhotoListFragment.Companion.photoArray
 import com.example.damda.navigation.UserFragment
-import com.google.android.gms.tasks.OnCompleteListener
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.google.firebase.iid.FirebaseInstanceId
 import com.jakewharton.rxbinding2.view.layoutChanges
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
@@ -33,15 +28,11 @@ import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
-<<<<<<< HEAD
 import androidx.fragment.app.Fragment
 import com.example.damda.GlobalApplication
 import com.example.damda.R
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
-import okhttp3.*
-=======
->>>>>>> c77e416b129a31685514ddfff7e08966f17ce7d1
 import java.io.IOException
 import java.net.URL
 

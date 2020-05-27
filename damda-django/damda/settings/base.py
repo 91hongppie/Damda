@@ -29,7 +29,6 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'channels',
     'accounts',
     'albums',
     'imagekit',
@@ -159,9 +158,6 @@ ACCOUNT_LOGOUT_ON_GET = True
 # ACCOUNT_USERNAME_REQUIRED = False
 
 SITE_ID = 1
-
-# CHANNELS
-ASGI_APPLICATION = 'damda.routing.application'
 
 cred = credentials.Certificate(os.path.join(BASE_DIR, 'credentials.json'))
 default_app = firebase_admin.initialize_app(cred)
