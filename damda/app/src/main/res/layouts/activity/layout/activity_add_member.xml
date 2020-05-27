@@ -11,7 +11,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:elevation="4dp"
-        app:title="가족 목록" />
+        app:title="앨범 목록" />
     
     <RelativeLayout
         android:layout_width="match_parent"
@@ -23,8 +23,9 @@
         <TextView
             android:id="@+id/member_info"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="wrap_content"
             android:gravity="center_vertical"
+            android:padding="4dp"
             android:text="@string/add_info"
             />
         <View
@@ -38,16 +39,4 @@
             android:layout_width="match_parent"
             android:layout_height="match_parent"/>
     </RelativeLayout>
-
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/add_member_button"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:layout_margin="16dp"
-        android:contentDescription="@string/favorite"
-        app:backgroundTint="@color/bluebell"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@id/toolbar"
-        app:srcCompat="@drawable/baseline_add_black_24dp" />
 </RelativeLayout>

@@ -19,3 +19,7 @@ data class UserInfo(
     val state: Int,
     val family: Int
 )
+
+data class Account(
+    val username: String
+)

@@ -3,7 +3,7 @@ from rest_framework.response import Response
 from rest_framework.decorators import api_view
 from .models import Photo, Album, FaceImage
 from rest_framework import status
-from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer, AlbumPutSerializer
+from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer, AlbumPutSerializer, GetFaceSerializer
 import face_recognition as fr
 import skimage.io
 from django.conf import settings
@@ -72,7 +72,7 @@ def album(request, album_pk):
 def face(request, family_pk):
     if request.method == 'GET':
         faces = FaceImage.objects.filter(family=family_pk)
-        serializers = FaceSerializer(faces, many=True)
+        serializers = GetFaceSerializer(faces, many=True)
         return Response({"data": serializers.data})
     elif request.method == 'POST':
         image = fr.load_image_file(request.FILES['image'])

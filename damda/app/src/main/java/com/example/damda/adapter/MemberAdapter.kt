@@ -1,6 +1,7 @@
 package com.example.damda.adapter
 
 import android.app.AlertDialog
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
 import androidx.recyclerview.widget.RecyclerView
@@ -27,7 +28,10 @@ class MemberAdapter(val albumList: Array<Face>) : RecyclerView.Adapter<MemberAda
     override fun onBindViewHolder(holer: MainViewHolder, position: Int) {
         albumList[position].let { item ->
             with(holer) {
+                val username = item.member_account
                 title.text = item.name
+                if (username !== null) {
+                    account.text = username.username}
                 holer.bind(item.member, item.id)
             }
         }
@@ -36,6 +40,7 @@ class MemberAdapter(val albumList: Array<Face>) : RecyclerView.Adapter<MemberAda
     inner class MainViewHolder(parent: ViewGroup) : RecyclerView.ViewHolder(
         LayoutInflater.from(parent.context).inflate(R.layout.list_item_member, parent, false)) {
         val title = itemView.member_name
+        val account = itemView.connect_account
         val content = itemView.list_item_memeber_layout
         val builder = AlertDialog.Builder(parent.context)
         var members: Members? = null
@@ -52,15 +57,18 @@ class MemberAdapter(val albumList: Array<Face>) : RecyclerView.Adapter<MemberAda
                     FamilyService::class.java)
                 var singleItems = mutableListOf("선택 안함")
                 var member_id = mutableListOf(0)
-                var checkedItem = chk
+                var checkedItem = 0
                 familyService.requestFamilyMember("JWT $jwt", family_id).enqueue(object: Callback<Members> {
                     override fun onFailure(call: Call<Members>, t: Throwable) {
                     }
                     override fun onResponse(call: Call<Members>, response: Response<Members>) {
                         members = response.body()
-                        for (i in members!!.data) {
+                        for ((index, i) in members!!.data.withIndex()) {
                             singleItems.add(i.username)
                             member_id.add(i.id)
+                            if(i.username == account.text) {
+                                checkedItem = index + 1
+                            }
                         }
                         val userList = singleItems.toTypedArray()
                         builder.setTitle("연결 멤버를 선택하세요")
@@ -75,6 +83,7 @@ class MemberAdapter(val albumList: Array<Face>) : RecyclerView.Adapter<MemberAda
                                 }
 
                                 override fun onResponse(call: Call<Face>, response: Response<Face>) {
+                                    account.text = singleItems[checkedItem]
                                 }
                             })
                         }

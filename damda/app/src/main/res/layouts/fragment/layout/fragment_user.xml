@@ -89,7 +89,7 @@
         <TextView
             android:layout_width="wrap_content"
             android:layout_height="match_parent"
-            android:text="등록된 가족 얼굴"
+            android:text="앨범 관리"
             android:textSize="15sp"
             android:gravity="center_vertical"
             android:textColor="@color/black"/>

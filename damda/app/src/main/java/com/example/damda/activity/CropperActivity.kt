@@ -47,8 +47,11 @@ class CropperActivity : AppCompatActivity() {
             .build()
         var albumsService: AlbumsService = retrofit.create(
             AlbumsService::class.java)
-        imagePreview = findViewById<ImageView>(R.id.imagePreview) as ImageView
+        imagePreview = findViewById<ImageView>(R.id.preview) as ImageView
         ImagePicker()
+        preview.setOnClickListener {
+            ImagePicker()
+        }
         save_member.setOnClickListener {
             val directory = getApplicationContext().cacheDir
             val arr = uri.split("/")
@@ -70,19 +73,13 @@ class CropperActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<Face>, response: Response<Face>) {
                     Log.v("result", response.body().toString())
                     val builder = AlertDialog.Builder(this@CropperActivity)
-                    builder.setTitle("앨범 생성 완료!").setMessage("앨범으로 이동하시겠습니까?")
+                    builder.setTitle("앨범").setMessage("앨범 생성이 완료되었습니다.")
                     builder.setPositiveButton(
-                        "앨범으로 가기"
+                        "확인"
                     ) { dialog, id ->
                         var intent = Intent(this@CropperActivity, MainActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         startActivity(intent)
-                        finish()
-                    }
-
-                    builder.setNegativeButton(
-                        "가족 목록으로"
-                    ) { dialog, id ->
                         finish()
                     }
 
@@ -97,7 +94,7 @@ class CropperActivity : AppCompatActivity() {
         intent.type = "image/*"
 //        intent.action = Intent.ACTION_GET_CONTENT
         intent.putExtra("crop", "true")
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST)
+        startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_IMAGE_REQUEST)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

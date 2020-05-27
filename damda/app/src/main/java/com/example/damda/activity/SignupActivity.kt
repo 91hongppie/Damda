@@ -96,10 +96,7 @@ class SignupActivity : AppCompatActivity() {
                     }
 
                     override fun onResponse(call: Call<SignUp>, response: Response<SignUp>) {
-                        var dialog = AlertDialog.Builder(this@SignupActivity)
-                        dialog.setTitle("성공")
-                        dialog.setMessage("회원가입성공.")
-                        dialog.show()
+                        toast("회원 가입 되었습니다.")
                         val intent = Intent(this@SignupActivity, LoginActivity::class.java)
                         startActivity(intent)
                         finish()

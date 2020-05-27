@@ -30,12 +30,7 @@ class AddMemberActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
-//        member_list.adapter = MemberAdapter()
         member_list.layoutManager = LinearLayoutManager(this)
-        add_member_button.setOnClickListener {
-            var intent = Intent(this@AddMemberActivity, CropperActivity::class.java)
-                startActivity(intent)
-        }
         var faces: Faces? = null
         var facesList = emptyArray<Face>()
         var retrofit = Retrofit.Builder()
