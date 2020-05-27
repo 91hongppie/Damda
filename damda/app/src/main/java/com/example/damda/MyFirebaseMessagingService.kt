@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.IBinder
 import android.os.Message
 import android.util.Log
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import okhttp3.*
@@ -32,11 +33,11 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     private fun sendRegistrationToServer(token: String) {
         val client = OkHttpClient()
-
-        val builder = Request.Builder()
-        val url = builder.url("http://10.0.2.2:8000/api/accounts/addtoken/")
+        val jwt = GlobalApplication.prefs.token
+        val builder = Request.Builder().addHeader("Authorization", "JWT $jwt")
+        val url = builder.url("http://10.0.2.2:8000/api/accounts/device/")
         val formBody = FormBody.Builder()
-        val body = formBody.add("token", token).build()
+        val body = formBody.add("token", token).add("user_id", "${prefs.user_id}").build()
         val request = url
             .post(body)
             .build()

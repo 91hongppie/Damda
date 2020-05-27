@@ -26,10 +26,10 @@
             android:name=".activity.SplashActivity"
             android:theme="@style/SplashTheme">
 
-<!--             <intent-filter> -->
-<!--             <action android:name="android.intent.action.MAIN" /> -->
-<!--             <category android:name="android.intent.category.LAUNCHER" /> -->
-<!--             </intent-filter> -->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
         </activity>
         <activity android:name=".activity.RequestListActivity" />
         <activity android:name=".activity.CropperActivity" />
@@ -82,8 +82,7 @@
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activity.MainActivity">
-        </activity>
+        <activity android:name=".activity.MainActivity"></activity>
         <activity android:name=".activity.AddPhotoActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

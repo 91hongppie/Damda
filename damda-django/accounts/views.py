@@ -12,12 +12,14 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, DeviceSerializer, WaitUserSerializer
+from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, WaitUserSerializer
 from albums.models import FaceImage
 from albums.serializers import EditFaceSerializer
 import requests, json
 import jwt
 from decouple import config
+import datetime
+from .forms import DeviceForm
 
 # Create your views here.
 @api_view(['GET', 'POST', 'DELETE'])
@@ -151,42 +153,41 @@ class KakaoLogin(SocialLoginView):
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @csrf_exempt
-def addtoken(request):
+def checkDevice(request):
+    User = get_user_model()
+    try:
+        user_id = int(request.POST.get('user_id')) + 1
+    except:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+    user = User.objects.get(id=user_id)
 
-    device_token = request.body.decode('UTF-8')[6:]
+    device_token = request.POST.get('token')
+
     data = {
-        'device_token': device_token
+        'device_token': device_token,
+        'owner': user
     }
+    
+    user.last_login = datetime.datetime.now(datetime.timezone.utc)
+    user.save()
+
     target = Device.objects.filter(device_token=device_token)
     if len(target) > 0:
         return Response('Re-Hi!', status=status.HTTP_208_ALREADY_REPORTED)
     else:
-        serializer = DeviceSerializer(data=data)
-        if serializer.is_valid(raise_exception=True):
-            serializer.save()
+        form = DeviceForm(data)
+        if form.is_valid():
+            device = form.save()
+            device.save()
             return Response('Welcome!', status=status.HTTP_201_CREATED)
         else:
             return Response('what!', status=status.HTTP_401_UNAUTHORIZED)
 
 
-def message(request):
-    url = 'https://fcm.googleapis.com/fcm/send'
-    data = {
-        'to': 'eLILv1MTSP2Dutg1opqIq0:APA91bH0E88fCN8RUMsVTKqcZZJunGoK3jEftVjylN3VZvqQ9vmgxtUx3IDQx7pNSnUBpDIsgdj2mU95HkaFaxCpNiAyOtK23jODr7_yhLThqwOFFgZFPhDwdTydQiHgwfPrutzXqyn0',
-        'notification': {
-            'title': '좀',
-            'body': '보내줘!!'
-        }
-    }
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'key={config("AUTHORIZATION_TOKEN")}'
-    }
-    res = requests.post(url, data=json.dumps(data), headers=headers)
-    result = {
-        'status': res.status_code
-    }
-    
-    return JsonResponse(result)
-
-
+@api_view(['GET'])
+@permission_classes([AllowAny])
+def getTarget(request):
+    User = get_user_model()
+    target = User.objects.filter(last_login__lt=datetime.date(2020, 5, 20))
+    print(target)
+    return Response(status=status.HTTP_200_OK)

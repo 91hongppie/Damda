@@ -19,6 +19,7 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.damda.MySharedPreferences
@@ -160,8 +161,8 @@ class AddPhotoActivity : AppCompatActivity() {
             }
 
             var body = requestBody.build()
-
-            var request = Request.Builder()
+            val jwt = GlobalApplication.prefs.token
+            var request = Request.Builder().addHeader("Authorization", "JWT $jwt")
                 .url(url)
                 .post(body)
                 .build()
@@ -186,10 +187,12 @@ class AddPhotoActivity : AppCompatActivity() {
         }
 
         override fun onResponse(call: okhttp3.Call, response: Response) {
+            val status = response.code()
+            Log.d("server response", "$status")
 
             val result = response.body()?.string()
 
-            Log.d("Server response", "result: $result")
+            Log.d("Sever response", "result: $result")
         }
     }
 }
