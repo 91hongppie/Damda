@@ -3,6 +3,7 @@ package com.example.damda.activity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -43,6 +44,7 @@ class RequestListActivity : AppCompatActivity() {
         val user_id = GlobalApplication.prefs.user_id.toString()
         var requestService: RequestService = retrofit.create(
             RequestService::class.java)
+
         requestService.requestWaitUser("JWT $jwt", user_id).enqueue(object: Callback<WaitUsers> {
             override fun onFailure(call: Call<WaitUsers>, t: Throwable) {
                 Log.v("face", t.toString())

@@ -25,7 +25,11 @@ interface FamilyService{
                       @Query ("req") req:String): Call<WaitUser>
 
     @DELETE("/api/accounts/family/")
-    fun DeleteRequest(@Header("Authorization") token: String): Call<Message>
+    fun deleteRequest(@Header("Authorization") token: String): Call<Message>
+
+    @GET("/api/accounts/family/{id}/")
+    fun detailFamily(@Header("Authorization") token: String,
+                            @Path("id") id: String): Call<DetailFamily>
 
     @GET("/api/accounts/family_info/{id}/")
     fun requestFamilyMember(@Header("Authorization") token: String,
@@ -35,4 +39,5 @@ interface FamilyService{
     fun requestSelectMember(@Header("Authorization") token: String,
                             @Path("id") id: String,
                             @Body parameters: HashMap<String, Any>): Call<Face>
+
 }

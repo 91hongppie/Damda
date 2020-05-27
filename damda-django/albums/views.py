@@ -83,9 +83,9 @@ def face(request, family_pk):
         image = fr.load_image_file(request.FILES['image'])
         faces_locations = fr.face_locations(image)
         if len(faces_locations) == 0:
-            return Response(status=403, data={'error': '얼굴을 찾을 수 없습니다.'})
+            return Response(status=202, data={'message': '얼굴을 찾을 수 없습니다.'})
         elif len(faces_locations) > 1:
-            return Response(status=403, data={'error': '얼굴이 하나 이상입니다.'})
+            return Response(status=202, data={'message': '얼굴이 하나 이상입니다.'})
         top, right, bottom, left = faces_locations[0]
         face = image[top:bottom, left:right]
         title = request.data['album_name'].replace('"',"")

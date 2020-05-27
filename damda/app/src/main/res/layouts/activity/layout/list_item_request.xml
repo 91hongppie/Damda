@@ -8,7 +8,6 @@
         android:id="@+id/search_fullname"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:layout_marginBottom="5dp"
         android:text="제목"
         android:textSize="15dp"
         android:gravity="center_vertical"
@@ -19,10 +18,18 @@
         android:layout_height="wrap_content"
         android:layout_weight="1"
     />
+    <TextView
+        android:id="@+id/response"
+        android:layout_width="wrap_content"
+        android:layout_height="match_parent"
+        android:visibility="gone"
+        android:gravity="center_vertical"/>
     <Button
         android:id="@+id/button1"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
+        android:theme="@style/ButtonStyle"
+        android:textSize="13sp"
         android:text="수락"
         />
 
@@ -30,6 +37,8 @@
         android:id="@+id/button2"
         android:layout_width="80dp"
         android:layout_height="wrap_content"
+        android:theme="@style/DeleteButton"
+        android:textSize="13sp"
         android:text="거절"
         />
 <!--    <View-->

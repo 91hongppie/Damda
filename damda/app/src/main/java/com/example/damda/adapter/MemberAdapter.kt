@@ -4,6 +4,7 @@ import android.app.AlertDialog
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.ViewGroup
+import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.damda.GlobalApplication
 import com.example.damda.R
@@ -44,55 +45,73 @@ class MemberAdapter(val albumList: Array<Face>) : RecyclerView.Adapter<MemberAda
         val content = itemView.list_item_memeber_layout
         val builder = AlertDialog.Builder(parent.context)
         var members: Members? = null
+        val context = parent.context
         val url = parent.context.getString(R.string.damda_server)
         fun bind (chk: Int, face_id: Int) {
             content.setOnClickListener {
-                val jwt = GlobalApplication.prefs.token
-                val family_id = GlobalApplication.prefs.family_id.toString()
-                var retrofit = Retrofit.Builder()
-                    .baseUrl(url)
-                    .addConverterFactory(GsonConverterFactory.create())
-                    .build()
-                var familyService: FamilyService = retrofit.create(
-                    FamilyService::class.java)
-                var singleItems = mutableListOf("선택 안함")
-                var member_id = mutableListOf(0)
-                var checkedItem = 0
-                familyService.requestFamilyMember("JWT $jwt", family_id).enqueue(object: Callback<Members> {
-                    override fun onFailure(call: Call<Members>, t: Throwable) {
-                    }
-                    override fun onResponse(call: Call<Members>, response: Response<Members>) {
-                        members = response.body()
-                        for ((index, i) in members!!.data.withIndex()) {
-                            singleItems.add(i.username)
-                            member_id.add(i.id)
-                            if(i.username == account.text) {
-                                checkedItem = index + 1
+                if (GlobalApplication.prefs.state == "3") {
+                    val jwt = GlobalApplication.prefs.token
+                    val family_id = GlobalApplication.prefs.family_id.toString()
+                    var retrofit = Retrofit.Builder()
+                        .baseUrl(url)
+                        .addConverterFactory(GsonConverterFactory.create())
+                        .build()
+                    var familyService: FamilyService = retrofit.create(
+                        FamilyService::class.java
+                    )
+                    var singleItems = mutableListOf("선택 안함")
+                    var member_id = mutableListOf(0)
+                    var checkedItem = 0
+                    familyService.requestFamilyMember("JWT $jwt", family_id)
+                        .enqueue(object : Callback<Members> {
+                            override fun onFailure(call: Call<Members>, t: Throwable) {
                             }
-                        }
-                        val userList = singleItems.toTypedArray()
-                        builder.setTitle("연결 멤버를 선택하세요")
-                        builder.setNeutralButton(R.string.cancel) { dialog, which ->
-                        }
-                        builder.setPositiveButton(R.string.ok) { dialog, which ->
-                            var params:HashMap<String, Any> = HashMap<String, Any>()
-                            params.put("member_id", member_id[checkedItem])
-                            params.put("face_id", face_id)
-                            familyService.requestSelectMember("JWT $jwt", family_id, params).enqueue(object: Callback<Face> {
-                                override fun onFailure(call: Call<Face>, t: Throwable) {
-                                }
 
-                                override fun onResponse(call: Call<Face>, response: Response<Face>) {
-                                    account.text = singleItems[checkedItem]
+                            override fun onResponse(
+                                call: Call<Members>,
+                                response: Response<Members>
+                            ) {
+                                members = response.body()
+                                for ((index, i) in members!!.data.withIndex()) {
+                                    singleItems.add(i.username)
+                                    member_id.add(i.id)
+                                    if (i.username == account.text) {
+                                        checkedItem = index + 1
+                                    }
                                 }
-                            })
-                        }
-                        builder.setSingleChoiceItems(userList, checkedItem) { dialog, which ->
-                            checkedItem = which
-                        }
-                        builder.show()
-                    }
-                })
+                                val userList = singleItems.toTypedArray()
+                                builder.setTitle("연결 멤버를 선택하세요")
+                                builder.setNeutralButton(R.string.cancel) { dialog, which ->
+                                }
+                                builder.setPositiveButton(R.string.ok) { dialog, which ->
+                                    var params: HashMap<String, Any> = HashMap<String, Any>()
+                                    params.put("member_id", member_id[checkedItem])
+                                    params.put("face_id", face_id)
+                                    familyService.requestSelectMember("JWT $jwt", family_id, params)
+                                        .enqueue(object : Callback<Face> {
+                                            override fun onFailure(call: Call<Face>, t: Throwable) {
+                                            }
+
+                                            override fun onResponse(
+                                                call: Call<Face>,
+                                                response: Response<Face>
+                                            ) {
+                                                account.text = singleItems[checkedItem]
+                                            }
+                                        })
+                                }
+                                builder.setSingleChoiceItems(
+                                    userList,
+                                    checkedItem
+                                ) { dialog, which ->
+                                    checkedItem = which
+                                }
+                                builder.show()
+                            }
+                        })
+                } else {
+                    Toast.makeText(context, "계정 변경은 담장만 가능합니다.", Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }

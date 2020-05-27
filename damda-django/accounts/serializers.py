@@ -14,7 +14,7 @@ class UserCreatSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'state', 'family')
+        fields = ('id', 'username', 'state', 'family', 'first_name', 'birth', 'is_lunar')
 
 class JoinFamilySerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,6 +27,12 @@ class FamilySerializer(serializers.ModelSerializer):
         model = Family
         fields = ('id', 'main_member')
 
+class DetailFamilySerializer(serializers.ModelSerializer):
+    members = UserSerializer(source="user_family", many=True)
+    class Meta:
+        model = Family
+        fields = ('id', 'main_member', 'members')
+
 class DeviceSerializer(serializers.ModelSerializer):
     class Meta:
         model = Device
@@ -36,3 +42,4 @@ class WaitUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = WaitUser
         fields = ('id','wait_user')
+

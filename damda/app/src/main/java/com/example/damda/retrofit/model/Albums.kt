@@ -13,7 +13,8 @@ data class Face(
     val image: String,
     val name: String,
     val member: Int,
-    val member_account: Account
+    val member_account: Account,
+    val message: String
 )
 
 data class Faces(

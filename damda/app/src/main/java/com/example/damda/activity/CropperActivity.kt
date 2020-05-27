@@ -71,7 +71,9 @@ class CropperActivity : AppCompatActivity() {
                     dialog.show()
                 }
                 override fun onResponse(call: Call<Face>, response: Response<Face>) {
-                    Log.v("result", response.body().toString())
+                    if (response.code() == 202) {
+                        Toast.makeText(this@CropperActivity, response.body()?.message, Toast.LENGTH_LONG).show()
+                    } else {
                     val builder = AlertDialog.Builder(this@CropperActivity)
                     builder.setTitle("앨범").setMessage("앨범 생성이 완료되었습니다.")
                     builder.setPositiveButton(
@@ -84,7 +86,7 @@ class CropperActivity : AppCompatActivity() {
                     }
 
                     val alertDialog = builder.create()
-                    alertDialog.show()
+                    alertDialog.show()}
                 }
             })
         }
