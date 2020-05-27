@@ -21,3 +21,8 @@ data class Faces(
 data class DeleteAlbum(
     val data: String
 )
+
+data class PutAlbum(
+    val id: Int,
+    val image: String
+)

@@ -1,9 +1,11 @@
 package com.example.damda.navigation
 
 import android.Manifest
+import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.Context
 import android.content.Context.DOWNLOAD_SERVICE
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -115,17 +117,19 @@ class PhotoListFragment : Fragment() {
                 }
             })
         view.rv_photo?.layoutManager = GridLayoutManager(activity, 3)
-        view.btn_correct.setOnClickListener {
-            photoArray = ArrayList<Photos>()
-            deleteArray = ArrayList<Int>()
-            navStatus = 1
-            photoStatus = 1
-            context.replaceNavbar()
-            view.cl_navbar.visibility = View.VISIBLE
-            view.btn_cancel.visibility = View.VISIBLE
-            view.btn_correct.visibility = View.INVISIBLE
-            view.rv_photo.adapter?.notifyDataSetChanged()
-        }
+            view.btn_correct.setOnClickListener {
+                if (photoList.isNotEmpty()) {
+                    photoArray = ArrayList<Photos>()
+                    deleteArray = ArrayList<Int>()
+                    navStatus = 1
+                    photoStatus = 1
+                    context.replaceNavbar()
+                    view.cl_navbar.visibility = View.VISIBLE
+                    view.btn_cancel.visibility = View.VISIBLE
+                    view.btn_correct.visibility = View.INVISIBLE
+                    view.rv_photo.adapter?.notifyDataSetChanged()
+                }
+            }
         view.btn_download.setOnClickListener {
             photoList = photoArray.toTypedArray()
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
@@ -195,50 +199,61 @@ class PhotoListFragment : Fragment() {
             view.rv_photo.adapter?.notifyDataSetChanged()
 
         }
-        view.btn_photos_delete.setOnClickListener {
-            photoStatus = 0
-            navStatus = 0
-            view.cl_navbar.visibility = View.GONE
-            view.btn_cancel.visibility = View.INVISIBLE
-            view.btn_correct.visibility = View.VISIBLE
-            context.replaceNavbar()
-            val jwt = GlobalApplication.prefs.token
-            var payload: String = ""
-            for (photo in deleteArray) {
-                if (payload.length == 0) {
-                    payload += "$photo"
-                } else {
-                    payload += ", $photo"
-                }
-            }
-            val formBody = FormBody.Builder()
-                .add("photos", payload.toString())
-                .build()
-            val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt").method("POST", formBody)
-                .build()
-            val client = OkHttpClient()
-            client.newCall(request).enqueue(object: Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    println("Failed to execute request!")
-                }
+            val dialog = AlertDialog.Builder(activity)
+            dialog.setMessage("삭제하시겠습니까?")
+                .setPositiveButton("확인",
+                    DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
+                        photoStatus = 0
+                        navStatus = 0
+                        view.cl_navbar.visibility = View.GONE
+                        view.btn_cancel.visibility = View.INVISIBLE
+                        view.btn_correct.visibility = View.VISIBLE
+                        context.replaceNavbar()
+                        val jwt = GlobalApplication.prefs.token
+                        var payload: String = ""
+                        for (photo in deleteArray) {
+                            if (payload.length == 0) {
+                                payload += "$photo"
+                            } else {
+                                payload += ", $photo"
+                            }
+                        }
+                        val formBody = FormBody.Builder()
+                            .add("photos", payload.toString())
+                            .build()
+                        val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt").method("POST", formBody)
+                            .build()
+                        val client = OkHttpClient()
+                        client.newCall(request).enqueue(object: Callback {
+                            override fun onFailure(call: Call, e: IOException) {
+                                println("Failed to execute request!")
+                            }
 
-                override fun onResponse(call: Call, response: Response) {
-                    val body = response.body()?.string()
-                    val gson = GsonBuilder().create()
-                    var list = emptyArray<Photos>()
-                    photoList= gson.fromJson(body, list::class.java)
-                    var bundle = Bundle()
-                    bundle.putParcelable("album", album)
-                    var fragment = PhotoListFragment()
-                    fragment.arguments = bundle
-                    fragmentManager!!.beginTransaction().remove(this@PhotoListFragment).commit()
-                    fragmentManager!!.popBackStack()
-                    fragmentManager!!.popBackStack()
-                    context.replaceFragment(fragment)
-                }
-            })
-            photoArray = ArrayList<Photos>()
-            deleteArray = ArrayList<Int>()
+                            override fun onResponse(call: Call, response: Response) {
+                                val body = response.body()?.string()
+                                val gson = GsonBuilder().create()
+                                var list = emptyArray<Photos>()
+                                photoList= gson.fromJson(body, list::class.java)
+                                var bundle = Bundle()
+                                bundle.putParcelable("album", album)
+                                var fragment = PhotoListFragment()
+                                fragment.arguments = bundle
+                                fragmentManager!!.beginTransaction().remove(this@PhotoListFragment).commit()
+                                fragmentManager!!.popBackStack()
+                                fragmentManager!!.popBackStack()
+                                context.replaceFragment(fragment)
+                            }
+                        })
+                        photoArray = ArrayList<Photos>()
+                        deleteArray = ArrayList<Int>()
+                    })
+                .setNegativeButton("취소",
+                DialogInterface.OnClickListener { dialog, id ->
+                    dialog.dismiss()
+                })
+            dialog.create()
+        view.btn_photos_delete.setOnClickListener {
+            dialog.show()
         }
         prepareTransitions()
         postponeEnterTransition()
