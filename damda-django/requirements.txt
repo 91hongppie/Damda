@@ -13,7 +13,7 @@ cycler==0.10.0
 decorator==4.4.2
 defusedxml==0.6.0
 Django==3.0.6
-django-allauth==0.41.0
+django-allauth==0.42.0
 django-appconf==1.0.4
 django-cors-headers==3.2.1
 django-imagekit==4.0.2
@@ -42,6 +42,7 @@ imageio==2.8.0
 itypes==1.2.0
 Jinja2==2.11.2
 kiwisolver==1.2.0
+korean-lunar-calendar==0.2.1
 MarkupSafe==1.1.1
 matplotlib==3.2.1
 msgpack==1.0.0

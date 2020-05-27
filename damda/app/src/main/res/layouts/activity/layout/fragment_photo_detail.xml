@@ -10,13 +10,12 @@
     <androidx.viewpager.widget.ViewPager
         android:id="@+id/vp_photo"
         android:layout_width="match_parent"
-        android:layout_height="300dp"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/tvGalleryTitle"
         android:layout_alignParentStart="true"
         android:layout_alignParentLeft="true"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true"
-        android:layout_marginTop="92dp"
         android:background="@color/colorWhite"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
@@ -53,8 +52,8 @@
 
         <Button
             android:id="@+id/btn_option"
-            android:layout_width="42dp"
-            android:layout_height="42dp"
+            android:layout_width="25dp"
+            android:layout_height="25dp"
             android:layout_alignParentTop="true"
             android:layout_alignParentEnd="true"
             android:layout_alignParentBottom="false"

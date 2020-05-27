@@ -2,6 +2,7 @@ package com.example.damda.adapter
 
 import android.util.Log
 import android.view.LayoutInflater
+import android.view.View
 import android.view.ViewGroup
 import android.widget.Button
 import androidx.recyclerview.widget.RecyclerView
@@ -60,11 +61,10 @@ class RequestAdapter(val requestList: Array<WaitUser>) : RecyclerView.Adapter<Re
                         Log.e("LOGIN",t.message)
                     }
                     override fun onResponse(call: Call<User>, response: Response<User>) {
-                        if (response.code() == 400) {
-                            Log.v("400", response.body().toString())
-                        } else {
-                            Log.v("good",response.body().toString())
-                        }
+                        button1.visibility = View.GONE
+                        button2.visibility = View.GONE
+                        itemView.response.visibility = View.VISIBLE
+                        itemView.response.text = "요청이 수락되었습니다."
                     }
                 })
             }
@@ -74,11 +74,10 @@ class RequestAdapter(val requestList: Array<WaitUser>) : RecyclerView.Adapter<Re
                         Log.e("LOGIN",t.message)
                     }
                     override fun onResponse(call: Call<Message>, response: Response<Message>) {
-                        if (response.code() == 400) {
-                            Log.v("400", response.body().toString())
-                        } else {
-                            Log.v("good",response.body().toString())
-                        }
+                        button1.visibility = View.GONE
+                        button2.visibility = View.GONE
+                        itemView.response.visibility = View.VISIBLE
+                        itemView.response.text = "요청이 거절되었습니다."
                     }
                 })
             }

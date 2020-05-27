@@ -7,7 +7,7 @@ from django.contrib.auth import get_user_model
 from .models import Photo, Album, FaceImage
 from accounts.models import Family
 from rest_framework import status
-from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer, AlbumPutSerializer
+from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer, AlbumPutSerializer, GetFaceSerializer
 import face_recognition as fr
 import skimage.io
 from django.conf import settings
@@ -77,15 +77,15 @@ def album(request, album_pk):
 def face(request, family_pk):
     if request.method == 'GET':
         faces = FaceImage.objects.filter(family=family_pk)
-        serializers = FaceSerializer(faces, many=True)
+        serializers = GetFaceSerializer(faces, many=True)
         return Response({"data": serializers.data})
     elif request.method == 'POST':
         image = fr.load_image_file(request.FILES['image'])
         faces_locations = fr.face_locations(image)
         if len(faces_locations) == 0:
-            return Response(status=403, data={'error': '얼굴을 찾을 수 없습니다.'})
+            return Response(status=202, data={'message': '얼굴을 찾을 수 없습니다.'})
         elif len(faces_locations) > 1:
-            return Response(status=403, data={'error': '얼굴이 하나 이상입니다.'})
+            return Response(status=202, data={'message': '얼굴이 하나 이상입니다.'})
         top, right, bottom, left = faces_locations[0]
         face = image[top:bottom, left:right]
         title = request.data['album_name'].replace('"',"")

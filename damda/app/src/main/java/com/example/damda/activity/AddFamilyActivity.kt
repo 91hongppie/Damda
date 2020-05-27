@@ -44,7 +44,7 @@ class AddFamilyActivity : AppCompatActivity() {
             make_family.isEnabled = false
         }
         delete_btn.setOnClickListener {
-            familyService.DeleteRequest(token).enqueue(object: Callback<Message> {
+            familyService.deleteRequest(token).enqueue(object: Callback<Message> {
                 override fun onFailure(call: Call<Message>, t: Throwable) {
                     Log.e("LOGIN",t.message)
                     var dialog = AlertDialog.Builder(this@AddFamilyActivity)
