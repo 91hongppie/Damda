@@ -46,7 +46,7 @@
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
         android:contentDescription="@string/favorite"
-        app:backgroundTint="#009688"
+        app:backgroundTint="@color/bluebell"
         android:layout_alignParentBottom="true"
         android:layout_alignRight="@id/toolbar"
         app:srcCompat="@drawable/baseline_add_black_24dp" />
