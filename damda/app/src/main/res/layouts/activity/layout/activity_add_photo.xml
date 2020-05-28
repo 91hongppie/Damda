@@ -39,10 +39,10 @@
             android:layout_height="wrap_content"
             android:layout_margin="8dp"
             android:adjustViewBounds="true"
+            android:autofillHints="사진"
             android:contentDescription="사진을 등록해주세요"
             android:minHeight="400dp"
-            android:scaleType="fitCenter"
-            android:autofillHints="사진"/>
+            android:scaleType="fitCenter" />
 
     </ScrollView>
 
@@ -50,15 +50,15 @@
         android:id="@+id/image_division"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal"
-        android:layout_below="@+id/image_scroll"/>
+        android:layout_below="@+id/image_scroll"
+        android:orientation="horizontal" />
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@+id/image_division"
-        android:orientation="vertical"
-        android:gravity="center">
+        android:gravity="center"
+        android:orientation="vertical">
 
         <Button
             android:id="@+id/select_photo_button"
@@ -67,10 +67,10 @@
             android:layout_marginLeft="15dp"
             android:layout_marginTop="20dp"
             android:layout_marginRight="15dp"
+            android:background="@color/enableButton"
             android:text="@string/select_image"
-            android:theme="@style/ButtonStyle"
             android:textColor="@color/colorWhite"
-            android:background="@color/enableButton"/>
+            android:theme="@style/ButtonStyle" />
 
         <Button
             android:id="@+id/upload_photo_button"
@@ -80,9 +80,9 @@
             android:layout_marginTop="20dp"
             android:layout_marginRight="15dp"
             android:layout_marginBottom="35dp"
+            android:background="@color/disableButton"
             android:text="@string/upload_image"
-            android:textColor="@color/colorWhite"
-            android:background="@color/disableButton"/>
+            android:textColor="@color/colorWhite" />
     </LinearLayout>
 
 
