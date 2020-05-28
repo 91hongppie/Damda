@@ -11,8 +11,11 @@ from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer, Album
 import face_recognition as fr
 import skimage.io
 from django.conf import settings
+from json import JSONEncoder
 import os
 import shutil
+import json
+import numpy as np
 # Create your views here.
 
 @api_view(['GET', 'POST'])
@@ -26,24 +29,14 @@ def photo(request, family_pk, album_pk):
         photo_ids = list(map(int, photos.split(', ')))
         photos = Photo.objects.filter(id__in=photo_ids)
         album_id = photos[0].album
+        for photo in photos:
+            file_path = settings.MEDIA_ROOT + '/' + str(photo.pic_name)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
         photos.delete()
         photo_list = Photo.objects.filter(album=album_id)
         serializers = PhotoSerializer(photo_list, many=True)
         return Response(serializers.data)
-
-@api_view(['POST', ])
-def photo_delete(request):
-    photos = request.data['photos']
-    photo_id = int(photos)
-    # print(photo_id)
-    # print(type(photos))
-    # photo_ids = list(map(int, photos))
-    photos = Photo.objects.filter(id=photo_id)
-    album_id = photos[0].album
-    photo_list = Photo.objects.filter(album=album_id)
-    photos.delete()
-    serializers = PhotoSerializer(photo_list, many=True)
-    return Response(serializers.data)
 
 
 @api_view(['GET', 'POST', ])
@@ -66,6 +59,12 @@ def album(request, album_pk):
     elif request.method == 'DELETE':
         album = get_object_or_404(Album, pk=album_pk)
         file_path = settings.MEDIA_ROOT + '/albums/' + str(album.family.id) + '/' + str(album_pk)
+        with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json') as family:
+                data = json.load(family)
+                if data.get(f'{album.family.id}_{album.title}'):
+                    data.pop(f'{album.family.id}_{album.title}', None)
+        with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'w', encoding='utf-8') as family:
+            json.dump(data, family, cls=NumpyArrayEncoder, ensure_ascii=-False, indent=2)
         if os.path.isdir(file_path):
             shutil.rmtree(file_path)
         album.delete()
@@ -89,6 +88,21 @@ def face(request, family_pk):
         top, right, bottom, left = faces_locations[0]
         face = image[top:bottom, left:right]
         title = request.data['album_name'].replace('"',"")
+        try:
+            face_encoding = fr.face_encodings(face)
+        except:
+            return Response(status=202, data={'message': '얼굴을 찾을 수 없습니다.'})
+        ROOT_DIR = os.path.abspath("./")
+        os.makedirs(os.path.join(ROOT_DIR, 'uploads/faces/{}'.format(family_pk)), exist_ok=True)
+        try:
+            with open(f'uploads/faces/{family_pk}/family_{family_pk}.json') as family:
+                data = json.load(family)
+            data[f'{family_pk}_{title}'] = [face_encoding[0].tolist()]
+        except:
+            data = {}
+            data[f'{family_pk}_{title}'] = [face_encoding[0].tolist()]
+        with open(f'uploads/faces/{family_pk}/family_{family_pk}.json', 'w', encoding='utf-8') as family:
+            json.dump(data, family, cls=NumpyArrayEncoder, ensure_ascii=-False, indent=2)
         albumSerializer = AlbumSerializer(data={'family':family_pk, 'title':title, 'image': "empty"})
         if albumSerializer.is_valid():
             albumSerializer.save()
@@ -129,6 +143,10 @@ def all_photo(request, family_pk):
         photos = request.data['photos']
         photo_ids = list(map(int, photos.split(', ')))
         photos = Photo.objects.filter(id__in=photo_ids)
+        for photo in photos:
+            file_path = settings.MEDIA_ROOT + '/' + str(photo.pic_name)
+            if os.path.isfile(file_path):
+                os.remove(file_path)
         photos.delete()
         albums = Album.objects.filter(family=family_pk)
         for album in albums:
@@ -177,7 +195,32 @@ def addphoto(request):
             print('이미 있는 사진입니다')
             continue
         skimage.io.imsave(image_path, image)
-        image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)
+        image = fr.load_image_file(item)
+        faces = fr.face_locations(image)
+        if len(faces) != 0:
+            for face in faces:
+                top, right, bottom, left = face
+                image_face = image[top:bottom, left:right]
+                unknown_face = fr.face_encodings(image_face)
+                with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'r', encoding='utf-8') as family:
+                    data = json.load(family)
+                for album_name, data in data.items():
+                    for dt in data:
+                        dt = [np.asarray(dt)]
+                        distance = fr.face_distance(dt, unknown_face[0])
+                        if distance < 0.4:
+                            info = album_name.split('_')
+                            user_album = Album.objects.filter(family=info[0], title=info[1])[0]
+                            image = Photo.objects.create(pic_name=item, title=item.name, album=user_album)
+        else:
+            image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)    
         
 
     return Response(status=status.HTTP_200_OK)
+
+
+class NumpyArrayEncoder(JSONEncoder):
+    def default(self, obj):
+        if isinstance(obj, np.ndarray):
+            return obj.tolist()
+        return JSONEncoder.default(self, obj)
