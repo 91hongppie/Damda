@@ -1,3 +1,4 @@
+from __future__ import absolute_import, unicode_literals
 import os
 import signal
 
@@ -12,30 +13,44 @@ from django.contrib.auth import get_user_model
 import datetime
 
 from django import db
+from celery import shared_task
 
 
-class MultiProcessTest:
-    PID = os.getpid()
+@shared_task
+def add(self):
+    return x + y
 
-    User = get_user_model()
+@shared_task
+def mul(x, y):
+    return x * y
 
-    def multi_process_test(self, i):
-        self.PID = os.getpid()
-        db.connections.close_all()
-        result = User.objects.filter(last_time__gt=datetime.date(2020, 5, 20))
+@shared_task
+def xsum(numbers):
+    return sum(numbers)
 
-        print(result)
+
+# class MultiProcessTest:
+#     PID = os.getpid()
+
+#     User = get_user_model()
+
+#     def multi_process_test(self, i):
+#         self.PID = os.getpid()
+#         db.connections.close_all()
+#         result = User.objects.filter(last_time__gt=datetime.date(2020, 5, 20))
+
+#         print(result)
 
     
-    def run(self):
-        _list = ['1', '11', '111', '1111', '11111', '111111']
-        with ProcessPoolExecutor(max_workers=3) as pool:
-            pool.map(self.multi_process_test, _list, chunksize=200)
+#     def run(self):
+#         _list = ['1', '11', '111', '1111', '11111', '111111']
+#         with ProcessPoolExecutor(max_workers=3) as pool:
+#             pool.map(self.multi_process_test, _list, chunksize=200)
 
 
-    def __del__(self):
-        if os.getpid() == 1:
-            os.killpg(os.getpgid(self.PID), signal.SIGKILL)
+#     def __del__(self):
+#         if os.getpid() == 1:
+#             os.killpg(os.getpgid(self.PID), signal.SIGKILL)
 
 
 # end = False

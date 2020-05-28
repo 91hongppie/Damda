@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, WaitUserSerializer, DetailFamilySerializer
+from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, WaitUserSerializer
 from albums.models import FaceImage
 from albums.serializers import EditFaceSerializer, AlbumSerializer
 import requests, json
@@ -86,10 +86,8 @@ def MakeFamily(request):
         if familySerializer.is_valid(raise_exception=True):
             familySerializer.save()
             userSerializer = UserSerializer(data={'username': user.username, 'state': 3, 'family': familySerializer.data['id']}, instance=user)
-            albumSerializer = AlbumSerializer(data={'family':familySerializer.data['id'], 'title':'기본 앨범', 'image': "empty"})
-            if userSerializer.is_valid(raise_exception=True) and albumSerializer.is_valid(raise_exception=True):
+            if userSerializer.is_valid(raise_exception=True):
                 userSerializer.save()
-                albumSerializer.save()
                 return Response(familySerializer.data)
     elif request.method == 'DELETE':
         wait_user = get_object_or_404(WaitUser, wait_user=user)
@@ -100,28 +98,7 @@ def MakeFamily(request):
             return Response({'message': '요청이 취소되었습니다.'})
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
-@permission_classes([IsAuthenticated])
-@authentication_classes((JSONWebTokenAuthentication,))
-def DetailFamily(request, family_pk):
-    family = get_object_or_404(Family, pk=family_pk)
-    serializer = DetailFamilySerializer(family)
-    members = []
-    calendar = KoreanLunarCalendar()
-    year = datetime.date.today().year
-    for member in serializer.data['members']:
-        birth = member['birth']
-        if birth and member['is_lunar']:
-            Y, month, day = birth.split('-')
-            calendar.setLunarDate(year, int(month), int(day), False)
-            birth = calendar.SolarIsoFormat()
-        members.append({'username': member['username'], 'first_name': member['first_name'], 'birth': birth})
-    return Response({'main_member': get_object_or_404(get_user_model(), pk=serializer.data['main_member']).username,
-                    'members': members})
-
 @api_view(['GET', 'POST'])
-@permission_classes([IsAuthenticated])
-@authentication_classes((JSONWebTokenAuthentication,))
 def GetFamily(request, family_pk):
     if request.method == 'GET':
         users = User.objects.filter(family=family_pk)
@@ -207,12 +184,3 @@ def checkDevice(request):
             return Response('Welcome!', status=status.HTTP_201_CREATED)
         else:
             return Response('what!', status=status.HTTP_401_UNAUTHORIZED)
-
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def getTarget(request):
-    User = get_user_model()
-    target = User.objects.filter(last_login__lt=datetime.date(2020, 5, 20))
-    print(target)
-    return Response(status=status.HTTP_200_OK)
