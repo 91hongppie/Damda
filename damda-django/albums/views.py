@@ -144,24 +144,40 @@ def all_photo(request, family_pk):
 def addphoto(request):
     User = get_user_model()
     image_list = request.FILES.getlist('uploadImages')
+
+    # 유저가 있는지 확인 
     try:
         user_id = int(request.POST.get('user_id'))
         user = get_object_or_404(User, id=user_id)
     except:
         return Response(data='Who are you?', status=status.HTTP_404_NOT_FOUND)
     
-    try:
+    # 가족 앨범 확인
+    if len(Album.objects.filter(family_id=user.family_id)):
         albums = Album.objects.filter(family_id=user.family_id)
         album = albums[0]
-    except:
-        print('Family is NOT FOUND')
-        return Response(data="Family is NOT FOUND", status=status.HTTP_404_NOT_FOUND)
+    else:
+        # 앨범이 없으면 기본 앨범 만들기 시도 
+        try:
+            album = Album.objects.create(family_id=user.family_id, title='기본 앨범', image="")
+        # 못만들면 404 
+        except:
+            print('Family is NOT FOUND')
+            return Response(data="Family is NOT FOUND", status=status.HTTP_404_NOT_FOUND) 
 
+    ROOT_DIR = os.path.abspath("./")
+    os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/{}/{}'.format(user.family_id, album.id)), exist_ok=True)
+    
     for item in image_list:
-        if len(Photo.objects.filter(title=item.name, album=album)):
+        image = fr.load_image_file(item)
+
+        image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
+        pic_name = image_path[8:]
+        if len(Photo.objects.filter(pic_name=image_path, album=album)):
             print('이미 있는 사진입니다')
             continue
-        image = Photo.objects.create(pic_name=item, title=item.name, album=album)
+        skimage.io.imsave(image_path, image)
+        image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)
         
 
     return Response(status=status.HTTP_200_OK)
