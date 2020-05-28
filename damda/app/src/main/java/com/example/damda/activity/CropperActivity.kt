@@ -4,7 +4,6 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.provider.FontsContract.Columns.RESULT_CODE
 import android.util.Log
 import android.view.MenuItem
 import android.widget.ImageView
@@ -34,12 +33,6 @@ class CropperActivity : AppCompatActivity() {
     var uri = ""
     val token = "JWT " + GlobalApplication.prefs.token.toString()
     val family_id = GlobalApplication.prefs.family_id.toString()
-    var retrofit = Retrofit.Builder()
-        .baseUrl("http://10.0.2.2:8000")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    var albumsService: AlbumsService = retrofit.create(
-        AlbumsService::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -48,8 +41,17 @@ class CropperActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
-        imagePreview = findViewById<ImageView>(R.id.imagePreview) as ImageView
+        var retrofit = Retrofit.Builder()
+            .baseUrl(getString(R.string.damda_server))
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        var albumsService: AlbumsService = retrofit.create(
+            AlbumsService::class.java)
+        imagePreview = findViewById<ImageView>(R.id.preview) as ImageView
         ImagePicker()
+        preview.setOnClickListener {
+            ImagePicker()
+        }
         save_member.setOnClickListener {
             val directory = getApplicationContext().cacheDir
             val arr = uri.split("/")
@@ -69,11 +71,13 @@ class CropperActivity : AppCompatActivity() {
                     dialog.show()
                 }
                 override fun onResponse(call: Call<Face>, response: Response<Face>) {
-                    Log.v("result", response.body().toString())
+                    if (response.code() == 202) {
+                        Toast.makeText(this@CropperActivity, response.body()?.message, Toast.LENGTH_LONG).show()
+                    } else {
                     val builder = AlertDialog.Builder(this@CropperActivity)
-                    builder.setTitle("앨범 생성 완료!").setMessage("앨범으로 이동하시겠습니까?")
+                    builder.setTitle("앨범").setMessage("앨범 생성이 완료되었습니다.")
                     builder.setPositiveButton(
-                        "앨범으로 가기"
+                        "확인"
                     ) { dialog, id ->
                         var intent = Intent(this@CropperActivity, MainActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
@@ -81,14 +85,8 @@ class CropperActivity : AppCompatActivity() {
                         finish()
                     }
 
-                    builder.setNegativeButton(
-                        "가족 목록으로"
-                    ) { dialog, id ->
-                        finish()
-                    }
-
                     val alertDialog = builder.create()
-                    alertDialog.show()
+                    alertDialog.show()}
                 }
             })
         }
@@ -98,7 +96,7 @@ class CropperActivity : AppCompatActivity() {
         intent.type = "image/*"
 //        intent.action = Intent.ACTION_GET_CONTENT
         intent.putExtra("crop", "true")
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST)
+        startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_IMAGE_REQUEST)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

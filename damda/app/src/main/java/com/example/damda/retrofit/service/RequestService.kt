@@ -11,8 +11,12 @@ interface RequestService {
     fun requestWaitUser(@Header("Authorization") jwt:String,
                       @Path("id") id:String) : Call<WaitUsers>
 
-    @POST("/api/accounts/family/{id}/")
+    @POST("/api/accounts/user/{id}/")
     fun requestAccept(@Header("Authorization") token: String,
                       @Path("id") id: String,
                       @Body parameters: HashMap<String, Any>): Call<User>
+
+    @DELETE("/api/accounts/user/{id}/")
+    fun requestDelete(@Header("Authorization") jwt:String,
+                      @Path("id") id: Int) : Call<Message>
 }

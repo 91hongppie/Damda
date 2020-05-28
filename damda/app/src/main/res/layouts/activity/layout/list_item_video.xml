@@ -1,0 +1,24 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:id="@+id/chat_message_item_layout"
+    android:layout_width="match_parent"
+    android:layout_height="400dp"
+    android:padding="10dp">
+    <VideoView
+        android:id="@+id/video"
+        android:layout_width="wrap_content"
+        android:layout_height="300dp">
+
+    </VideoView>
+    <TextView
+        android:id="@+id/search_fullname"
+        android:layout_width="wrap_content"
+        android:layout_height="30dp"
+        android:layout_below="@id/video"
+        android:text="제목"
+        android:textSize="20dp"
+        android:textColor="@color/black"
+        />
+
+
+
+</RelativeLayout>

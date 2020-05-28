@@ -1,25 +1,19 @@
 package com.example.damda.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.widget.ListView
+import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.damda.GlobalApplication
 import com.example.damda.R
-import com.example.damda.adapter.MemberAdapter
 import com.example.damda.adapter.RequestAdapter
-import com.example.damda.retrofit.model.Face
-import com.example.damda.retrofit.model.Faces
 import com.example.damda.retrofit.model.WaitUser
 import com.example.damda.retrofit.model.WaitUsers
-import com.example.damda.retrofit.service.AlbumsService
 import com.example.damda.retrofit.service.RequestService
-import kotlinx.android.synthetic.main.activity_add_member.*
 import kotlinx.android.synthetic.main.activity_request_list.*
 import retrofit2.Call
 import retrofit2.Callback
@@ -43,14 +37,14 @@ class RequestListActivity : AppCompatActivity() {
         var waitUsers: WaitUsers? = null
         var waitList = emptyArray<WaitUser>()
         var retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8000")
+            .baseUrl(getString(R.string.damda_server))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-
         val jwt = GlobalApplication.prefs.token
         val user_id = GlobalApplication.prefs.user_id.toString()
         var requestService: RequestService = retrofit.create(
             RequestService::class.java)
+
         requestService.requestWaitUser("JWT $jwt", user_id).enqueue(object: Callback<WaitUsers> {
             override fun onFailure(call: Call<WaitUsers>, t: Throwable) {
                 Log.v("face", t.toString())

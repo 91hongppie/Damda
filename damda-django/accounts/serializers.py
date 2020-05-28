@@ -1,11 +1,11 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import WaitUser, Family, Device
+from .models import WaitUser, Family
 
 class UserCreatSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ['id', 'username', 'email', 'password']
+        fields = ['id', 'username', 'email', 'password', 'first_name', 'birth', 'is_lunar']
 
     def create(self, validated_data):
         user = get_user_model().objects.create_user(**self.validated_data)
@@ -14,7 +14,7 @@ class UserCreatSerializer(serializers.ModelSerializer):
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'state', 'family')
+        fields = ('id', 'username', 'state', 'family', 'first_name', 'birth', 'is_lunar')
 
 class JoinFamilySerializer(serializers.ModelSerializer):
     class Meta:
@@ -27,12 +27,14 @@ class FamilySerializer(serializers.ModelSerializer):
         model = Family
         fields = ('id', 'main_member')
 
-class DeviceSerializer(serializers.ModelSerializer):
+class DetailFamilySerializer(serializers.ModelSerializer):
+    members = UserSerializer(source="user_family", many=True)
     class Meta:
-        model = Device
-        fields = ('id', 'device_token')
+        model = Family
+        fields = ('id', 'main_member', 'members')
 
 class WaitUserSerializer(serializers.ModelSerializer):
     class Meta:
         model = WaitUser
         fields = ('id','wait_user')
+

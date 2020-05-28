@@ -1,8 +1,10 @@
 package com.example.damda.navigation
 
 import android.Manifest
+import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.Context
+import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.graphics.Bitmap
@@ -11,13 +13,11 @@ import android.os.Build
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
-import android.widget.Button
-import android.widget.EditText
-import android.widget.TextView
+import android.transition.TransitionInflater
+import android.view.*
+import android.widget.*
 import androidx.annotation.DrawableRes
+import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.PagerAdapter
@@ -28,15 +28,21 @@ import com.example.damda.R
 import com.example.damda.URLtoBitmapTask
 import com.example.damda.activity.MainActivity
 import com.example.damda.helper.ZoomOutPageTransformer
+import com.example.damda.navigation.PhotoListFragment.Companion.currentPosition
 import com.example.damda.navigation.model.Album
 import com.example.damda.navigation.model.Photos
+import com.example.damda.retrofit.model.PutAlbum
+import com.example.damda.retrofit.service.AlbumsService
 import com.google.gson.GsonBuilder
+import io.reactivex.Single
 import kotlinx.android.synthetic.main.fragment_photo_detail.*
 import kotlinx.android.synthetic.main.fragment_photo_detail.view.*
-import kotlinx.android.synthetic.main.fragment_photo_detail.view.btn_share
+import kotlinx.android.synthetic.main.fragment_photo_detail.view.btn_option
+import kotlinx.android.synthetic.main.fragment_photo_list.*
 import kotlinx.android.synthetic.main.image_fullscreen.view.*
 import okhttp3.*
-import org.jetbrains.anko.find
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.net.URL
@@ -48,22 +54,17 @@ class PhotoDetailFragment: Fragment() {
     private var selectedPosition: Int = 0
     private var album: Album? = null
     lateinit var tvGalleryTitle: TextView
-    lateinit var et_update: EditText
-    lateinit var btn_share: Button
-    lateinit var btn_delete: Button
-    lateinit var btn_save: Button
+    lateinit var btn_option: Button
     lateinit var viewPager: ViewPager
     lateinit var galleryPagerAdapter: GalleryPagerAdapter
+    lateinit var dialog: AlertDialog.Builder
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+        val context = activity as MainActivity
         val view = inflater.inflate(R.layout.fragment_photo_detail, container, false)
-
-        viewPager = view!!.findViewById(R.id.vp_photo)
-        tvGalleryTitle = view.findViewById(R.id.tvGalleryTitle)
-        et_update = view.findViewById(R.id.et_update)
-        btn_share = view.findViewById(R.id.btn_share)
-        btn_delete = view.findViewById(R.id.btn_delete)
-        btn_save = view.findViewById(R.id.btn_save)
+        viewPager = view!!.vp_photo
+        tvGalleryTitle = view.tvGalleryTitle
+        btn_option = view.btn_option
         album = arguments?.getParcelable<Album>("album")
 
 
@@ -80,79 +81,124 @@ class PhotoDetailFragment: Fragment() {
         viewPager.adapter = galleryPagerAdapter
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener)
         viewPager.setPageTransformer(true, ZoomOutPageTransformer())
-
         setCurrentItem(selectedPosition)
+        prepareSharedElementTransition()
+        if (savedInstanceState == null) {
+            postponeEnterTransition()
+        }
+
+        dialog = AlertDialog.Builder(activity)
+        dialog.setMessage("삭제하시겠습니까?")
+            .setPositiveButton("확인",
+                DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
+                    val album = arguments?.getParcelable<Album>("album")
+                    val family_id = GlobalApplication.prefs.family_id?.toInt()
+                    var url = URL(getString(R.string.damda_server)+"/api/albums/photo/${family_id}/")
+                    if (album?.id != null) {
+                        url = URL(getString(R.string.damda_server)+"/api/albums/photo/${family_id}/${album?.id}/")
+                    }
+                    val jwt = GlobalApplication.prefs.token
+                    val payload = photoList[selectedPosition].id
+                    val formBody = FormBody.Builder()
+                        .add("photos", payload.toString())
+                        .build()
+                    val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt").method("POST", formBody)
+                        .build()
+                    val client = OkHttpClient()
+                    client.newCall(request).enqueue(object: Callback {
+                        override fun onFailure(call: Call, e: IOException) {
+                            println("Failed to execute request!")
+                        }
+
+                        override fun onResponse(call: Call, response: Response) {
+                            val body = response.body()?.string()
+                            val gson = GsonBuilder().create()
+                            var list = emptyArray<Photos>()
+                            photoList= gson.fromJson(body, list::class.java)
+                            var bundle = Bundle()
+                            bundle.putParcelable("album", album)
+                            var fragment = PhotoListFragment()
+                            fragment.arguments = bundle
+                            fragmentManager!!.beginTransaction().remove(this@PhotoDetailFragment).commit()
+                            fragmentManager!!.popBackStack()
+                            fragmentManager!!.popBackStack()
+                            context.replaceFragment(fragment)
+                        }
+                    })
+                })
+            .setNegativeButton("취소",
+                DialogInterface.OnClickListener { dialog, id ->
+                    dialog.dismiss()
+                })
 
         return view
     }
-
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
         val context = activity as MainActivity
+        btn_option.setOnClickListener {
+            val wrapper = ContextThemeWrapper(this.context, R.style.BasePopupMenu)
+            val pop = PopupMenu(wrapper, it)
+            pop.inflate(R.menu.menu_photo)
+            pop.setOnMenuItemClickListener { item ->
+                when(item.itemId){
+                    R.id.save -> {
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
+                            if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
+                                PackageManager.PERMISSION_DENIED){
+                                requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
+                            }
+                            else{
+                                startDownloading()
+                            }
 
-        btn_share.setOnClickListener {
-            val share_intent = Intent().apply {
-                var url = "http://10.0.2.2:8000${photoList[selectedPosition].pic_name}"
-                var image_task: URLtoBitmapTask = URLtoBitmapTask()
-                image_task = URLtoBitmapTask().apply {
-                    imgurl = URL(url)
-                }
-                var bitmap: Bitmap = image_task.execute().get()
-                var uri: Uri? = getImageUri(context, bitmap, photoList[selectedPosition].title)
-                action = Intent.ACTION_SEND
-                putExtra(Intent.EXTRA_STREAM, uri)
-                type = "image/*"
-            }
-            val chooser = Intent.createChooser(share_intent, "친구에게 공유하기")
+                        }
+                        else {
+                            startDownloading()
+                        }
+                    }
+                    R.id.image_change -> {
+                        var retrofit = Retrofit.Builder()
+                            .baseUrl(getString(R.string.damda_server))
+                            .addConverterFactory(GsonConverterFactory.create())
+                            .build()
+                        val jwt = GlobalApplication.prefs.token
+                        val photo = photoList[selectedPosition].pic_name!!
+                        var albumsService: AlbumsService = retrofit.create(AlbumsService::class.java)
+                        albumsService.changeAlbumImage("JWT $jwt", album!!.id, album!!.id, photo).enqueue(object: retrofit2.Callback<PutAlbum>{
+                            override fun onFailure(call: retrofit2.Call<PutAlbum>, t: Throwable) {
+                                Toast.makeText(context, "대표 이미지가 변경에 실패했습니다.", Toast.LENGTH_SHORT).show()
+                            }
+
+                            override fun onResponse(call: retrofit2.Call<PutAlbum>, response: retrofit2.Response<PutAlbum>) {
+                                Toast.makeText(context, "대표 이미지가 변경되었습니다.", Toast.LENGTH_SHORT).show()
+                            }
+                        })
+                    }
+                    R.id.share -> {
+                        val share_intent = Intent().apply {
+                            var url = getString(R.string.damda_server)+"${photoList[selectedPosition].pic_name}"
+                            var image_task: URLtoBitmapTask = URLtoBitmapTask()
+                            image_task = URLtoBitmapTask().apply {
+                                imgurl = URL(url)
+                            }
+                            var bitmap: Bitmap = image_task.execute().get()
+                            var uri: Uri? = getImageUri(context, bitmap, photoList[selectedPosition].title)
+                            action = Intent.ACTION_SEND
+                            putExtra(Intent.EXTRA_STREAM, uri)
+                            type = "image/*"
+                        }
+                        val chooser = Intent.createChooser(share_intent, "친구에게 공유하기")
 //            intent.putExtra(Intent.EXTRA_STREAM, "http://10.0.2.2:8000${photoList[selectedPosition].pic_name}")
-            startActivity(chooser)
-        }
-        btn_delete.setOnClickListener {
-            val url = URL("http://10.0.2.2:8000/api/albums/photo/")
-            val jwt = GlobalApplication.prefs.token
-            val payload = photoList[selectedPosition].id
-            val formBody = FormBody.Builder()
-                .add("photos", payload.toString())
-                .build()
-            val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt").method("POST", formBody)
-                .build()
-            val client = OkHttpClient()
-            val album = arguments?.getParcelable<Album>("album")
-            client.newCall(request).enqueue(object: Callback {
-                override fun onFailure(call: Call, e: IOException) {
-                    println("Failed to execute request!")
+                        startActivity(chooser)
+                    }
+                    R.id.delete-> {
+                        dialog.show()
+                    }
                 }
-
-                override fun onResponse(call: Call, response: Response) {
-                    val body = response.body()?.string()
-                    val gson = GsonBuilder().create()
-                    var list = emptyArray<Photos>()
-                    photoList= gson.fromJson(body, list::class.java)
-                    var bundle = Bundle()
-                    bundle.putParcelable("album", album)
-                    var fragment = PhotoListFragment()
-                    fragment.arguments = bundle
-                    fragmentManager!!.beginTransaction().remove(this@PhotoDetailFragment).commit()
-                    fragmentManager!!.popBackStack()
-                    fragmentManager!!.popBackStack()
-                    context.replaceFragment(fragment)
-                }
-            })
-        }
-        btn_save.setOnClickListener {
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                    PackageManager.PERMISSION_DENIED){
-                    requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
-                }
-                else{
-                    startDownloading()
-                }
-
+                true
             }
-            else{
-                startDownloading()
-            }
+            pop.show()
         }
     }
 
@@ -160,9 +206,14 @@ class PhotoDetailFragment: Fragment() {
         viewPager.setCurrentItem(position, false)
     }
 
+//    override fun onCreateOptionsMenu(menu: Menu, inflater: MenuInflater) {
+//        super.onCreateOptionsMenu(menu, inflater)
+//        inflater.inflate(R.menu.menu_photo, menu)
+//    }
+
     private  fun startDownloading() {
         val photo = photoList[selectedPosition]
-        val imgurl = "http://10.0.2.2:8000${photo.pic_name}"
+        val imgurl = getString(R.string.damda_server)+"${photo.pic_name}"
         val request = DownloadManager.Request(Uri.parse(imgurl))
         val jwt = GlobalApplication.prefs.token
         request.addRequestHeader("Authorization", "JWT $jwt")
@@ -184,6 +235,7 @@ class PhotoDetailFragment: Fragment() {
             override fun onPageSelected(position: Int) {
                 // set gallery title
                 selectedPosition = position
+                currentPosition = position
                 tvGalleryTitle.text = photoList.get(selectedPosition).title
             }
 
@@ -204,10 +256,12 @@ class PhotoDetailFragment: Fragment() {
             val photo = photoList.get(position)
             // load image
             Glide.with(context!!)
-                .load("http://10.0.2.2:8000${photo.pic_name}")
+                .load(getString(R.string.damda_server)+"${photo.pic_name}")
                 .into(view.ivFullscreenImage)
 
             container.addView(view)
+
+
 
             return view
         }
@@ -244,5 +298,26 @@ class PhotoDetailFragment: Fragment() {
             fragment.arguments = argument
             return fragment
         }
+    }
+    private fun prepareSharedElementTransition() {
+        val transition = TransitionInflater.from(context)
+            .inflateTransition(R.transition.image_shared_element_transition)
+        sharedElementEnterTransition = transition
+
+        // A similar mapping is set at the GridFragment with a setExitSharedElementCallback.
+        setEnterSharedElementCallback(
+            object : SharedElementCallback() {
+                override fun onMapSharedElements(names: List<String>, sharedElements: MutableMap<String, View>) {
+                    // Locate the image view at the primary fragment (the ImageFragment that is currently
+                    // visible). To locate the fragment, call instantiateItem with the selection position.
+                    // At this stage, the method will simply return the fragment at the position and will
+                    // not create a new one.
+                    val currentFragment = viewPager!!.adapter?.instantiateItem(viewPager!!, currentPosition) as Fragment
+                    val view = currentFragment.view ?: return
+
+                    // Map the first shared element name to the child ImageView.
+                    sharedElements[names[0]] = view.findViewById(R.id.image)
+                }
+            })
     }
 }

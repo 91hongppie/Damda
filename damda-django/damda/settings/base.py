@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.kakao',
-    'firebase_admin'
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -161,3 +161,5 @@ SITE_ID = 1
 
 cred = credentials.Certificate(os.path.join(BASE_DIR, 'credentials.json'))
 default_app = firebase_admin.initialize_app(cred)
+
+CELERY_RESULT_BACKEND = 'django-db'

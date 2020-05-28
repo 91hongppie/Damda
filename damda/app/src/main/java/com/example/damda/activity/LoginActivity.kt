@@ -34,17 +34,18 @@ class LoginActivity : AppCompatActivity() {
     var login: Login? = null
     var kakaoLogin: KakaoLogin? = null
     var userInfo: UserInfo? = null
+    var retrofit:Retrofit? = null
+    var loginService: LoginService? = null
     private var callback: SessionCallback = SessionCallback()
-    var retrofit = Retrofit.Builder()
-        .baseUrl("http://10.0.2.2:8000")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    var loginService: LoginService = retrofit.create(
-        LoginService::class.java)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
-
+        retrofit = Retrofit.Builder()
+        .baseUrl(getString(R.string.damda_server))
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+        loginService = retrofit?.create(
+            LoginService::class.java)
         var token = FirebaseInstanceId.getInstance().token
         if (token != null) {
             sendRegistrationToServer(token)
@@ -55,7 +56,7 @@ class LoginActivity : AppCompatActivity() {
             var text1 = email.text.toString()
             var text2 = password.text.toString()
 
-            loginService.requestLogin(text1, text2).enqueue(object: Callback<Login>{
+            loginService?.requestLogin(text1, text2)?.enqueue(object: Callback<Login>{
                 override fun onFailure(call: Call<Login>, t: Throwable) {
                     Log.e("LOGIN",t.message)
                     var dialog = AlertDialog.Builder(this@LoginActivity)
@@ -109,7 +110,7 @@ class LoginActivity : AppCompatActivity() {
                     var params:HashMap<String, Any> = HashMap<String, Any>()
                     params.put("access_token", accessToken)
 
-                    loginService.requestKakao(params)?.enqueue(object: Callback<KakaoLogin>{
+                    loginService?.requestKakao(params)?.enqueue(object: Callback<KakaoLogin>{
                         override fun onFailure(call: Call<KakaoLogin>, t: Throwable) {
                             Log.e("LOGIN",t.message)
                             var dialog = AlertDialog.Builder(this@LoginActivity)
@@ -122,7 +123,7 @@ class LoginActivity : AppCompatActivity() {
                             GlobalApplication.prefs.token = kakaoLogin?.token
                             val token = "JWT " + kakaoLogin?.token
                             Log.v("token", token)
-                            loginService.requestUser(token)?.enqueue(object: Callback<UserInfo>{
+                            loginService?.requestUser(token)?.enqueue(object: Callback<UserInfo>{
                                 override fun onFailure(call: Call<UserInfo>, t: Throwable) {
                                     Log.e("LOGIN",t.message)
                                     var dialog = AlertDialog.Builder(this@LoginActivity)
@@ -134,7 +135,7 @@ class LoginActivity : AppCompatActivity() {
                                     userInfo = response.body()
                                     GlobalApplication.prefs.user_id = userInfo?.id.toString()
                                     GlobalApplication.prefs.family_id = userInfo?.family.toString()
-                                    GlobalApplication.prefs.state = login?.state.toString()
+                                    GlobalApplication.prefs.state = userInfo?.state.toString()
                                     Log.v("UserInfo",userInfo?.toString())
                                     moveActivity(userInfo?.state!!.toInt())
                                 }
@@ -204,7 +205,7 @@ class LoginActivity : AppCompatActivity() {
 
         override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
 
-            var result = response?.body()?.string()
+            var result = response.body()?.string()
 
             Log.d("response", "result: $result")
         }

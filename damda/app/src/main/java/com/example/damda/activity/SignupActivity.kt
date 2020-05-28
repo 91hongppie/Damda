@@ -1,9 +1,11 @@
 package com.example.damda.activity
 
 
+import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
+import android.widget.DatePicker
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -22,6 +24,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.regex.Pattern
+import javax.xml.datatype.DatatypeConstants.MONTHS
 
 
 class SignupActivity : AppCompatActivity() {
@@ -67,7 +70,7 @@ class SignupActivity : AppCompatActivity() {
 
         isCheckID = false
         var retrofit = Retrofit.Builder()
-            .baseUrl("http://10.0.2.2:8000")
+            .baseUrl(getString(R.string.damda_server))
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         var signupService: SignupService = retrofit.create(
@@ -78,6 +81,10 @@ class SignupActivity : AppCompatActivity() {
             var text2 = editPWD.text.toString()
             params.put("username", text1)
             params.put("password",text2)
+            params.put("first_name", name.text.toString())
+            params.put("birth", "${dataPicker.year}-${dataPicker.month + 1}-${dataPicker.dayOfMonth}")
+            params.put("is_lunar", is_lunar.isChecked)
+
             if (isCheckID) {
                 signupService.signUp(params).enqueue(object:Callback<SignUp>{
                     override fun onFailure(call: Call<SignUp>, t: Throwable) {
@@ -89,10 +96,7 @@ class SignupActivity : AppCompatActivity() {
                     }
 
                     override fun onResponse(call: Call<SignUp>, response: Response<SignUp>) {
-                        var dialog = AlertDialog.Builder(this@SignupActivity)
-                        dialog.setTitle("성공")
-                        dialog.setMessage("회원가입성공.")
-                        dialog.show()
+                        toast("회원 가입 되었습니다.")
                         val intent = Intent(this@SignupActivity, LoginActivity::class.java)
                         startActivity(intent)
                         finish()
