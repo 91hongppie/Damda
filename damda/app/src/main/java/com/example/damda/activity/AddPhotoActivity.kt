@@ -128,7 +128,7 @@ class AddPhotoActivity : AppCompatActivity() {
                     )
                 }
 
-                val url = URL("http://10.0.2.2:8000/api/albums/addphoto/")
+                val url = URL(prefs.damdaServer+"/api/albums/addphoto/")
                 val jwt = GlobalApplication.prefs.token
 
                 uploadImage(url, images, paths)

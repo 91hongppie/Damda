@@ -10,6 +10,7 @@ import androidx.appcompat.app.AlertDialog
 import com.example.damda.retrofit.model.Family
 import com.example.damda.retrofit.service.FamilyService
 import com.example.damda.GlobalApplication
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.retrofit.model.Message
 import com.example.damda.retrofit.model.WaitUser
@@ -27,7 +28,7 @@ class AddFamilyActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_family)
         var retrofit = Retrofit.Builder()
-            .baseUrl(getString(R.string.damda_server))
+            .baseUrl(prefs.damdaServer)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         var familyService: FamilyService = retrofit.create(

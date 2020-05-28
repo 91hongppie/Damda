@@ -7,6 +7,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.damda.*
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.retrofit.model.KakaoLogin
 import com.example.damda.retrofit.model.Login
 import com.example.damda.retrofit.model.UserInfo
@@ -41,7 +42,7 @@ class LoginActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_login)
         retrofit = Retrofit.Builder()
-        .baseUrl(getString(R.string.damda_server))
+        .baseUrl(prefs.damdaServer)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
         loginService = retrofit?.create(

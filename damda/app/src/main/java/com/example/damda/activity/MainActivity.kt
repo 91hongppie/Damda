@@ -93,7 +93,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     private fun sendRegistrationToServer(token: String) {
-        val url = URL(getString(R.string.damda_server)+"/api/accounts/device/")
+        val url = URL(prefs.damdaServer+"/api/accounts/device/")
         val jwt = GlobalApplication.prefs.token
         val formBody = FormBody.Builder()
             .add("token", token)
@@ -106,19 +106,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val callback = Callback1()
 
         client.newCall(request).enqueue(callback)
-    }
-
-    inner class Callback1: Callback {
-        override fun onFailure(call: okhttp3.Call, e: IOException) {
-
-        }
-
-        override fun onResponse(call: okhttp3.Call, response: Response) {
-
-            val result = response.body()?.string()
-
-            Log.d("Server response", "result: $result")
-        }
     }
 
     fun replaceFragment(fragment: Fragment){
@@ -180,7 +167,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     interface RetrofitNetwork { @GET("/network") fun listUser() : Call<Array<String>> }
 
     val retrofit = Retrofit.Builder()
-        .baseUrl("http://10.0.2.2:8000")
+        .baseUrl(prefs.damdaServer)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 
@@ -208,9 +195,13 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED )
         {
             val imageProjection =
-                arrayOf(MediaStore.Images.Media.DATA, MediaStore.Images.Media._ID)
+                arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA)
             val lastId = prefs.autoId
-            val imageCursor = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageProjection, null, null, MediaStore.Images.Media._ID +  " desc ")
+            val selection = "${MediaStore.Images.Media.DATA} NOT LIKE ?"
+            val selectionArgs = arrayOf(
+                "%damda%"
+            )
+            val imageCursor = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageProjection, selection, selectionArgs, MediaStore.Images.Media._ID +  " desc ")
             var images = arrayListOf<File>()
             var paths = arrayListOf<String>()
             val imageIdIndex = imageCursor?.getColumnIndex(MediaStore.Images.Media._ID)
@@ -221,6 +212,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 while (true) {
                     val imageId = imageCursor.getString(imageIdIndex)
                     val imageData = imageCursor.getString(imageDataIndex!!)
+                    Log.e("bucket", imageData)
                     // 최종 동기화 아이디보다 이전 아이디일 경우 중지
                     if (!isValidDate(lastId, imageId)) {
                         break
@@ -237,7 +229,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                         break
                     }
                 }
-                val url = URL("http://10.0.2.2:8000/api/albums/addphoto/")
+                val url = URL(prefs.damdaServer+"/api/albums/addphoto/")
                 if (images.size > 0) {
                     var dialogBuilder = android.app.AlertDialog.Builder(this)
                     dialogBuilder.setTitle("사진 업로드")
@@ -285,7 +277,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
 
             val body = requestBody.build()
-            val jwt = GlobalApplication.prefs.token
+            val jwt = prefs.token
             val request = Request.Builder().addHeader("Authorization", "JWT $jwt")
                 .url(url)
                 .post(body)
@@ -311,9 +303,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
 
         override fun onResponse(call: okhttp3.Call, response: Response) {
-            val status = response.code()
-            Log.d("server response", "$status")
-
             val result = response.body()?.string()
 
             Log.d("Sever response", "result: $result")
