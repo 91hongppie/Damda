@@ -35,7 +35,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val client = OkHttpClient()
         val jwt = GlobalApplication.prefs.token
         val builder = Request.Builder().addHeader("Authorization", "JWT $jwt")
-        val url = builder.url("http://10.0.2.2:8000/api/accounts/device/")
+        val url = builder.url(prefs.damdaServer+"/api/accounts/device/")
         val formBody = FormBody.Builder()
         val body = formBody.add("token", token).add("user_id", "${prefs.user_id}").build()
         val request = url

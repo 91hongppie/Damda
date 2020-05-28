@@ -12,6 +12,7 @@ import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.damda.*
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.activity.AddMemberActivity
 import com.example.damda.activity.CropperActivity
 import com.example.damda.activity.MainActivity
@@ -49,7 +50,7 @@ class AlbumListFragment : Fragment() {
                 context.replaceFragment(fragment)
             }
         var retrofit = Retrofit.Builder()
-            .baseUrl(getString(R.string.damda_server))
+            .baseUrl(prefs.damdaServer)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val jwt = GlobalApplication.prefs.token

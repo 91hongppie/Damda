@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.damda.GlobalApplication
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.adapter.FamilyListAdapter
 import com.example.damda.adapter.MemberAdapter
@@ -40,7 +41,7 @@ class FamilyListActivity : AppCompatActivity() {
         val id =  GlobalApplication.prefs.family_id.toString()
         var familyList : DetailFamily? = null
         var retrofit = Retrofit.Builder()
-            .baseUrl(getString(R.string.damda_server))
+            .baseUrl(prefs.damdaServer)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         var familyService : FamilyService = retrofit.create(

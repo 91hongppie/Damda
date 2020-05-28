@@ -10,6 +10,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import com.example.damda.GlobalApplication
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.retrofit.model.Face
 import com.example.damda.retrofit.service.AlbumsService
@@ -42,7 +43,7 @@ class CropperActivity : AppCompatActivity() {
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
         var retrofit = Retrofit.Builder()
-            .baseUrl(getString(R.string.damda_server))
+            .baseUrl(prefs.damdaServer)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         var albumsService: AlbumsService = retrofit.create(
