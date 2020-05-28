@@ -32,6 +32,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 import retrofit2.http.GET
 import androidx.fragment.app.Fragment
 import com.example.damda.GlobalApplication
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
@@ -75,10 +76,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     private fun sendRegistrationToServer(token: String) {
-        val url = URL(getString(R.string.damda_server)+"/api/accounts/addtoken/")
+        val url = URL(getString(R.string.damda_server)+"/api/accounts/device/")
         val jwt = GlobalApplication.prefs.token
         val formBody = FormBody.Builder()
             .add("token", token)
+            .add("user_id", "${prefs.user_id}")
             .build()
         val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt").method("POST", formBody)
             .build()

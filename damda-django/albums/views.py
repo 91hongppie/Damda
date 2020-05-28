@@ -138,30 +138,24 @@ def all_photo(request, family_pk):
         return Response(return_list)
 
 
-
-
 @api_view(['POST'])
 @permission_classes([AllowAny])
 @csrf_exempt
 def addphoto(request):
     User = get_user_model()
     image_list = request.FILES.getlist('uploadImages')
-    user_id = None
-    
     try:
         user_id = int(request.POST.get('user_id'))
+        user = get_object_or_404(User, id=user_id+1)
     except:
-        user_id = 1
-        print('Who are you?')
+        return Response(data='Who are you?', status=status.HTTP_404_NOT_FOUND)
     
-    user = get_object_or_404(User, id=user_id)
     try:
-        print(user.family_id)
         albums = Album.objects.filter(family_id=user.family_id)
         album = albums[0]
     except:
-        album = Album.objects.get(id=1)
         print('Family is NOT FOUND')
+        return Response(data="Family is NOT FOUND", status=status.HTTP_404_NOT_FOUND)
 
     for item in image_list:
         if len(Photo.objects.filter(title=item.name, album=album)):

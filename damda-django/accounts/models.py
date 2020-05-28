@@ -20,3 +20,4 @@ class WaitUser(models.Model):
 
 class Device(models.Model):
     device_token = models.CharField(unique=True, max_length=250)
+    owner = models.ForeignKey(User, related_name='user_device', on_delete=models.CASCADE)

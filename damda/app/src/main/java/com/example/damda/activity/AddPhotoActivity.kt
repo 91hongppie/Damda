@@ -19,6 +19,7 @@ import android.view.View
 import android.view.View.OnClickListener
 import android.widget.Button
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.damda.MySharedPreferences
@@ -28,6 +29,7 @@ import com.example.damda.R
 import com.jakewharton.rxbinding2.view.clickable
 import kotlinx.android.synthetic.main.activity_add_photo.*
 import okhttp3.*
+import org.jetbrains.anko.contentView
 import java.io.*
 import java.lang.Exception
 import java.net.URL
@@ -117,6 +119,7 @@ class AddPhotoActivity : AppCompatActivity() {
                         100
                     )
                 }
+
                 val url = URL("http://10.0.2.2:8000/api/albums/addphoto/")
                 val jwt = GlobalApplication.prefs.token
 
@@ -128,13 +131,13 @@ class AddPhotoActivity : AppCompatActivity() {
 
     fun getFilePath(imageUri: Uri): String? {
         var result : String?
-        var cursor: Cursor? = contentResolver.query(imageUri, null, null, null, null)
+        val cursor: Cursor? = contentResolver.query(imageUri, null, null, null, null)
 
         if (cursor == null) {
             result = imageUri.path
         } else {
             cursor.moveToFirst()
-            var idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
+            val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
             result = cursor.getString(idx)
             cursor.close()
         }
@@ -146,22 +149,22 @@ class AddPhotoActivity : AppCompatActivity() {
         try {
             val MEDIA_TYPE_IMAGE = MediaType.parse("image/*")
 
-            var requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
+            val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("user_id", "${prefs.user_id}")
 
             for (i in 0 until images.size) {
                 val exif = ExifInterface(images[i])
                 val datetime = exif.getAttribute(ExifInterface.TAG_DATETIME)
-                var datetime_split = datetime.split(" ")
-                var date = datetime_split[0].split(":").joinToString("")
-                var time = datetime_split[1].split(":").joinToString("")
+                val datetime_split = datetime.split(" ")
+                val date = datetime_split[0].split(":").joinToString("")
+                val time = datetime_split[1].split(":").joinToString("")
                 Log.d("DATETIME", "date: $date, time: $time")
                 requestBody.addFormDataPart("uploadImages", "damda_${prefs.user_id}_${date}_${time}", RequestBody.create(MEDIA_TYPE_IMAGE, images[i]))
             }
 
-            var body = requestBody.build()
-
-            var request = Request.Builder()
+            val body = requestBody.build()
+            val jwt = GlobalApplication.prefs.token
+            val request = Request.Builder().addHeader("Authorization", "JWT $jwt")
                 .url(url)
                 .post(body)
                 .build()
@@ -177,6 +180,8 @@ class AddPhotoActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.d("Exception", "$e")
         }
+
+        Toast.makeText(this, "업로드 성공", Toast.LENGTH_LONG).show()
     }
 
     inner class Callback1 : Callback {
@@ -186,10 +191,12 @@ class AddPhotoActivity : AppCompatActivity() {
         }
 
         override fun onResponse(call: okhttp3.Call, response: Response) {
+            val status = response.code()
+            Log.d("server response", "$status")
 
             val result = response.body()?.string()
 
-            Log.d("Server response", "result: $result")
+            Log.d("Sever response", "result: $result")
         }
     }
 }

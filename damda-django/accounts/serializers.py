@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import WaitUser, Family, Device
+from .models import WaitUser, Family
 
 class UserCreatSerializer(serializers.ModelSerializer):
     class Meta:
@@ -32,11 +32,6 @@ class DetailFamilySerializer(serializers.ModelSerializer):
     class Meta:
         model = Family
         fields = ('id', 'main_member', 'members')
-
-class DeviceSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Device
-        fields = ('id', 'device_token')
 
 class WaitUserSerializer(serializers.ModelSerializer):
     class Meta:
