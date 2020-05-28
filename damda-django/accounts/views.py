@@ -207,12 +207,3 @@ def checkDevice(request):
             return Response('Welcome!', status=status.HTTP_201_CREATED)
         else:
             return Response('what!', status=status.HTTP_401_UNAUTHORIZED)
-
-
-@api_view(['GET'])
-@permission_classes([AllowAny])
-def getTarget(request):
-    User = get_user_model()
-    target = User.objects.filter(last_login__lt=datetime.date(2020, 5, 20))
-    print(target)
-    return Response(status=status.HTTP_200_OK)

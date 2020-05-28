@@ -73,12 +73,14 @@ class AddPhotoActivity : AppCompatActivity() {
             val imageView: ImageView = findViewById(R.id.addphoto_image)
 
             var images = arrayListOf<File>()
+            var paths = arrayListOf<String>()
             val clipdata: ClipData? = data?.clipData
 
             if (clipdata != null) {
                 for (i in 0 until clipdata.itemCount) {
                     var imageUri: Uri = clipdata.getItemAt(i).uri
                     var path = getFilePath(imageUri)
+                    paths.add(path!!)
                     val image = File(path)
                     Log.d("File path", "result : $path")
                     try {
@@ -91,6 +93,7 @@ class AddPhotoActivity : AppCompatActivity() {
             } else {
                 var imageUri: Uri? = data?.data
                 var path = getFilePath(imageUri!!)
+                paths.add(path!!)
                 val image = File(path)
                 try {
                     images.add(image)
@@ -123,7 +126,7 @@ class AddPhotoActivity : AppCompatActivity() {
                 val url = URL("http://10.0.2.2:8000/api/albums/addphoto/")
                 val jwt = GlobalApplication.prefs.token
 
-                uploadImage(url, images)
+                uploadImage(url, images, paths)
 
             }
         }
@@ -145,7 +148,7 @@ class AddPhotoActivity : AppCompatActivity() {
         return result
     }
 
-    fun uploadImage(url : URL, images: ArrayList<File>) {
+    fun uploadImage(url : URL, images: ArrayList<File>, paths: ArrayList<String>) {
         try {
             val MEDIA_TYPE_IMAGE = MediaType.parse("image/*")
 
@@ -153,7 +156,7 @@ class AddPhotoActivity : AppCompatActivity() {
                 .addFormDataPart("user_id", "${prefs.user_id}")
 
             for (i in 0 until images.size) {
-                val exif = ExifInterface(images[i])
+                val exif = ExifInterface(paths[i])
                 val datetime = exif.getAttribute(ExifInterface.TAG_DATETIME)
                 val datetime_split = datetime.split(" ")
                 val date = datetime_split[0].split(":").joinToString("")
@@ -180,8 +183,6 @@ class AddPhotoActivity : AppCompatActivity() {
         } catch (e: Exception) {
             Log.d("Exception", "$e")
         }
-
-        Toast.makeText(this, "업로드 성공", Toast.LENGTH_LONG).show()
     }
 
     inner class Callback1 : Callback {
