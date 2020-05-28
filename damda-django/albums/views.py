@@ -59,16 +59,20 @@ def album(request, album_pk):
     elif request.method == 'DELETE':
         album = get_object_or_404(Album, pk=album_pk)
         file_path = settings.MEDIA_ROOT + '/albums/' + str(album.family.id) + '/' + str(album_pk)
-        with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json') as family:
-                data = json.load(family)
-                if data.get(f'{album.family.id}_{album.title}'):
-                    data.pop(f'{album.family.id}_{album.title}', None)
-        with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'w', encoding='utf-8') as family:
-            json.dump(data, family, cls=NumpyArrayEncoder, ensure_ascii=-False, indent=2)
-        if os.path.isdir(file_path):
-            shutil.rmtree(file_path)
-        album.delete()
-        return Response({"data": "삭제완료"})
+        try:
+            with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json') as family:
+                    data = json.load(family)
+                    if data.get(f'{album.family.id}_{album.title}'):
+                        data.pop(f'{album.family.id}_{album.title}', None)
+            with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'w', encoding='utf-8') as family:
+                json.dump(data, family, cls=NumpyArrayEncoder, ensure_ascii=-False, indent=2)
+            if os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+            album.delete()
+            return Response({"data": "삭제완료"})
+        except:
+            album.delete()
+            return Response({"data": "삭제완료"})
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -202,8 +206,13 @@ def addphoto(request):
                 top, right, bottom, left = face
                 image_face = image[top:bottom, left:right]
                 unknown_face = fr.face_encodings(image_face)
-                with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'r', encoding='utf-8') as family:
-                    data = json.load(family)
+                try:
+                    with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'r', encoding='utf-8') as family:
+                        data = json.load(family)
+                except:
+                    image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)
+                    break
+                count = 0
                 for album_name, data in data.items():
                     for dt in data:
                         dt = [np.asarray(dt)]
@@ -212,6 +221,9 @@ def addphoto(request):
                             info = album_name.split('_')
                             user_album = Album.objects.filter(family=info[0], title=info[1])[0]
                             image = Photo.objects.create(pic_name=item, title=item.name, album=user_album)
+                            count += 1
+                if count == 0:
+                    image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)    
         else:
             image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)    
         
