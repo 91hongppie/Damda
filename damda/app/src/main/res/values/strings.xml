@@ -88,6 +88,7 @@
     <string name="can_use_email">사용 가능한 이메일입니다.</string>
     <string name="error_do_not_check_id">아이디 중복 체크 확인해 주세요.</string>
     <string name="add_info">앨범과 계정을 연결하면 연결된 계정의 얼굴은 자동 업로드에서 제외됩니다.</string>
+    <string name="family_info">음력 생일은 올해 해당 날짜로 표시 됩니다.</string>
     <string name="user_info">상세정보</string>
     <string name="wait">진행중인 요청이 있습니다.\n담장이 수락하면 가족 앨범을 이용할 수 있습니다.</string>
 
