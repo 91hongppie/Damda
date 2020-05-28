@@ -1,4 +1,7 @@
 from __future__ import absolute_import, unicode_literals
+
+from damda.celery import app
+
 import os
 import signal
 
@@ -7,78 +10,62 @@ import requests, json
 import jwt
 import requests
 from decouple import config
-from django.http import JsonResponse
-from concurrent.futures import ProcessPoolExecutor
 from django.contrib.auth import get_user_model
+from .models import Device
 import datetime
 
 from django import db
 from celery import shared_task
 
 
-@shared_task
-def add(self):
-    return x + y
-
-@shared_task
-def mul(x, y):
-    return x * y
-
-@shared_task
-def xsum(numbers):
-    return sum(numbers)
+@app.task
+def say_hello():
+    print('hello, celery!')
 
 
-# class MultiProcessTest:
-#     PID = os.getpid()
+url = 'https://fcm.googleapis.com/fcm/send'
+User = get_user_model()
 
-#     User = get_user_model()
-
-#     def multi_process_test(self, i):
-#         self.PID = os.getpid()
-#         db.connections.close_all()
-#         result = User.objects.filter(last_time__gt=datetime.date(2020, 5, 20))
-
-#         print(result)
-
+@app.task
+def sendPushWeekly():
+    global url
+    today = datetime.datetime.now(datetime.timezone.utc)
+    week = datetime.timedelta(minutes=1)
+    week_ago = today - week
     
-#     def run(self):
-#         _list = ['1', '11', '111', '1111', '11111', '111111']
-#         with ProcessPoolExecutor(max_workers=3) as pool:
-#             pool.map(self.multi_process_test, _list, chunksize=200)
+    users = User.objects.filter(last_login__lt=week_ago)
+    
+    devices = Device.objects.filter(switch=True, owner__in=users)
 
+    if len(devices) == 1:
+        data = {
+            "to": f"{devices[0].device_token}",
+            "notification": {
+                "title": "담다",
+                "body": "오늘은 가족들과 사진 한장 어떠세요?"
+            }
+        }
+    elif len(devices) > 1:
+        dl = []
+        for device in devices:
+            dl.append(device.device_token)
 
-#     def __del__(self):
-#         if os.getpid() == 1:
-#             os.killpg(os.getpgid(self.PID), signal.SIGKILL)
+        data = {
+            "registration_ids": f"{dl}",
+            "notification": {
+                "title": "담다",
+                "body": "오늘은 가족들과 사진 한장 어떠세요?"
+            }
+        }
+    else:
+        return '알맞은 대상이 없습니다.'
 
-
-# end = False
-
-# def message(days=7):
-#     global end
-#     # end를 True로 바꾸면 멈춤
-#     if end:
-#         return
-
-#     url = 'https://fcm.googleapis.com/fcm/send'
-#     data = {
-#         # 1명일 때,
-#         'to': '', 
-#         # 2명 이상일 때,
-#         'registration_ids': [],
-#         'notification': {
-#             'title': '좀',
-#             'body': '보내줘!!'
-#         }
-#     }
-#     headers = {
-#         'Content-Type': 'application/json',
-#         'Authorization': f'key={config("AUTHORIZATION_TOKEN")}'
-#     }
-#     res = requests.post(url, data=json.dumps(data), headers=headers)
-#     result = {
-#         'status': res.status_code
-#     }
-
-#     threading.Timer(days * 24 * 60 * 60, message, )
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'key={config("AUTHORIZATION_TOKEN")}'
+    }
+    
+    response = requests.post(url, data=json.dumps(data), headers=headers)
+    result = response.status_code
+    print(response)
+    return result
