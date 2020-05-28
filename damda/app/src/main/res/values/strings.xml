@@ -104,4 +104,11 @@
     <string name="sharePhoto">공유</string>
     <string name="avatar">아바타</string>
 
+    <!--  Notification channel  -->
+    <string name="channel_name1">안부 묻기</string>
+    <string name="channel_name2">새로운 사진</string>
+    <string name="channel_description1">일정 기간 활동하지 않으면 알림이 울립니다.</string>
+    <string name="channel_description2">새로운 사진이 업로드되면 알림이 울립니다.</string>
+
+
 </resources>

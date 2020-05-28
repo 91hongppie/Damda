@@ -31,6 +31,11 @@ app.conf.update(
     CELERYBEAT_SCHEDULE = {
         'send_push_weekly': {
             'task': 'accounts.tasks.sendPushWeekly',
+            'schedule': timedelta(days=1),
+            'args': ()
+        },
+        'send_push_new_image': {
+            'task': 'accounts.tasks.sendPushNew',
             'schedule': timedelta(minutes=1),
             'args': ()
         },
