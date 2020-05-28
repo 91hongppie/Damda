@@ -10,6 +10,7 @@ import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.damda.*
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.retrofit.model.CheckEmail
 import com.example.damda.retrofit.model.SignUp
 import com.example.damda.retrofit.service.SignupService
@@ -70,7 +71,7 @@ class SignupActivity : AppCompatActivity() {
 
         isCheckID = false
         var retrofit = Retrofit.Builder()
-            .baseUrl(getString(R.string.damda_server))
+            .baseUrl(prefs.damdaServer)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         var signupService: SignupService = retrofit.create(

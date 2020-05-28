@@ -5,8 +5,6 @@
     <string name="kakao_app_key">1ecc00ce5effc6b1718425438d605126</string>
     <string name="kakao_scheme">kakao1ecc00ce5effc6b1718425438d605126</string>
     <string name="kakaolink_host">kakaolink</string>
-<!--    <string name="damda_server">https://k02b2051.p.ssafy.io</string>-->
-    <string name="damda_server">http://10.0.2.2:8000</string>
 
     <!-- Sign In -->
     <string name="email">이메일 주소</string>
@@ -88,6 +86,7 @@
     <string name="can_use_email">사용 가능한 이메일입니다.</string>
     <string name="error_do_not_check_id">아이디 중복 체크 확인해 주세요.</string>
     <string name="add_info">앨범과 계정을 연결하면 연결된 계정의 얼굴은 자동 업로드에서 제외됩니다.</string>
+    <string name="family_info">음력 생일은 올해 해당 날짜로 표시 됩니다.</string>
     <string name="user_info">상세정보</string>
     <string name="wait">진행중인 요청이 있습니다.\n담장이 수락하면 가족 앨범을 이용할 수 있습니다.</string>
 
@@ -104,6 +103,7 @@
     <string name="sharePhoto">공유</string>
     <string name="avatar">아바타</string>
 
+<<<<<<< HEAD
     <string name="label_cancel">Cancel</string>
     <string name="label_ok">OK</string>
     <string name="label_select_video">Select Video</string>
@@ -119,5 +119,13 @@
     </string>
     <string name="pick_a_video">Select or record a a video below to try it out:</string>
     <string name="trimming_progress">Trimming your video...</string>
+=======
+    <!--  Notification channel  -->
+    <string name="channel_name1">안부 묻기</string>
+    <string name="channel_name2">새로운 사진</string>
+    <string name="channel_description1">일정 기간 활동하지 않으면 알림이 울립니다.</string>
+    <string name="channel_description2">새로운 사진이 업로드되면 알림이 울립니다.</string>
+
+>>>>>>> b87f0c767e479fa08195eceb56d8be816a334dd8
 
 </resources>

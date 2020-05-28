@@ -29,6 +29,7 @@ import androidx.fragment.app.Fragment
 import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.damda.GlobalApplication
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.URLtoBitmapTask
 import com.example.damda.activity.AddPhotoActivity
@@ -71,10 +72,10 @@ class PhotoListFragment : Fragment() {
         }
         album = arguments?.getParcelable<Album>("album")
         val family_id = GlobalApplication.prefs.family_id?.toInt()
-        var url = URL(getString(R.string.damda_server)+"/api/albums/photo/${family_id}/")
+        var url = URL(prefs.damdaServer+"/api/albums/photo/${family_id}/")
         view.albumTitle?.text = "전체 보기"
         if (album?.id != null) {
-            url = URL(getString(R.string.damda_server)+"/api/albums/photo/${family_id}/${album?.id}/")
+            url = URL(prefs.damdaServer+"/api/albums/photo/${family_id}/${album?.id}/")
             view.albumTitle?.text = album?.title
         }
         val jwt = GlobalApplication.prefs.token
@@ -165,7 +166,7 @@ class PhotoListFragment : Fragment() {
             view.rv_photo.adapter?.notifyDataSetChanged()
             var imageUris = ArrayList<Uri?>()
             for (photo in photoList) {
-                var url = getString(R.string.damda_server)+"${photo.pic_name}"
+                var url = prefs.damdaServer+"${photo.pic_name}"
                 var image_task: URLtoBitmapTask = URLtoBitmapTask()
                 image_task = URLtoBitmapTask().apply {
                     imgurl = URL(url)
@@ -263,7 +264,7 @@ class PhotoListFragment : Fragment() {
 
     private  fun startDownloading() {
         for(photo in photoList){
-            val imgurl = getString(R.string.damda_server)+"${photo.pic_name}"
+            val imgurl = prefs.damdaServer+"${photo.pic_name}"
             val request = DownloadManager.Request(Uri.parse(imgurl))
             val jwt = GlobalApplication.prefs.token
             request.addRequestHeader("Authorization", "JWT $jwt")

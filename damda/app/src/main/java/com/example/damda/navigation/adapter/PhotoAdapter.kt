@@ -10,6 +10,7 @@ import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.activity.MainActivity
 import com.example.damda.activity.MainActivity.Companion.navStatus
@@ -29,7 +30,7 @@ class PhotoAdapter (val photoList: Array<Photos>, val activity: MainActivity, va
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.list_item_photo, parent, false)
-        val url = parent.context.getString(R.string.damda_server)
+        val url = prefs.damdaServer
         return CustomViewHolder(view, url)
     }
 

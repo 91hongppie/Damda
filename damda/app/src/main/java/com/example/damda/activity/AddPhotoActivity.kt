@@ -128,7 +128,7 @@ class AddPhotoActivity : AppCompatActivity() {
                     )
                 }
 
-                val url = URL("http://10.0.2.2:8000/api/albums/addphoto/")
+                val url = URL(prefs.damdaServer+"/api/albums/addphoto/")
                 val jwt = GlobalApplication.prefs.token
 
                 uploadImage(url, images, paths)
@@ -164,6 +164,7 @@ class AddPhotoActivity : AppCompatActivity() {
                 val exif = ExifInterface(paths[i])
                 var date: String
                 var time: String
+
                 if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
                     val datetime = exif.getAttribute(ExifInterface.TAG_DATETIME)
                     val datetime_split = datetime.split(" ")
@@ -174,7 +175,8 @@ class AddPhotoActivity : AppCompatActivity() {
                     date = today.year.toString() + today.month.toString() + today.day.toString()
                     time = today.hours.toString() + today.minutes.toString() + today.seconds.toString()
                 }
-                Log.d("DATETIME", "date: $date, time: $time")
+
+                Log.d("FILENAME", "damda_${prefs.user_id}_${date}_${time}")
                 Log.d("USER", "id: ${prefs.user_id}")
                 requestBody.addFormDataPart("uploadImages", "damda_${prefs.user_id}_${date}_${time}", RequestBody.create(MEDIA_TYPE_IMAGE, images[i]))
             }
@@ -210,7 +212,6 @@ class AddPhotoActivity : AppCompatActivity() {
             Log.d("server response", "$status")
 
             val result = response.body()?.string()
-
             Log.d("Sever response", "result: $result")
         }
     }

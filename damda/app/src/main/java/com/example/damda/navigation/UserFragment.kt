@@ -9,6 +9,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.fragment.app.Fragment
 import com.example.damda.GlobalApplication
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.activity.*
 import com.example.damda.retrofit.model.DetailFamily
@@ -37,7 +38,7 @@ class UserFragment : Fragment() {
         val id =  GlobalApplication.prefs.family_id.toString()
         var familyList : DetailFamily? = null
         var retrofit = Retrofit.Builder()
-            .baseUrl(getString(R.string.damda_server))
+            .baseUrl(prefs.damdaServer)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         var familyService : FamilyService = retrofit.create(

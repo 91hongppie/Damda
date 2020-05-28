@@ -24,6 +24,7 @@ import androidx.viewpager.widget.PagerAdapter
 import androidx.viewpager.widget.ViewPager
 import com.bumptech.glide.Glide
 import com.example.damda.GlobalApplication
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.URLtoBitmapTask
 import com.example.damda.activity.MainActivity
@@ -54,7 +55,7 @@ class PhotoDetailFragment: Fragment() {
     private var selectedPosition: Int = 0
     private var album: Album? = null
     lateinit var tvGalleryTitle: TextView
-    lateinit var btn_option: Button
+    lateinit var btn_option: ImageView
     lateinit var viewPager: ViewPager
     lateinit var galleryPagerAdapter: GalleryPagerAdapter
     lateinit var dialog: AlertDialog.Builder
@@ -93,9 +94,9 @@ class PhotoDetailFragment: Fragment() {
                 DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
                     val album = arguments?.getParcelable<Album>("album")
                     val family_id = GlobalApplication.prefs.family_id?.toInt()
-                    var url = URL(getString(R.string.damda_server)+"/api/albums/photo/${family_id}/")
+                    var url = URL(prefs.damdaServer+"/api/albums/photo/${family_id}/")
                     if (album?.id != null) {
-                        url = URL(getString(R.string.damda_server)+"/api/albums/photo/${family_id}/${album?.id}/")
+                        url = URL(prefs.damdaServer+"/api/albums/photo/${family_id}/${album?.id}/")
                     }
                     val jwt = GlobalApplication.prefs.token
                     val payload = photoList[selectedPosition].id
@@ -159,7 +160,7 @@ class PhotoDetailFragment: Fragment() {
                     }
                     R.id.image_change -> {
                         var retrofit = Retrofit.Builder()
-                            .baseUrl(getString(R.string.damda_server))
+                            .baseUrl(prefs.damdaServer)
                             .addConverterFactory(GsonConverterFactory.create())
                             .build()
                         val jwt = GlobalApplication.prefs.token
@@ -177,7 +178,7 @@ class PhotoDetailFragment: Fragment() {
                     }
                     R.id.share -> {
                         val share_intent = Intent().apply {
-                            var url = getString(R.string.damda_server)+"${photoList[selectedPosition].pic_name}"
+                            var url = prefs.damdaServer+"${photoList[selectedPosition].pic_name}"
                             var image_task: URLtoBitmapTask = URLtoBitmapTask()
                             image_task = URLtoBitmapTask().apply {
                                 imgurl = URL(url)
@@ -189,7 +190,7 @@ class PhotoDetailFragment: Fragment() {
                             type = "image/*"
                         }
                         val chooser = Intent.createChooser(share_intent, "친구에게 공유하기")
-//            intent.putExtra(Intent.EXTRA_STREAM, "http://10.0.2.2:8000${photoList[selectedPosition].pic_name}")
+//            intent.putExtra(Intent.EXTRA_STREAM, prefs.damdaServer+"${photoList[selectedPosition].pic_name}")
                         startActivity(chooser)
                     }
                     R.id.delete-> {
@@ -213,7 +214,7 @@ class PhotoDetailFragment: Fragment() {
 
     private  fun startDownloading() {
         val photo = photoList[selectedPosition]
-        val imgurl = getString(R.string.damda_server)+"${photo.pic_name}"
+        val imgurl = prefs.damdaServer+"${photo.pic_name}"
         val request = DownloadManager.Request(Uri.parse(imgurl))
         val jwt = GlobalApplication.prefs.token
         request.addRequestHeader("Authorization", "JWT $jwt")
@@ -256,7 +257,7 @@ class PhotoDetailFragment: Fragment() {
             val photo = photoList.get(position)
             // load image
             Glide.with(context!!)
-                .load(getString(R.string.damda_server)+"${photo.pic_name}")
+                .load(prefs.damdaServer+"${photo.pic_name}")
                 .into(view.ivFullscreenImage)
 
             container.addView(view)

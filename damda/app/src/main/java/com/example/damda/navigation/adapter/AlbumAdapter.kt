@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
 import com.example.damda.GlobalApplication
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.activity.MainActivity
 import com.example.damda.navigation.AlbumListFragment
@@ -49,7 +50,7 @@ class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val f
             name?.text = album.title
             if (album.image != "empty") {
                 Glide.with(itemView.context)
-                    .load(fragment.getString(R.string.damda_server) + "/${album.image}")
+                    .load(prefs.damdaServer + "/${album.image}")
                     .error(R.drawable.album).apply(RequestOptions().override(600, 600))
                     .apply(RequestOptions.centerCropTransform()).into(image)
             }
@@ -64,7 +65,7 @@ class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val f
                             if (fragment.perm()) {
                                 val jwt = GlobalApplication.prefs.token
                                 val family_id = GlobalApplication.prefs.family_id?.toInt()
-                                val url = URL(fragment.getString(R.string.damda_server)+"/api/albums/photo/${family_id}/${album.id}/")
+                                val url = URL(prefs.damdaServer+"/api/albums/photo/${family_id}/${album.id}/")
                                 val request = Request.Builder().url(url)
                                     .addHeader("Authorization", "JWT $jwt")
                                     .build()
@@ -79,7 +80,7 @@ class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val f
                                         val gson = GsonBuilder().create()
                                         val photoList = gson.fromJson(body, Array<Photos>::class.java)
                                         for (photo in photoList) {
-                                            val imgurl = fragment.getString(R.string.damda_server)+"${photo.pic_name}"
+                                            val imgurl = prefs.damdaServer+"${photo.pic_name}"
                                             val downrequest =
                                                 DownloadManager.Request(Uri.parse(imgurl))
                                             downrequest.addRequestHeader(
@@ -112,7 +113,7 @@ class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val f
                                     when(which){
                                         DialogInterface.BUTTON_NEUTRAL -> {
                                             var retrofit = Retrofit.Builder()
-                                                .baseUrl(fragment.getString(R.string.damda_server))
+                                                .baseUrl(prefs.damdaServer)
                                                 .addConverterFactory(GsonConverterFactory.create())
                                                 .build()
                                             val jwt = GlobalApplication.prefs.token
