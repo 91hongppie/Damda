@@ -54,7 +54,7 @@ class PhotoDetailFragment: Fragment() {
     private var selectedPosition: Int = 0
     private var album: Album? = null
     lateinit var tvGalleryTitle: TextView
-    lateinit var btn_option: Button
+    lateinit var btn_option: ImageView
     lateinit var viewPager: ViewPager
     lateinit var galleryPagerAdapter: GalleryPagerAdapter
     lateinit var dialog: AlertDialog.Builder
