@@ -181,7 +181,7 @@ class KakaoLogin(SocialLoginView):
 def checkDevice(request):
     User = get_user_model()
     try:
-        user_id = int(request.POST.get('user_id')) + 1
+        user_id = int(request.POST.get('user_id'))
     except:
         return Response(status=status.HTTP_401_UNAUTHORIZED)
     user = User.objects.get(id=user_id)

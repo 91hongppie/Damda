@@ -146,7 +146,7 @@ def addphoto(request):
     image_list = request.FILES.getlist('uploadImages')
     try:
         user_id = int(request.POST.get('user_id'))
-        user = get_object_or_404(User, id=user_id+1)
+        user = get_object_or_404(User, id=user_id)
     except:
         return Response(data='Who are you?', status=status.HTTP_404_NOT_FOUND)
     
