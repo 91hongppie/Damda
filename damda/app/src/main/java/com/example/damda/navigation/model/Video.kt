@@ -4,7 +4,7 @@ import android.os.Parcel
 import android.os.Parcelable
 
 
-class Video(var id: Int, var pic_name: String?, var title: String?) : Parcelable {
+class Video(var id: Int, var file: String?, var title: String?) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readInt(),
         parcel.readString(),
@@ -13,7 +13,7 @@ class Video(var id: Int, var pic_name: String?, var title: String?) : Parcelable
 
     override fun writeToParcel(parcel: Parcel, flags: Int) {
         parcel.writeInt(id)
-        parcel.writeString(pic_name)
+        parcel.writeString(file)
         parcel.writeString(title)
     }
 

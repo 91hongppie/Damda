@@ -8,9 +8,9 @@ import retrofit2.http.*
 
 
 interface VideoService {
-//    @GET("/api/albums/{id}/")
-//    fun requestAlbums(@Header("Authorization") jwt:String,
-//                      @Path("id") id:String) : Call<Albums>
+    @GET("/api/albums/{id}/video/")
+    fun requestVideo(@Header("Authorization") jwt:String,
+                      @Path("id") id:String) : Call<Videos>
 //
 //    @GET("/api/albums/{id}/face/")
 //    fun requestFaces(@Header("Authorization") jwt:String,

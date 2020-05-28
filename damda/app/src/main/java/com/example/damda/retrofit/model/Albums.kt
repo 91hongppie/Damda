@@ -1,6 +1,7 @@
 package com.example.damda.retrofit.model
 
 import com.example.damda.navigation.model.Album
+import com.example.damda.navigation.model.Video
 import java.util.*
 
 data class Albums(
@@ -28,4 +29,8 @@ data class DeleteAlbum(
 data class PutAlbum(
     val id: Int,
     val image: String
+)
+
+data class Videos(
+    val data: Array<Video>
 )

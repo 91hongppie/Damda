@@ -38,8 +38,8 @@ class EditFaceSerializer(serializers.ModelSerializer):
 class VideoSerializer(serializers.ModelSerializer):
     class Meta:
         model = Video
-        fields = ('file', 'family', 'title')
-        
+        fields = ('id', 'file', 'family', 'title')
+
 class AlbumPutSerializer(serializers.ModelSerializer):
     class Meta:
         model = Album

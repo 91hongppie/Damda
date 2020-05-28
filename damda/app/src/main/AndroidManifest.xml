@@ -19,7 +19,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.TrimmerActivity"></activity>
+        <activity android:name=".activity.AddVideoActivity"/>
+        <activity android:name=".activity.TrimmerActivity" />
 
         <service
             android:name=".retrofit.service.RequestService"
