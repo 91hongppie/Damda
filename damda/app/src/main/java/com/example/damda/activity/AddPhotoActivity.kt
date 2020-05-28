@@ -13,6 +13,7 @@ import android.media.ExifInterface
 import android.media.Image
 import android.net.Uri
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.util.Log
 import android.view.View
@@ -31,15 +32,19 @@ import kotlinx.android.synthetic.main.activity_add_photo.*
 import okhttp3.*
 import org.jetbrains.anko.contentView
 import java.io.*
-import java.lang.Exception
 import java.net.URL
 import java.net.UnknownHostException
+import java.sql.Time
+import java.util.*
+import kotlin.Exception
+import kotlin.collections.ArrayList
 
 
 class AddPhotoActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_add_photo)
+        Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS)
         upload_photo_button.isClickable = false
         val pickImage: Button = findViewById(R.id.select_photo_button)
 
@@ -157,11 +162,20 @@ class AddPhotoActivity : AppCompatActivity() {
 
             for (i in 0 until images.size) {
                 val exif = ExifInterface(paths[i])
-                val datetime = exif.getAttribute(ExifInterface.TAG_DATETIME)
-                val datetime_split = datetime.split(" ")
-                val date = datetime_split[0].split(":").joinToString("")
-                val time = datetime_split[1].split(":").joinToString("")
+                var date: String
+                var time: String
+                if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
+                    val datetime = exif.getAttribute(ExifInterface.TAG_DATETIME)
+                    val datetime_split = datetime.split(" ")
+                    date = datetime_split[0].split(":").joinToString("")
+                    time = datetime_split[1].split(":").joinToString("")
+                } else {
+                    val today = Date()
+                    date = today.year.toString() + today.month.toString() + today.day.toString()
+                    time = today.hours.toString() + today.minutes.toString() + today.seconds.toString()
+                }
                 Log.d("DATETIME", "date: $date, time: $time")
+                Log.d("USER", "id: ${prefs.user_id}")
                 requestBody.addFormDataPart("uploadImages", "damda_${prefs.user_id}_${date}_${time}", RequestBody.create(MEDIA_TYPE_IMAGE, images[i]))
             }
 
