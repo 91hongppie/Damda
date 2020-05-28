@@ -6,26 +6,19 @@ import android.content.pm.PackageManager
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
-import android.view.ViewGroup.LayoutParams.MATCH_PARENT
 import android.view.ViewGroup.LayoutParams.WRAP_CONTENT
-import android.widget.RelativeLayout
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.FragmentManager
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
-import com.example.damda.navigation.AlarmFragment
+import com.example.damda.navigation.VideoFragment
 import com.example.damda.navigation.AlbumListFragment
 import com.example.damda.navigation.PhotoListFragment
-import com.example.damda.navigation.PhotoListFragment.Companion.photoArray
 import com.example.damda.navigation.UserFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.jakewharton.rxbinding2.view.layoutChanges
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
-import org.jetbrains.anko.above
 import retrofit2.Call
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -144,7 +137,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 return true
             }
             R.id.action_favorite_alarm -> {
-                var alarmFragment = AlarmFragment()
+                var alarmFragment = VideoFragment()
                 supportFragmentManager.popBackStack(null, POP_BACK_STACK_INCLUSIVE)
                 supportFragmentManager.beginTransaction().replace(R.id.main_content, alarmFragment)
                     .commit()

@@ -38,5 +38,5 @@ def get_file_name(instance, filename):
  
 class Video(models.Model):
     file = models.FileField(upload_to=get_file_name)
-    family = models.ForeignKey(Family,on_delete=models.CASCADE,related_name=family_video)
+    family = models.ForeignKey(Family,on_delete=models.CASCADE,related_name="family_video")
     title = models.TextField()
