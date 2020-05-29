@@ -81,8 +81,12 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
                 Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
             })
-
-        bottom_navigation.selectedItemId = R.id.action_album_list
+        if (intent.getBooleanExtra("사진업로드", false)){
+            bottom_navigation.selectedItemId = R.id.action_photo_list
+        }
+        else {
+            bottom_navigation.selectedItemId = R.id.action_album_list
+        }
     }
 
     private fun sendRegistrationToServer(token: String) {

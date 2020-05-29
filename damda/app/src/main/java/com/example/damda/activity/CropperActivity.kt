@@ -14,6 +14,7 @@ import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.retrofit.model.Face
 import com.example.damda.retrofit.service.AlbumsService
+import com.jakewharton.rxbinding2.view.clickable
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.activity_cropper.*
 import okhttp3.MediaType
@@ -54,6 +55,7 @@ class CropperActivity : AppCompatActivity() {
             ImagePicker()
         }
         save_member.setOnClickListener {
+            save_member.clickable().accept(false)
             val directory = getApplicationContext().cacheDir
             val arr = uri.split("/")
             val file_name = arr[arr.size - 1]
@@ -74,6 +76,7 @@ class CropperActivity : AppCompatActivity() {
                 override fun onResponse(call: Call<Face>, response: Response<Face>) {
                     if (response.code() == 202) {
                         Toast.makeText(this@CropperActivity, response.body()?.message, Toast.LENGTH_LONG).show()
+                        save_member.clickable().accept(true)
                     } else {
                     val builder = AlertDialog.Builder(this@CropperActivity)
                     builder.setTitle("앨범").setMessage("앨범 생성이 완료되었습니다.")
