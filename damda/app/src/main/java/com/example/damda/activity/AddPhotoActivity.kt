@@ -159,7 +159,7 @@ class AddPhotoActivity : AppCompatActivity() {
 
             val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("user_id", "${prefs.user_id}")
-
+            var nums = 0
             for (i in 0 until images.size) {
                 val exif = ExifInterface(paths[i])
                 var date: String
@@ -178,7 +178,8 @@ class AddPhotoActivity : AppCompatActivity() {
 
                 Log.d("FILENAME", "damda_${prefs.user_id}_${date}_${time}")
                 Log.d("USER", "id: ${prefs.user_id}")
-                requestBody.addFormDataPart("uploadImages", "damda_${prefs.user_id}_${date}_${time}", RequestBody.create(MEDIA_TYPE_IMAGE, images[i]))
+                requestBody.addFormDataPart("uploadImages", "damda_${prefs.user_id}_${date}_${time}_${nums}", RequestBody.create(MEDIA_TYPE_IMAGE, images[i]))
+                nums += 1
             }
 
             val body = requestBody.build()
