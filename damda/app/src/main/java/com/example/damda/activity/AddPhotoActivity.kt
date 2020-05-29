@@ -23,10 +23,12 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.net.toUri
 import com.example.damda.MySharedPreferences
 import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
+import com.example.damda.navigation.PhotoListFragment
 import com.jakewharton.rxbinding2.view.clickable
 import kotlinx.android.synthetic.main.activity_add_photo.*
 import okhttp3.*
@@ -77,8 +79,7 @@ class AddPhotoActivity : AppCompatActivity() {
 
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
 
-            val imageView: ImageView = findViewById(R.id.addphoto_image)
-
+            var imageUris = arrayListOf<Uri>()
             var images = arrayListOf<File>()
             var paths = arrayListOf<String>()
             val clipdata: ClipData? = data?.clipData
@@ -87,6 +88,7 @@ class AddPhotoActivity : AppCompatActivity() {
                 for (i in 0 until clipdata.itemCount) {
                     var imageUri: Uri = clipdata.getItemAt(i).uri
                     var path = getFilePath(imageUri)
+                    imageUris.add(imageUri)
                     paths.add(path!!)
                     val image = File(path)
                     Log.d("File path", "result : $path")
@@ -100,6 +102,7 @@ class AddPhotoActivity : AppCompatActivity() {
             } else {
                 var imageUri: Uri? = data?.data
                 var path = getFilePath(imageUri!!)
+                imageUris.add(imageUri)
                 paths.add(path!!)
                 val image = File(path)
                 try {
@@ -113,6 +116,7 @@ class AddPhotoActivity : AppCompatActivity() {
             upload_photo_button.isClickable = true
             upload_photo_button.background = getDrawable(R.color.enableButton)
 
+            setImageView(imageUris)
             select_photo_button.text = "선택됨"
             select_photo_button.isClickable = false
             select_photo_button.background = getDrawable(R.color.disableButton)
@@ -131,7 +135,6 @@ class AddPhotoActivity : AppCompatActivity() {
                 }
 
                 val url = URL(prefs.damdaServer+"/api/albums/addphoto/")
-                val jwt = GlobalApplication.prefs.token
 
                 uploadImage(url, images, paths)
 
@@ -155,6 +158,10 @@ class AddPhotoActivity : AppCompatActivity() {
         return result
     }
 
+    fun setImageView(imageUris: ArrayList<Uri>) {
+        addphoto_image.setImageURI(imageUris[0])
+    }
+
     fun uploadImage(url : URL, images: ArrayList<File>, paths: ArrayList<String>) {
         try {
             val MEDIA_TYPE_IMAGE = MediaType.parse("image/*")
@@ -176,7 +183,7 @@ class AddPhotoActivity : AppCompatActivity() {
                 } else {
                     val datetime = Calendar.getInstance(TimeZone.getDefault(), Locale.KOREA).time
                     val today = SimpleDateFormat("yyyyMMdd_HHmmss").format(datetime)
-                    today + "_i"
+                    today + "_$i"
                 }
                 Log.d("TIME", "$fileDatetime")
                 Log.d("USER", "id: ${prefs.user_id}")
