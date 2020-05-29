@@ -23,10 +23,12 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.fragment.app.FragmentManager
 import com.example.damda.MySharedPreferences
 import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
+import com.example.damda.navigation.PhotoListFragment
 import com.jakewharton.rxbinding2.view.clickable
 import kotlinx.android.synthetic.main.activity_add_photo.*
 import okhttp3.*
@@ -214,6 +216,10 @@ class AddPhotoActivity : AppCompatActivity() {
 
             val result = response.body()?.string()
             Log.d("Sever response", "result: $result")
+            var intent = Intent(this@AddPhotoActivity, MainActivity::class.java)
+            intent.putExtra("사진업로드", true)
+            startActivity(intent)
+            ActivityCompat.finishAffinity(this@AddPhotoActivity)
         }
     }
 }
