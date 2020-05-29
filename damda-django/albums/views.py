@@ -4,10 +4,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
-from .models import Photo, Album, FaceImage
+from .models import Photo, Album, FaceImage, Video
 from accounts.models import Family
 from rest_framework import status
-from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer, AlbumPutSerializer, GetFaceSerializer
+from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer, AlbumPutSerializer, GetFaceSerializer, VideoSerializer
 import face_recognition as fr
 import skimage.io
 from django.conf import settings
@@ -230,6 +230,31 @@ def addphoto(request):
 
     return Response(status=status.HTTP_200_OK)
 
+@api_view(['GET', 'POST', ])
+def video(request,family_pk):
+    if request.method == 'GET':
+        videos = Video.objects.filter(family=family_pk)
+        serializers = VideoSerializer(videos, many=True)
+        print(serializers.data)
+        return Response({"data": serializers.data})
+    elif request.method == 'POST':
+        serializer = VideoSerializer(data={'file':request.FILES['image'],'family':family_pk,'title':request.data.get('title')[1:-1]})
+        serializer.is_valid()
+        print(serializer.errors)
+        if serializer.is_valid():
+            serializer.save()
+            # data = {
+            #     'uploadPath': uploaded_file.file.url
+            # }
+            return Response(serializer.data)
+    return JsonResponse(data)
+
+@api_view(['DELETE'])
+def detail_video(request,family_pk,video_pk):
+    if request.method == 'DELETE':
+        video = get_object_or_404(Video,pk=video_pk)
+        video.delete()
+        return Response({'asdf':'asdf'})
 
 class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):

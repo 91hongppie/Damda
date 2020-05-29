@@ -37,6 +37,14 @@ android {
     }
 
 }
+repositories {
+    maven {
+        url 'https://oss.sonatype.org/content/repositories/snapshots/'
+    }
+    flatDir {
+        dirs "libs"
+    }
+}
 
 dependencies {
     implementation fileTree(dir: 'libs', include: ['*.jar'])
@@ -73,6 +81,7 @@ dependencies {
 
     annotationProcessor 'com.github.bumptech.glide:compiler:4.11.0'
     api 'com.theartofdev.edmodo:android-image-cropper:2.8.+'
+    implementation 'life.knowledge4:k4l-video-trimmer:1.1.3-SNAPSHOT'
 }
 
 apply plugin: 'com.google.gms.google-services'
