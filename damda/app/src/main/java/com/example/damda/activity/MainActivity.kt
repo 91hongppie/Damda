@@ -78,11 +78,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 // Log and toast
                 val msg = getString(R.string.msg_token_fmt, token)
                 Log.d(TAG, msg)
-
-                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
             })
 
-        bottom_navigation.selectedItemId = R.id.action_album_list
+        if (intent.getBooleanExtra("사진업로드", false)){
+            bottom_navigation.selectedItemId = R.id.action_photo_list
+        }
+        else {
+            bottom_navigation.selectedItemId = R.id.action_album_list
+        }
     }
 
     private fun sendRegistrationToServer(token: String) {

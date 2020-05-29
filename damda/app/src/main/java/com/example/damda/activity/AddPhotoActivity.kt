@@ -222,6 +222,11 @@ class AddPhotoActivity : AppCompatActivity() {
 
             val result = response.body()?.string()
             Log.d("Sever response", "result: $result")
+            var intent = Intent(this@AddPhotoActivity, MainActivity::class.java)
+            intent.putExtra("사진업로드", true)
+            startActivity(intent)
+            ActivityCompat.finishAffinity(this@AddPhotoActivity)
+
         }
     }
 }
