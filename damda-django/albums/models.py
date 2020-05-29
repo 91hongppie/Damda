@@ -14,13 +14,7 @@ class Album(models.Model):
 
 
 class Photo(models.Model):
-    pic_name = ProcessedImageField(
-        processors=[ResizeToFit(128, 128)],
-        format='JPEG',
-        options={'quality': 100},
-        upload_to = 'albums/pic_names',
-        blank=False,
-    )
+    pic_name = models.CharField(max_length=500)
     title = models.TextField()
     album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name="album_photo")
 
