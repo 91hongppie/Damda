@@ -30,7 +30,7 @@ def photo(request, family_pk, album_pk):
         photos = Photo.objects.filter(id__in=photo_ids)
         album_id = photos[0].album
         for photo in photos:
-            file_path = settings.MEDIA_ROOT + '/' + str(photo.pic_name)
+            file_path = settings.MEDIA_ROOT + '/' + str(photo.pic_name[8:])
             if os.path.isfile(file_path):
                 os.remove(file_path)
         photos.delete()
@@ -92,9 +92,8 @@ def face(request, family_pk):
         top, right, bottom, left = faces_locations[0]
         face = image[top:bottom, left:right]
         title = request.data['album_name'].replace('"',"")
-        try:
-            face_encoding = fr.face_encodings(face)
-        except:
+        face_encoding = fr.face_encodings(face)
+        if len(face_encoding) == 0:
             return Response(status=202, data={'message': '얼굴을 찾을 수 없습니다.'})
         ROOT_DIR = os.path.abspath("./")
         os.makedirs(os.path.join(ROOT_DIR, 'uploads/faces/{}'.format(family_pk)), exist_ok=True)
@@ -148,7 +147,7 @@ def all_photo(request, family_pk):
         photo_ids = list(map(int, photos.split(', ')))
         photos = Photo.objects.filter(id__in=photo_ids)
         for photo in photos:
-            file_path = settings.MEDIA_ROOT + '/' + str(photo.pic_name)
+            file_path = settings.MEDIA_ROOT + '/' + str(photo.pic_name[8:])
             if os.path.isfile(file_path):
                 os.remove(file_path)
         photos.delete()
@@ -189,15 +188,15 @@ def addphoto(request):
 
     ROOT_DIR = os.path.abspath("./")
     os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/{}/{}'.format(user.family_id, album.id)), exist_ok=True)
-    
     for item in image_list:
         image = fr.load_image_file(item)
 
         image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
-        pic_name = image_path[8:]
+        pic_name = image_path
         if len(Photo.objects.filter(pic_name=image_path, album=album)):
             print('이미 있는 사진입니다')
             continue
+        save_path2 = os.path.join(ROOT_DIR, image_path)
         skimage.io.imsave(image_path, image)
         image = fr.load_image_file(item)
         faces = fr.face_locations(image)
@@ -206,26 +205,33 @@ def addphoto(request):
                 top, right, bottom, left = face
                 image_face = image[top:bottom, left:right]
                 unknown_face = fr.face_encodings(image_face)
+                if len(unknown_face) == 0:
+                    if not Photo.objects.filter(pic_name=pic_name):
+                        make_image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)
+                    break
                 try:
                     with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'r', encoding='utf-8') as family:
                         data = json.load(family)
                 except:
-                    image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)
+                    if not Photo.objects.filter(pic_name=pic_name):
+                        make_image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)
                     break
                 count = 0
                 for album_name, data in data.items():
                     for dt in data:
                         dt = [np.asarray(dt)]
                         distance = fr.face_distance(dt, unknown_face[0])
-                        if distance < 0.4:
+                        if distance < 0.44:
                             info = album_name.split('_')
                             user_album = Album.objects.filter(family=info[0], title=info[1])[0]
-                            image = Photo.objects.create(pic_name=item, title=item.name, album=user_album)
+                            make_image = Photo.objects.create(pic_name=pic_name, title=item.name, album=user_album)
                             count += 1
                 if count == 0:
-                    image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)    
+                    if not Photo.objects.filter(pic_name=pic_name):
+                        make_image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)    
         else:
-            image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)    
+            if not Photo.objects.filter(pic_name=pic_name, album=album):
+                make_image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)    
         
 
     return Response(status=status.HTTP_200_OK)
