@@ -24,6 +24,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
+import androidx.fragment.app.FragmentManager
 import com.example.damda.MySharedPreferences
 import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
@@ -168,7 +169,7 @@ class AddPhotoActivity : AppCompatActivity() {
 
             val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("user_id", "${prefs.user_id}")
-
+                
             for (i in 0 until images.size) {
                 val exif = ExifInterface(paths[i])
                 var fileDatetime : String
@@ -179,15 +180,16 @@ class AddPhotoActivity : AppCompatActivity() {
                     var date = datetime_split[0].split(":").joinToString("")
                     var time = datetime_split[1].split(":").joinToString("")
                     "${date}_${time}"
-
                 } else {
                     val datetime = Calendar.getInstance(TimeZone.getDefault(), Locale.KOREA).time
                     val today = SimpleDateFormat("yyyyMMdd_HHmmss").format(datetime)
                     today + "_$i"
                 }
+                
                 Log.d("TIME", "$fileDatetime")
                 Log.d("USER", "id: ${prefs.user_id}")
                 requestBody.addFormDataPart("uploadImages", "damda_${prefs.user_id}_${fileDatetime}", RequestBody.create(MEDIA_TYPE_IMAGE, images[i]))
+
             }
 
             val body = requestBody.build()
@@ -226,7 +228,6 @@ class AddPhotoActivity : AppCompatActivity() {
             intent.putExtra("사진업로드", true)
             startActivity(intent)
             ActivityCompat.finishAffinity(this@AddPhotoActivity)
-
         }
     }
 }

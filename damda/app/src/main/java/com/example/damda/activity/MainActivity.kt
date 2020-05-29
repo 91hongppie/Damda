@@ -79,7 +79,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 val msg = getString(R.string.msg_token_fmt, token)
                 Log.d(TAG, msg)
             })
-
         if (intent.getBooleanExtra("사진업로드", false)){
             bottom_navigation.selectedItemId = R.id.action_photo_list
         }
