@@ -18,6 +18,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path, include
 from rest_framework_jwt.views import obtain_jwt_token
+from django.views.static import serve
+from django.urls import re_path
 
 urlpatterns = [
     path('api/admin/', admin.site.urls),
@@ -25,6 +27,10 @@ urlpatterns = [
     path('api/albums/', include('albums.urls')),
     path('api/api-token-auth/', obtain_jwt_token),
     path('api/rest-auth/', include('rest_auth.urls')),
-    path('api/rest-auth/registration/', include('rest_auth.registration.urls'))
+    path('api/rest-auth/registration/', include('rest_auth.registration.urls')),
+    re_path(r'^uploads/(?P<path>.*)$', serve, {'document_root':settings.MEDIA_ROOT})
 
-] + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+]
+
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

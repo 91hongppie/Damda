@@ -36,12 +36,12 @@
         <ImageView
             android:id="@+id/addphoto_image"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
+            android:layout_height="400dp"
+            android:minHeight="400dp"
             android:layout_margin="8dp"
             android:adjustViewBounds="true"
             android:autofillHints="사진"
             android:contentDescription="사진을 등록해주세요"
-            android:minHeight="400dp"
             android:scaleType="fitCenter" />
 
     </ScrollView>
