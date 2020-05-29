@@ -10,5 +10,7 @@ urlpatterns = [
     path('<int:family_pk>/', views.albums),
     path('album/<int:album_pk>/', views.album),
     path('<int:family_pk>/face/', views.face),
-    path('addphoto/', views.addphoto)
+    path('addphoto/', views.addphoto),
+    path('<int:family_pk>/video/', views.video),
+    path('<int:family_pk>/video/<int:video_pk>/', views.detail_video)
 ]

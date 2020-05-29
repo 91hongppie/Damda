@@ -7,6 +7,7 @@ import android.view.ViewGroup
 import android.widget.Toast
 import androidx.recyclerview.widget.RecyclerView
 import com.example.damda.GlobalApplication
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.retrofit.model.Face
 //import com.example.damda.retrofit.model.RequestData
@@ -46,7 +47,7 @@ class MemberAdapter(val albumList: Array<Face>) : RecyclerView.Adapter<MemberAda
         val builder = AlertDialog.Builder(parent.context)
         var members: Members? = null
         val context = parent.context
-        val url = parent.context.getString(R.string.damda_server)
+        val url = prefs.damdaServer
         fun bind (chk: Int, face_id: Int) {
             content.setOnClickListener {
                 if (GlobalApplication.prefs.state == "3") {

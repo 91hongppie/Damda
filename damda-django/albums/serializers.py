@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Photo, Album, FaceImage
+from .models import Photo, Album, FaceImage, Video
 from django.contrib.auth import get_user_model
 
 
@@ -33,6 +33,12 @@ class EditFaceSerializer(serializers.ModelSerializer):
     class Meta:
         model = FaceImage
         fields = ('id', 'member')
+
+    
+class VideoSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Video
+        fields = ('id', 'file', 'family', 'title')
 
 class AlbumPutSerializer(serializers.ModelSerializer):
     class Meta:

@@ -9,6 +9,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.damda.GlobalApplication
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.adapter.MemberAdapter
 import com.example.damda.retrofit.model.Face
@@ -34,7 +35,7 @@ class AddMemberActivity : AppCompatActivity() {
         var faces: Faces? = null
         var facesList = emptyArray<Face>()
         var retrofit = Retrofit.Builder()
-            .baseUrl(getString(R.string.damda_server))
+            .baseUrl(prefs.damdaServer)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val jwt = GlobalApplication.prefs.token

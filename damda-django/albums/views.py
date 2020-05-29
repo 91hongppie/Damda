@@ -4,10 +4,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
-from .models import Photo, Album, FaceImage
+from .models import Photo, Album, FaceImage, Video
 from accounts.models import Family
 from rest_framework import status
-from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer, AlbumPutSerializer, GetFaceSerializer
+from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer, AlbumPutSerializer, GetFaceSerializer, VideoSerializer
 import face_recognition as fr
 import skimage.io
 from django.conf import settings
@@ -59,16 +59,20 @@ def album(request, album_pk):
     elif request.method == 'DELETE':
         album = get_object_or_404(Album, pk=album_pk)
         file_path = settings.MEDIA_ROOT + '/albums/' + str(album.family.id) + '/' + str(album_pk)
-        with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json') as family:
-                data = json.load(family)
-                if data.get(f'{album.family.id}_{album.title}'):
-                    data.pop(f'{album.family.id}_{album.title}', None)
-        with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'w', encoding='utf-8') as family:
-            json.dump(data, family, cls=NumpyArrayEncoder, ensure_ascii=-False, indent=2)
-        if os.path.isdir(file_path):
-            shutil.rmtree(file_path)
-        album.delete()
-        return Response({"data": "삭제완료"})
+        try:
+            with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json') as family:
+                    data = json.load(family)
+                    if data.get(f'{album.family.id}_{album.title}'):
+                        data.pop(f'{album.family.id}_{album.title}', None)
+            with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'w', encoding='utf-8') as family:
+                json.dump(data, family, cls=NumpyArrayEncoder, ensure_ascii=-False, indent=2)
+            if os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+            album.delete()
+            return Response({"data": "삭제완료"})
+        except:
+            album.delete()
+            return Response({"data": "삭제완료"})
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 
@@ -202,8 +206,13 @@ def addphoto(request):
                 top, right, bottom, left = face
                 image_face = image[top:bottom, left:right]
                 unknown_face = fr.face_encodings(image_face)
-                with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'r', encoding='utf-8') as family:
-                    data = json.load(family)
+                try:
+                    with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'r', encoding='utf-8') as family:
+                        data = json.load(family)
+                except:
+                    image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)
+                    break
+                count = 0
                 for album_name, data in data.items():
                     for dt in data:
                         dt = [np.asarray(dt)]
@@ -212,12 +221,40 @@ def addphoto(request):
                             info = album_name.split('_')
                             user_album = Album.objects.filter(family=info[0], title=info[1])[0]
                             image = Photo.objects.create(pic_name=item, title=item.name, album=user_album)
+                            count += 1
+                if count == 0:
+                    image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)    
         else:
             image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)    
         
 
     return Response(status=status.HTTP_200_OK)
 
+@api_view(['GET', 'POST', ])
+def video(request,family_pk):
+    if request.method == 'GET':
+        videos = Video.objects.filter(family=family_pk)
+        serializers = VideoSerializer(videos, many=True)
+        print(serializers.data)
+        return Response({"data": serializers.data})
+    elif request.method == 'POST':
+        serializer = VideoSerializer(data={'file':request.FILES['image'],'family':family_pk,'title':request.data.get('title')[1:-1]})
+        serializer.is_valid()
+        print(serializer.errors)
+        if serializer.is_valid():
+            serializer.save()
+            # data = {
+            #     'uploadPath': uploaded_file.file.url
+            # }
+            return Response(serializer.data)
+    return JsonResponse(data)
+
+@api_view(['DELETE'])
+def detail_video(request,family_pk,video_pk):
+    if request.method == 'DELETE':
+        video = get_object_or_404(Video,pk=video_pk)
+        video.delete()
+        return Response({'asdf':'asdf'})
 
 class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):
