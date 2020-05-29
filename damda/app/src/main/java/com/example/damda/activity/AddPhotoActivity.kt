@@ -35,6 +35,8 @@ import java.io.*
 import java.net.URL
 import java.net.UnknownHostException
 import java.sql.Time
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.*
 import kotlin.Exception
 import kotlin.collections.ArrayList
@@ -162,23 +164,23 @@ class AddPhotoActivity : AppCompatActivity() {
 
             for (i in 0 until images.size) {
                 val exif = ExifInterface(paths[i])
-                var date: String
-                var time: String
+                var fileDatetime : String
 
-                if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
+                fileDatetime = if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
                     val datetime = exif.getAttribute(ExifInterface.TAG_DATETIME)
                     val datetime_split = datetime.split(" ")
-                    date = datetime_split[0].split(":").joinToString("")
-                    time = datetime_split[1].split(":").joinToString("")
-                } else {
-                    val today = Date()
-                    date = today.year.toString() + today.month.toString() + today.day.toString()
-                    time = today.hours.toString() + today.minutes.toString() + today.seconds.toString()
-                }
+                    var date = datetime_split[0].split(":").joinToString("")
+                    var time = datetime_split[1].split(":").joinToString("")
+                    "${date}_${time}"
 
-                Log.d("FILENAME", "damda_${prefs.user_id}_${date}_${time}")
+                } else {
+                    val datetime = Calendar.getInstance(TimeZone.getDefault(), Locale.KOREA).time
+                    val today = SimpleDateFormat("yyyyMMdd_HHmmss").format(datetime)
+                    today + "_i"
+                }
+                Log.d("TIME", "$fileDatetime")
                 Log.d("USER", "id: ${prefs.user_id}")
-                requestBody.addFormDataPart("uploadImages", "damda_${prefs.user_id}_${date}_${time}", RequestBody.create(MEDIA_TYPE_IMAGE, images[i]))
+                requestBody.addFormDataPart("uploadImages", "damda_${prefs.user_id}_${fileDatetime}", RequestBody.create(MEDIA_TYPE_IMAGE, images[i]))
             }
 
             val body = requestBody.build()
