@@ -23,6 +23,7 @@ import android.widget.ImageView
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import androidx.core.net.toUri
 import androidx.fragment.app.FragmentManager
 import com.example.damda.MySharedPreferences
 import com.example.damda.GlobalApplication
@@ -37,6 +38,8 @@ import java.io.*
 import java.net.URL
 import java.net.UnknownHostException
 import java.sql.Time
+import java.text.SimpleDateFormat
+import java.time.LocalDateTime
 import java.util.*
 import kotlin.Exception
 import kotlin.collections.ArrayList
@@ -77,8 +80,7 @@ class AddPhotoActivity : AppCompatActivity() {
 
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
 
-            val imageView: ImageView = findViewById(R.id.addphoto_image)
-
+            var imageUris = arrayListOf<Uri>()
             var images = arrayListOf<File>()
             var paths = arrayListOf<String>()
             val clipdata: ClipData? = data?.clipData
@@ -87,6 +89,7 @@ class AddPhotoActivity : AppCompatActivity() {
                 for (i in 0 until clipdata.itemCount) {
                     var imageUri: Uri = clipdata.getItemAt(i).uri
                     var path = getFilePath(imageUri)
+                    imageUris.add(imageUri)
                     paths.add(path!!)
                     val image = File(path)
                     Log.d("File path", "result : $path")
@@ -100,6 +103,7 @@ class AddPhotoActivity : AppCompatActivity() {
             } else {
                 var imageUri: Uri? = data?.data
                 var path = getFilePath(imageUri!!)
+                imageUris.add(imageUri)
                 paths.add(path!!)
                 val image = File(path)
                 try {
@@ -113,6 +117,7 @@ class AddPhotoActivity : AppCompatActivity() {
             upload_photo_button.isClickable = true
             upload_photo_button.background = getDrawable(R.color.enableButton)
 
+            setImageView(imageUris)
             select_photo_button.text = "선택됨"
             select_photo_button.isClickable = false
             select_photo_button.background = getDrawable(R.color.disableButton)
@@ -131,7 +136,6 @@ class AddPhotoActivity : AppCompatActivity() {
                 }
 
                 val url = URL(prefs.damdaServer+"/api/albums/addphoto/")
-                val jwt = GlobalApplication.prefs.token
 
                 uploadImage(url, images, paths)
 
@@ -155,33 +159,37 @@ class AddPhotoActivity : AppCompatActivity() {
         return result
     }
 
+    fun setImageView(imageUris: ArrayList<Uri>) {
+        addphoto_image.setImageURI(imageUris[0])
+    }
+
     fun uploadImage(url : URL, images: ArrayList<File>, paths: ArrayList<String>) {
         try {
             val MEDIA_TYPE_IMAGE = MediaType.parse("image/*")
 
             val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("user_id", "${prefs.user_id}")
-            var nums = 0
+                
             for (i in 0 until images.size) {
                 val exif = ExifInterface(paths[i])
-                var date: String
-                var time: String
+                var fileDatetime : String
 
-                if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
+                fileDatetime = if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
                     val datetime = exif.getAttribute(ExifInterface.TAG_DATETIME)
                     val datetime_split = datetime.split(" ")
-                    date = datetime_split[0].split(":").joinToString("")
-                    time = datetime_split[1].split(":").joinToString("")
+                    var date = datetime_split[0].split(":").joinToString("")
+                    var time = datetime_split[1].split(":").joinToString("")
+                    "${date}_${time}"
                 } else {
-                    val today = Date()
-                    date = today.year.toString() + today.month.toString() + today.day.toString()
-                    time = today.hours.toString() + today.minutes.toString() + today.seconds.toString()
+                    val datetime = Calendar.getInstance(TimeZone.getDefault(), Locale.KOREA).time
+                    val today = SimpleDateFormat("yyyyMMdd_HHmmss").format(datetime)
+                    today + "_$i"
                 }
-
-                Log.d("FILENAME", "damda_${prefs.user_id}_${date}_${time}")
+                
+                Log.d("TIME", "$fileDatetime")
                 Log.d("USER", "id: ${prefs.user_id}")
-                requestBody.addFormDataPart("uploadImages", "damda_${prefs.user_id}_${date}_${time}_${nums}", RequestBody.create(MEDIA_TYPE_IMAGE, images[i]))
-                nums += 1
+                requestBody.addFormDataPart("uploadImages", "damda_${prefs.user_id}_${fileDatetime}", RequestBody.create(MEDIA_TYPE_IMAGE, images[i]))
+
             }
 
             val body = requestBody.build()
