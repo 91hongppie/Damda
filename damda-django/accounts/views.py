@@ -13,7 +13,7 @@ from rest_framework.decorators import api_view, permission_classes, authenticati
 from rest_framework.response import Response
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, WaitUserSerializer, DetailFamilySerializer
-from albums.models import FaceImage
+from albums.models import Album
 from albums.serializers import EditFaceSerializer, AlbumSerializer
 import requests, json
 import jwt
@@ -128,7 +128,7 @@ def GetFamily(request, family_pk):
         serializer = UserSerializer(users, many=True)
         return Response({'data': serializer.data})
     elif request.method == 'POST':
-        face = get_object_or_404(FaceImage, pk=request.data.get('face_id'))
+        face = get_object_or_404(Album, pk=request.data.get('face_id'))
         member_id = request.data.get('member_id')
         if member_id == 0:
             member_id = None

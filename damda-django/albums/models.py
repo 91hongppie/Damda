@@ -11,19 +11,12 @@ class Album(models.Model):
     title = models.TextField()
     family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name="face_album")
     image = models.CharField(max_length=500)
-
+    member = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="family_member", null=True)
 
 class Photo(models.Model):
     pic_name = models.CharField(max_length=500)
     title = models.TextField()
-    album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name="album_photo")
-
-class FaceImage(models.Model):
-    album = models.ForeignKey(Album, on_delete=models.CASCADE)
-    image = models.CharField(max_length=500)
-    name = models.TextField()
-    family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name="family_face")
-    member = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="family_member", null=True)
+    album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name="album_photo") 
     
 
 def get_file_name(instance, filename):
