@@ -67,9 +67,12 @@ import http from '../http-common'
             http.post('/api/api-token-auth/', this.form)
           .then(response => {
             console.log(response.data)
-            const token = response.data.token
+            // const user = response.data
             this.$session.start()
-            this.$session.set('jwt', token)
+            this.$session.set('jwt', response.data)
+            // this.$session.set('family', user.family)
+            // this.$session.set('account', user.account)
+            // this.$session.set('username', user.username)
             this.$store.dispatch('login', response.data)
           })
           .catch((error) => {

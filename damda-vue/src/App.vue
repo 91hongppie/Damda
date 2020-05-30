@@ -14,6 +14,13 @@ export default {
   data() {
     return {
     }
+  },
+  created() {
+    this.$session.start()
+      if (this.$session.has('jwt')) {
+        this.$store.dispatch('login', this.$session.get('jwt'))
+      }
+
   }
 };
 </script>

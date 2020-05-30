@@ -16,6 +16,8 @@ import os
 import shutil
 import json
 import numpy as np
+from rest_framework import generics
+from rest_framework.pagination import PageNumberPagination
 # Create your views here.
 
 @api_view(['GET', 'POST'])
@@ -258,3 +260,26 @@ class NumpyArrayEncoder(JSONEncoder):
         if isinstance(obj, np.ndarray):
             return obj.tolist()
         return JSONEncoder.default(self, obj)
+
+class PostPagination(PageNumberPagination):
+    page_size = 12
+    
+class PostListAPIView(generics.ListAPIView):    
+    def get_queryset(self):
+        albums = Album.objects.filter(family=self.kwargs['family_pk'])
+        photo_query = []
+        for album in albums:
+            photos = Photo.objects.filter(album=album.id)
+            photo_query += photos
+        return photo_query
+    
+    serializer_class = PhotoSerializer
+    pagination_class = PostPagination
+
+class ListAPIView(generics.ListAPIView):
+    def get_queryset(self):
+        photos = Photo.objects.filter(album=self.kwargs['album_pk'])
+        serializers = PhotoSerializer(photos, many=True)
+        return serializers.data
+    serializer_class = PhotoSerializer
+    pagination_class = PostPagination

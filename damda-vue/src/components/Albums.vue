@@ -2,35 +2,31 @@
     <v-container fluid>
       <v-row dense>
         <v-col
-          v-for="card in cards"
-          :key="card.title"
-          :cols="card.flex"
+          v-for="album in albums"
+          :key="album.id"
+          cols="12"
+          lg="3"
+          md="4"
+          sm="6"
         >
-          <v-card>
+          <v-card @click="moveAlbum(album.id)">
             <v-img
-              :src="card.src"
+              v-if="album.image=='empty'"
+              :src="require('../assets/no_image.png')"
               class="white--text align-end"
-              gradient="to bottom, rgba(0,0,0,.1), rgba(0,0,0,.5)"
+              gradient="to bottom, rgba(0,0,0,.05), rgba(0,0,0,.0)"
               height="200px"
             >
-              <v-card-title v-text="card.title"></v-card-title>
             </v-img>
-
-            <v-card-actions>
-              <v-spacer></v-spacer>
-
-              <v-btn icon>
-                <v-icon>mdi-heart</v-icon>
-              </v-btn>
-
-              <v-btn icon>
-                <v-icon>mdi-bookmark</v-icon>
-              </v-btn>
-
-              <v-btn icon>
-                <v-icon>mdi-share-variant</v-icon>
-              </v-btn>
-            </v-card-actions>
+            <v-img
+              v-else
+              :src="baseURL + album.image"
+              class="white--text align-end"
+              gradient="to bottom, rgba(0,0,0,.05), rgba(0,0,0,.0)"
+              height="200px"
+            >
+            </v-img>
+            <v-card-title>{{ album.title }}</v-card-title>
           </v-card>
         </v-col>
       </v-row>
@@ -45,11 +41,7 @@
     name: 'Albums',
 
     data: () => ({
-      cards: [
-        { title: 'Pre-fab homes', src: 'https://cdn.vuetifyjs.com/images/cards/house.jpg', flex: 12 },
-        { title: 'Favorite road trips', src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg', flex: 6 },
-        { title: 'Best airlines', src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg', flex: 6 },
-      ],
+      baseURL : "",
       albums: []
     }),
 
@@ -57,26 +49,32 @@
     ...mapGetters([
       'options',
       'user',
-      'userInfo',
+      'family',
     ]),
     },
 
     mounted() {
-    // if (!this.user) {
-    //   this.$router.replace('/signin')
-    // }
-    // else {
-      this.baseURL = this.$store.state.server,
-      http.get(`/albums/1/`, this.options)
-        .then(response => {
-            this.albums = response.data
-            console.log(response.data)
-        })
-        .catch(error => {
-          console.log(error)
-        })
-    // }
-  },
+      this.baseURL = this.$store.state.server
+      if (!this.family) {
+        this.$router.replace('/login')
+      }
+      else {
+        http.get(`/api/albums/${this.family}/`, this.options)
+          .then(response => {
+              this.albums = response.data.data
+              console.log(response.data)
+          })
+          .catch(error => {
+            console.log(error)
+          })
+      }
+    },
+    
+    methods: {
+      moveAlbum(album_id) {
+        this.$emit('album-id', album_id)
+      }
+    }
 
   }
 </script>

@@ -11,7 +11,7 @@ const mutations = {
       state.token = data.token
       state.username = data.first_name
       state.family = data.family
-      state.account = data.account
+      state.account = data.username
   },
 }
 
@@ -21,7 +21,12 @@ const actions = {
     context.commit('setState', data)
   },
   logout(context) {
-    context.commit('setState', null)
+    context.commit('setState', {
+      token: null,
+      username: null,
+      family: null,
+      account: null 
+    })
   }
 }
 
@@ -35,13 +40,15 @@ const getters = {
   },
   user(state) {
     if (state.token) {
-      return jwtDecode(state.token)
+      return {id: jwtDecode(state.token),
+              username: state.username,
+              account: state.account}
     }
     return false
   },
-  userInfo(state) {
-    if (state.user) {
-      return state.user
+  family(state) {
+    if (state.family) {
+      return state.family
     }
     return false
   },

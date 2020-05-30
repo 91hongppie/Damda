@@ -15,7 +15,7 @@
       <template v-slot:img="{ props }">
         <v-img
           v-bind="props"
-          gradient="to top right, rgba(55,236,186,.7), rgba(25,32,72,.7)"
+          gradient="to top right, rgba(55,236,186,.7), rgba(146,181,217,.1)"
         ></v-img>
       </template>
 
@@ -28,7 +28,7 @@
         />
     </v-toolbar-title>
     <v-spacer></v-spacer>
-    <v-btn text class="my-1">로그아웃</v-btn>
+    <v-btn text class="my-1" @click="logout">로그아웃</v-btn>
     </v-app-bar>
     </v-container>
     <v-sheet
@@ -39,22 +39,25 @@
     >
       <v-container>
         <v-banner>
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit. Praesent cursus nec sem id malesuada.
-            Curabitur lacinia sem et turpis euismod, eget elementum ex pretium.
+            {{ username }}<br>{{ account }}
         </v-banner>
         <v-tabs
       background-color="white"
       color="#92B5D9"
       grow
     >
-      <v-tab>앨범</v-tab>
+      <v-tab @click="setAlbum">앨범</v-tab>
       <v-tab>전체보기</v-tab>
-
       <v-tab-item
-        v-for="n in 2"
-        :key="n"
+        :key="0"
       >
-        <Albums/>
+        <Albums v-if="album === 0" @album-id="moveAlbum"/>
+        <Photos v-else :album_id="album"/>
+      </v-tab-item>
+      <v-tab-item
+        :key="1"
+      >
+        <Photos :album_id="0"/>
       </v-tab-item>
     </v-tabs>
     </v-container>
@@ -63,65 +66,47 @@
 </template>
 
 <script>
-  import Albums from '../components/Albums';
+  import Albums from '../components/Albums'
+  import Photos from '../components/Photos'
+  import { mapGetters } from 'vuex'
   export default {
     name: 'MainPage',
     
     components: {
-    Albums,
+      Albums,
+      Photos
     },
 
     data: () => ({
-      ecosystem: [
-        {
-          text: 'vuetify-loader',
-          href: 'https://github.com/vuetifyjs/vuetify-loader',
-        },
-        {
-          text: 'github',
-          href: 'https://github.com/vuetifyjs/vuetify',
-        },
-        {
-          text: 'awesome-vuetify',
-          href: 'https://github.com/vuetifyjs/awesome-vuetify',
-        },
-      ],
-      importantLinks: [
-        {
-          text: 'Documentation',
-          href: 'https://vuetifyjs.com',
-        },
-        {
-          text: 'Chat',
-          href: 'https://community.vuetifyjs.com',
-        },
-        {
-          text: 'Made with Vuetify',
-          href: 'https://madewithvuejs.com/vuetify',
-        },
-        {
-          text: 'Twitter',
-          href: 'https://twitter.com/vuetifyjs',
-        },
-        {
-          text: 'Articles',
-          href: 'https://medium.com/vuetify',
-        },
-      ],
-      whatsNext: [
-        {
-          text: 'Explore components',
-          href: 'https://vuetifyjs.com/components/api-explorer',
-        },
-        {
-          text: 'Select a layout',
-          href: 'https://vuetifyjs.com/layout/pre-defined',
-        },
-        {
-          text: 'Frequently Asked Questions',
-          href: 'https://vuetifyjs.com/getting-started/frequently-asked-questions',
-        },
-      ],
+      account: "",
+      username: "",
+      album: 0
     }),
+
+    computed: {
+    ...mapGetters([
+      'options',
+      'user',
+    ]),
+    },
+
+    mounted() {
+      this.account = this.user.account
+      this.username = this.user.username
+    },
+
+    methods: {
+      moveAlbum(album_id) {
+        this.album = album_id
+      },
+      setAlbum() {
+        this.album = 0
+      },
+      logout() {
+        this.$session.destroy()
+        this.$store.dispatch('logout')
+        this.$router.replace('/login')
+      }
+    }
   }
 </script>
