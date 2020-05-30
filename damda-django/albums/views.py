@@ -80,7 +80,7 @@ def album(request, album_pk):
 @api_view(['GET', 'POST'])
 def face(request, family_pk):
     if request.method == 'GET':
-        faces = Album.objects.filter(family=family_pk, menber=True)
+        faces = Album.objects.filter(family=family_pk).exclude(title="기본 앨범")
         serializers = GetMemberSerializer(faces, many=True)
         return Response({"data": serializers.data})
     elif request.method == 'POST':
@@ -107,14 +107,20 @@ def face(request, family_pk):
             data[f'{family_pk}_{title}'] = [face_encoding[0].tolist()]
         with open(f'uploads/faces/{family_pk}/family_{family_pk}.json', 'w', encoding='utf-8') as family:
             json.dump(data, family, cls=NumpyArrayEncoder, ensure_ascii=-False, indent=2)
-        os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/{}/{}'.format(family_pk, albumSerializer.data['id'])), exist_ok=True)
-        image_path = 'uploads/albums/{}/{}/{}'.format(family_pk, albumSerializer.data['id'], request.FILES['image'])
-        albumSerializer = AlbumSerializer(data={'family':family_pk, 'title':title, 'image': image_path})
+        
+        albumSerializer = AlbumSerializer(data={'family':family_pk, 'title':title, 'image': "empty"})
         if albumSerializer.is_valid():
             albumSerializer.save()
-            save_path = os.path.join(ROOT_DIR, image_path)
-            skimage.io.imsave(save_path, image)
-            return Response(albumSerializer.data)
+            os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/{}/{}'.format(family_pk, albumSerializer.data['id'])), exist_ok=True)
+            image_path = 'uploads/albums/{}/{}/{}'.format(family_pk, albumSerializer.data['id'], request.FILES['image'])
+            album = get_object_or_404(Album, pk=albumSerializer.data['id'])
+            albumSerializer2 = AlbumSerializer(
+                data={'family':family_pk, 'title':title, 'image': image_path}, instance=album)
+            if albumSerializer2.is_valid():
+                albumSerializer2.save()
+                save_path = os.path.join(ROOT_DIR, image_path)
+                skimage.io.imsave(save_path, image)
+                return Response(albumSerializer2.data)
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST', ])
