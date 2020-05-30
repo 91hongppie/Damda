@@ -137,6 +137,12 @@ REST_FRAMEWORK = {
     ),
 }
 
+CORS_ORIGIN_ALLOW_ALL = True # CORS 모두 추가
+
+CORS_ORIGIN_WHITELIST = [
+    # 추후에 배포시 vue에서만 요청 보낼 수 있도록 정의!!
+]
+
 REST_USE_JWT = True
 AUTH_USER_MODEL = 'accounts.User'
 JWT_AUTH = {

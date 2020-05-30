@@ -1,32 +1,28 @@
 import jwtDecode from 'jwt-decode'
-// state : data와 유사
 const state = {
   token: null,
-  user: null,
+  username: null,
+  family: null,
+  account: null 
 }
 
 const mutations = {
-  setToken(state, token) {
-      state.token = token
+  setState(state, data) {
+      state.token = data.token
+      state.username = data.first_name
+      state.family = data.family
+      state.account = data.account
   },
-  setUser(state, user) {
-    state.child = user
-  }
 }
 
 const actions = {
 
-  login(context, token) {
-    context.commit('setToken', token)
+  login(context, data) {
+    context.commit('setState', data)
   },
   logout(context) {
-    context.commit('setToken', null)
-    context.commit('setUser', null)
-  },
-  child(context, childData) {
-    context.commit('setChild', childData)
+    context.commit('setState', null)
   }
-
 }
 
 const getters = {

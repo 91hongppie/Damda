@@ -38,7 +38,7 @@
 </template>
 
 <script>
-  import axios from 'axios'
+  import http from '../http-common'
   import { mapGetters } from 'vuex'
 
   export default {
@@ -50,6 +50,7 @@
         { title: 'Favorite road trips', src: 'https://cdn.vuetifyjs.com/images/cards/road.jpg', flex: 6 },
         { title: 'Best airlines', src: 'https://cdn.vuetifyjs.com/images/cards/plane.jpg', flex: 6 },
       ],
+      albums: []
     }),
 
     computed: {
@@ -65,13 +66,11 @@
     //   this.$router.replace('/signin')
     // }
     // else {
-      this.baseURL = "http://localhost:8000/",
-      axios.get(`/api/albums/${this.childInfo.id}/`, this.options)
+      this.baseURL = this.$store.state.server,
+      http.get(`/albums/1/`, this.options)
         .then(response => {
-          for (var element of response.data.card_set.reverse()) {
-            this.all_cards.push({'id': element.id, 'class_name': element.class_name, 
-            'card_path': this.baseURL + element.card_path, 'modal': false})
-          }
+            this.albums = response.data
+            console.log(response.data)
         })
         .catch(error => {
           console.log(error)
