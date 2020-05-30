@@ -4,10 +4,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
-from .models import Photo, Album, FaceImage, Video
+from .models import Photo, Album, Video
 from accounts.models import Family
 from rest_framework import status
-from .serializers import PhotoSerializer, AlbumSerializer, FaceSerializer, AlbumPutSerializer, GetFaceSerializer, VideoSerializer
+from .serializers import PhotoSerializer, AlbumSerializer, GetMemberSerializer, AlbumPutSerializer, VideoSerializer
 import face_recognition as fr
 import skimage.io
 from django.conf import settings
@@ -79,8 +79,8 @@ def album(request, album_pk):
 @api_view(['GET', 'POST'])
 def face(request, family_pk):
     if request.method == 'GET':
-        faces = FaceImage.objects.filter(family=family_pk)
-        serializers = GetFaceSerializer(faces, many=True)
+        faces = Album.objects.filter(family=family_pk, menber=True)
+        serializers = GetMemberSerializer(faces, many=True)
         return Response({"data": serializers.data})
     elif request.method == 'POST':
         image = fr.load_image_file(request.FILES['image'])
@@ -106,30 +106,14 @@ def face(request, family_pk):
             data[f'{family_pk}_{title}'] = [face_encoding[0].tolist()]
         with open(f'uploads/faces/{family_pk}/family_{family_pk}.json', 'w', encoding='utf-8') as family:
             json.dump(data, family, cls=NumpyArrayEncoder, ensure_ascii=-False, indent=2)
-        albumSerializer = AlbumSerializer(data={'family':family_pk, 'title':title, 'image': "empty"})
+        os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/{}/{}'.format(family_pk, albumSerializer.data['id'])), exist_ok=True)
+        image_path = 'uploads/albums/{}/{}/{}'.format(family_pk, albumSerializer.data['id'], request.FILES['image'])
+        albumSerializer = AlbumSerializer(data={'family':family_pk, 'title':title, 'image': image_path})
         if albumSerializer.is_valid():
             albumSerializer.save()
-
-            ROOT_DIR = os.path.abspath("./")
-            os.makedirs(os.path.join(ROOT_DIR, 'uploads/faces/{}'.format(family_pk)), exist_ok=True)
-            image_path = 'uploads/faces/{}/{}_{}'.format(family_pk, albumSerializer.data['id'], request.FILES['image'])
             save_path = os.path.join(ROOT_DIR, image_path)
-            skimage.io.imsave(save_path, face)
-
-            os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/{}/{}'.format(family_pk, albumSerializer.data['id'])), exist_ok=True)
-            image_path2 = 'uploads/albums/{}/{}/{}'.format(family_pk, albumSerializer.data['id'], request.FILES['image'])
-            save_path2 = os.path.join(ROOT_DIR, image_path2)
-            skimage.io.imsave(save_path2, image)
-
-            album = get_object_or_404(Album, pk=albumSerializer.data['id'])
-            albumSerializer2 = AlbumSerializer(
-                data={'family':family_pk, 'title':title, 'image': image_path2}, instance=album)
-            if albumSerializer2.is_valid():
-                albumSerializer2.save()
-            serializers = FaceSerializer(data={'album': albumSerializer.data['id'], 'family': family_pk, 'image': image_path, 'name': title})
-            if serializers.is_valid():
-                serializers.save()
-                return Response(serializers.data)
+            skimage.io.imsave(save_path, image)
+            return Response(albumSerializer.data)
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST', ])

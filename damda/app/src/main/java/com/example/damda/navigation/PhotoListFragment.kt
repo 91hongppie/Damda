@@ -264,7 +264,7 @@ class PhotoListFragment : Fragment() {
 
     private  fun startDownloading() {
         for(photo in photoList){
-            val imgurl = prefs.damdaServer+"${photo.pic_name}"
+            val imgurl = prefs.damdaServer+"/${photo.pic_name}"
             val request = DownloadManager.Request(Uri.parse(imgurl))
             val jwt = GlobalApplication.prefs.token
             request.addRequestHeader("Authorization", "JWT $jwt")

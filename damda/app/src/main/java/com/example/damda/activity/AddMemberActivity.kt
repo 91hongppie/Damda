@@ -26,6 +26,7 @@ class AddMemberActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
+        Log.e("dmsql","애드멤버")
         setContentView(R.layout.activity_add_member)
         setSupportActionBar(findViewById(R.id.toolbar))
         val actionBar = supportActionBar
