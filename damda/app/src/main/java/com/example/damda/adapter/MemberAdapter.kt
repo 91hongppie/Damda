@@ -31,7 +31,7 @@ class MemberAdapter(val albumList: Array<Face>) : RecyclerView.Adapter<MemberAda
         albumList[position].let { item ->
             with(holer) {
                 val username = item.member_account
-                title.text = item.name
+                title.text = item.title
                 if (username !== null) {
                     account.text = username.username}
                 holer.bind(item.member, item.id)
