@@ -10,9 +10,8 @@ data class Albums(
 
 data class Face(
     val id: Int,
-    val album: String,
     val image: String,
-    val name: String,
+    val title: String,
     val member: Int,
     val member_account: Account,
     val message: String
