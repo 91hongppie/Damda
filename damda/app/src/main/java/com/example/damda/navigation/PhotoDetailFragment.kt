@@ -96,7 +96,7 @@ class PhotoDetailFragment: Fragment() {
                     val family_id = GlobalApplication.prefs.family_id?.toInt()
                     var url = URL(prefs.damdaServer+"/api/albums/photo/${family_id}/")
                     if (album?.id != null) {
-                        url = URL(prefs.damdaServer+"/api/albums/photo/${family_id}/${album?.id}/")
+                        url = URL(prefs.damdaServer+"/api/albums/photo/${family_id}/${album.id}/")
                     }
                     val jwt = GlobalApplication.prefs.token
                     val payload = photoList[selectedPosition].id

@@ -125,5 +125,9 @@
     <string name="channel_description1">일정 기간 활동하지 않으면 알림이 울립니다.</string>
     <string name="channel_description2">새로운 사진이 업로드되면 알림이 울립니다.</string>
 
+    <!--  Mission  -->
+    <string name="daily_mission">일일 미션</string>
+    <string name="weekly_mission">주간 미션</string>
+    <string name="monthly_mission">월간 미션</string>
 
 </resources>

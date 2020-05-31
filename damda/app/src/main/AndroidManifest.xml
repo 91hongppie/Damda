@@ -19,7 +19,16 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.AddVideoActivity"/>
+        <service
+            android:name=".retrofit.service.ScoreService"
+            android:enabled="true"
+            android:exported="true"></service>
+        <service
+            android:name=".retrofit.service.MissionService"
+            android:enabled="true"
+            android:exported="true" />
+
+        <activity android:name=".activity.AddVideoActivity" />
         <activity android:name=".activity.TrimmerActivity" />
 
         <service

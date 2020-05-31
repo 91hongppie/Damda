@@ -1,5 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
-from .models import User, Family, WaitUser, Device
+from .models import User, Family, WaitUser, Device, Mission, Score
 from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework import status
@@ -12,7 +12,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.response import Response
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
-from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, WaitUserSerializer, DetailFamilySerializer
+from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, WaitUserSerializer, DetailFamilySerializer, MissionSerializer, ScoreSerializer
 from albums.models import FaceImage
 from albums.serializers import EditFaceSerializer, AlbumSerializer
 import requests, json
@@ -165,7 +165,8 @@ def signup(request):
         serializer = UserCreatSerializer(data=request.data)
         serializer.is_valid()
         if serializer.is_valid(raise_exception=True):
-            serializer.save()
+            user = serializer.save()
+            Score.objects.create(user=user)
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
@@ -207,3 +208,30 @@ def checkDevice(request):
             return Response('Welcome!', status=status.HTTP_201_CREATED)
         else:
             return Response('what!', status=status.HTTP_401_UNAUTHORIZED)
+
+@api_view(['GET', ])
+def missions(request, user_pk, period):
+    missions = Mission.objects.filter(user=user_pk, period=period)
+    serializers = MissionSerializer(missions, many=True)
+    print(serializers.data)
+    return Response({"data": serializers.data})
+
+
+@api_view(['GET', 'PUT', ])
+def score(request, user_pk):
+    if request.method == 'GET':
+        user = User.objects.filter(id=user_pk)[0]
+        score = Score.objects.filter(user=user_pk)[0]
+        serializer = ScoreSerializer(score)
+        data = {"name": user.first_name, "score": score.score}
+        return Response(data)
+    elif request.method == 'PUT':
+        user = User.objects.filter(id=user_pk)[0]
+        score = Score.objects.filter(user=user_pk)[0]
+        mission = Mission.objects.filter(user=user_pk, id=request.data['mission_id'])[0]
+        mission.prize = 1
+        mission.save()
+        score.score = request.data['score']
+        score.save()
+        data = {"name": user.first_name, "score": score.score}
+        return Response(data)

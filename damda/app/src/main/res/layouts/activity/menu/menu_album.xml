@@ -6,9 +6,6 @@
         android:id="@+id/album_menu_item1"
         android:title="@string/saveAlbum" />
     <item
-        android:id="@+id/album_menu_item2"
-        android:title="@string/albumImageChange"/>
-    <item
         android:id="@+id/album_menu_item3"
         android:title="@string/deleteAlbum" />
 </menu>
