@@ -209,7 +209,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 while (true) {
                     val imageId = imageCursor.getString(imageIdIndex)
                     val imageData = imageCursor.getString(imageDataIndex!!)
-                    Log.e("bucket", imageData)
                     // 최종 동기화 아이디보다 이전 아이디일 경우 중지
                     if (!isValidDate(lastId, imageId)) {
                         break

@@ -1,5 +1,5 @@
 from rest_framework import serializers
-from .models import Photo, Album, Video
+from .models import Photo, Album, Video, FamilyName
 from django.contrib.auth import get_user_model
 
 
@@ -39,3 +39,13 @@ class AlbumPutSerializer(serializers.ModelSerializer):
     class Meta:
         model = Album
         fields = ('id', 'image')
+
+class FamilyNameSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FamilyName
+        fields = ('id', 'user', 'owner', 'album', 'call')
+
+class FamilyNameupdateSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = FamilyName
+        fields = ('user', 'owner', 'album')

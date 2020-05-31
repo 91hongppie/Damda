@@ -57,7 +57,7 @@ class AlbumListFragment : Fragment() {
         val family_id = GlobalApplication.prefs.family_id.toString()
         var albumsService: AlbumsService = retrofit.create(
             AlbumsService::class.java)
-        albumsService.requestAlbums("JWT $jwt", family_id).enqueue(object: Callback<Albums>{
+        albumsService.requestAlbums("JWT $jwt", family_id, prefs.user_id!!).enqueue(object: Callback<Albums>{
             override fun onFailure(call: Call<Albums>, t: Throwable) {
                 var dialog = AlertDialog.Builder(context)
                 dialog.setTitle("에러")
