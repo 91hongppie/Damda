@@ -4,8 +4,9 @@
         <v-col
             v-for="(photo, i) in photos"
             :key="'photo' + photo.id"
-            cols="12"
+            cols="6"
             md="3"
+            sm="4"
         >
             <v-img
             @click="movePhoto(i)"

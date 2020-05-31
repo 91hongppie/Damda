@@ -18,7 +18,10 @@ export default {
   created() {
     this.$session.start()
       if (this.$session.has('jwt')) {
-        this.$store.dispatch('login', this.$session.get('jwt'))
+        this.$store.dispatch('kakaoLogin', this.$session.get('jwt'))
+        if (this.$session.has('user')) {
+          this.$store.dispatch('login', this.$session.get('user'))
+        }
       }
 
   }

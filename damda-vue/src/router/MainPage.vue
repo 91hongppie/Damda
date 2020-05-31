@@ -34,7 +34,7 @@
     <v-sheet
       id="scrolling-techniques-5"
       class="overflow-y-auto"
-      max-height="600"
+      max-height="80vh"
       style="margin-top: 100px"
     >
       <v-container>

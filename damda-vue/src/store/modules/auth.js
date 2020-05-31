@@ -8,17 +8,25 @@ const state = {
 
 const mutations = {
   setState(state, data) {
+    if (data.token) {
       state.token = data.token
+    }
       state.username = data.first_name
       state.family = data.family
       state.account = data.username
   },
+  setToken(state, token) {
+    state.token = token
+  }
 }
 
 const actions = {
 
   login(context, data) {
     context.commit('setState', data)
+  },
+  kakaoLogin(context, token) {
+    context.commit('setToken', token)
   },
   logout(context) {
     context.commit('setState', {

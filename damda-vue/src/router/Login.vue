@@ -34,6 +34,14 @@
           <v-col>
             <v-img :style="{marginTop:'10px'}" src="../assets/kakao_login_large_wide.png" max-height="35px"></v-img>
           </v-col>
+          <div>
+            <KakaoLogin
+            api-key="d43b2976f5db5f67d5dd053188612a95"
+            image="kakao_account_login_btn_medium_narrow"
+            :on-success=onSuccess
+            :on-failure=onFailure
+            />
+          </div>
           <v-col align="center">
             <a>비밀번호를 잊으셨나요?</a>
           </v-col>
@@ -66,13 +74,18 @@
 
 </template>
 
-<script src="https://developers.kakao.com/sdk/js/kakao.min.js"></script>
 <script>
   import http from '../http-common'
   import router from '../router'
+  import KakaoLogin from 'vue-kakao-login'
+  import { mapGetters } from 'vuex'
 
   export default {
     name: 'Login',
+
+    components: {
+      KakaoLogin
+    },
 
     data() {
       return {
@@ -116,19 +129,59 @@
         http.post('/api/api-token-auth/', this.form)
           .then(response => {
             this.$session.start()
-            this.$session.set('jwt', response.data)
+            this.$session.set('jwt', response.data.token)
+            this.$session.set('user', response.data)
             this.$store.dispatch('login', response.data)
-            router.push('/mainpage')
+            if (!response.data.family) {
+                alert("어플에서 가족을 생성한 후 이용해주세요.")
+              } else {
+              router.push('/mainpage')}
+          })
+          .catch((error) => {
+            alert("아이디와 비밀번호를 확인해 주세요.")
+            console.log(error)
+          })
+      },
+      onSuccess(data) {
+        const body = {
+          access_token: data.access_token
+        }
+        http.post('/api/accounts/rest-auth/kakao/', body)
+          .then(response => {
+            this.$session.start()
+            this.$session.set('jwt', response.data.token)
+            this.$store.dispatch('kakaoLogin', response.data.token)
+            http.get('/api/accounts/user/', this.options)
+            .then(response => {
+              this.$session.set('user', response.data)
+              this.$store.dispatch('login', response.data)
+              if (!response.data.family) {
+                alert("어플에서 가족을 생성한 후 이용해주세요.")
+              } else {
+              router.push('/mainpage')}
+            })
+            .catch((error) => {
+              console.log(error)
+            })
           })
           .catch((error) => {
             console.log(error)
           })
-      }
+      },
+      onFailure(data) {
+        console.log(data)
+        console.log("failure")
+      } 
+
     },
     computed: {
-      isDisabled() {
-        return valid == true
-      },
+      // isDisabled() {
+      //   return valid == true
+      // },
+      ...mapGetters([
+      'options',
+      'user'
+    ]),
   }
   }
 </script>
