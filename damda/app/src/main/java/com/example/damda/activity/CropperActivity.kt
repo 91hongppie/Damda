@@ -39,6 +39,7 @@ class CropperActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cropper)
+        cropper = this
         setSupportActionBar(findViewById(R.id.toolbar))
         val actionBar = supportActionBar
         actionBar?.setDisplayShowCustomEnabled(true)
@@ -152,5 +153,8 @@ class CropperActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+    companion object {
+        var cropper = CropperActivity()
     }
 }

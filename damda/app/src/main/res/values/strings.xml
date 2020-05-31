@@ -136,5 +136,10 @@
         <item>남동생</item>
         <item>여동생</item>
     </string-array>
+    
+    <!--  Mission  -->
+    <string name="daily_mission">일일 미션</string>
+    <string name="weekly_mission">주간 미션</string>
+    <string name="monthly_mission">월간 미션</string>
 
 </resources>

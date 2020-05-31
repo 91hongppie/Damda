@@ -59,8 +59,7 @@ def albums(request, family_pk, user_pk):
 def album(request, album_pk):
     if request.method == 'PUT':
         album = get_object_or_404(Album, pk=album_pk)
-        image = request.data['image'].replace('"',"")
-        print(image)
+        image = request.data['image'].replace('"',"")[1::]
         serializers = AlbumPutSerializer(data={'id': album_pk, 'image': image}, instance=album)
         if serializers.is_valid():
             serializers.save()
@@ -254,31 +253,30 @@ def addphoto(request):
         image = fr.load_image_file(item)
 
         image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
-        pic_name = image_path
         if len(Photo.objects.filter(pic_name=image_path, album=album)):
             print('이미 있는 사진입니다')
             continue
         save_path2 = os.path.join(ROOT_DIR, image_path)
-        skimage.io.imsave(image_path, image)
-        image = fr.load_image_file(item)
         faces = fr.face_locations(image)
         if len(faces) != 0:
+            count = 0
             for face in faces:
                 top, right, bottom, left = face
                 image_face = image[top:bottom, left:right]
                 unknown_face = fr.face_encodings(image_face)
                 if len(unknown_face) == 0:
-                    if not Photo.objects.filter(pic_name=pic_name):
-                        make_image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)
+                    if not Photo.objects.filter(pic_name=image_path):
+                        image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
+                        make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=album)
                     break
                 try:
                     with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'r', encoding='utf-8') as family:
                         data = json.load(family)
                 except:
-                    if not Photo.objects.filter(pic_name=pic_name):
-                        make_image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)
+                    if not Photo.objects.filter(pic_name=image_path):
+                        image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
+                        make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=album)
                     break
-                count = 0
                 for album_name, data in data.items():
                     for dt in data:
                         dt = [np.asarray(dt)]
@@ -286,14 +284,21 @@ def addphoto(request):
                         if distance < 0.44:
                             info = album_name.split('_')
                             user_album = Album.objects.filter(family=info[0], title=info[1])[0]
-                            make_image = Photo.objects.create(pic_name=pic_name, title=item.name, album=user_album)
+                            image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, user_album.id, item.name + '.jpg')
+                            make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=user_album)
+                            skimage.io.imsave(image_path, image)
                             count += 1
-                if count == 0:
-                    if not Photo.objects.filter(pic_name=pic_name):
-                        make_image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)    
+                            break
+            if count == 0:
+                if not Photo.objects.filter(pic_name=image_path):
+                    image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
+                    make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=album)
         else:
-            if not Photo.objects.filter(pic_name=pic_name, album=album):
-                make_image = Photo.objects.create(pic_name=pic_name, title=item.name, album=album)    
+            if not Photo.objects.filter(pic_name=image_path):
+                image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
+                make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=album)
+        skimage.io.imsave(image_path, image)
+        
         
 
     return Response(status=status.HTTP_200_OK)

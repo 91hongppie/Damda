@@ -13,5 +13,7 @@ urlpatterns = [
     path('user/<int:user_pk>/', views.JoinFamily),
     path('family/', views.MakeFamily),
     path('family/<int:family_pk>/', views.DetailFamily),
-    path('family_info/<int:family_pk>/', views.GetFamily)
+    path('family_info/<int:family_pk>/', views.GetFamily),
+    path('mission/<int:user_pk>/<int:period>/', views.missions),
+    path('score/<int:user_pk>/', views.score)
 ]
