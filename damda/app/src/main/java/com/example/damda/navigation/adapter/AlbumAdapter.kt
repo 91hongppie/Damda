@@ -47,7 +47,7 @@ class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val f
         val name = itemView.findViewById<TextView>(R.id.tv_album_title)
         var image = itemView.findViewById<ImageView>(R.id.album_image)
         fun bind (album: Album) {
-            name?.text = album.title
+            name?.text = album.call
             if (album.image != "empty") {
                 Glide.with(itemView.context)
                     .load(prefs.damdaServer + "/${album.image}")

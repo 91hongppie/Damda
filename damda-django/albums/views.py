@@ -4,10 +4,10 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
-from .models import Photo, Album, Video
+from .models import Photo, Album, Video, FamilyName
 from accounts.models import Family
 from rest_framework import status
-from .serializers import PhotoSerializer, AlbumSerializer, GetMemberSerializer, AlbumPutSerializer, VideoSerializer
+from .serializers import PhotoSerializer, AlbumSerializer, GetMemberSerializer, AlbumPutSerializer, VideoSerializer, FamilyNameSerializer, EditFaceSerializer
 import face_recognition as fr
 import skimage.io
 from django.conf import settings
@@ -40,10 +40,17 @@ def photo(request, family_pk, album_pk):
 
 
 @api_view(['GET', 'POST', ])
-def albums(request, family_pk):
+def albums(request, family_pk, user_pk):
     albums = Album.objects.filter(family=family_pk)
     serializers = AlbumSerializer(albums, many=True)
-    return Response({"data": serializers.data})
+    datas = serializers.data
+    for data in datas:
+        if data['title'] == "기본 앨범":
+            data['call'] = "기본 앨범"
+        else:
+            calls = get_object_or_404(FamilyName, user=user_pk, album=data['id'])
+            data['call'] = calls.call
+    return Response({"data": datas})
 
 
 @api_view(['PUT', 'DELETE'])
@@ -76,6 +83,17 @@ def album(request, album_pk):
             return Response({"data": "삭제완료"})
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
+@api_view(['GET', 'POST'])
+def albumMember(request, family_pk, user_pk):
+    if request.method == 'GET':
+        albums = Album.objects.filter(family=family_pk).exclude(title="기본 앨범")
+        serializers = AlbumSerializer(albums, many=True)
+        datas = serializers.data
+        for data in datas:
+            calls = get_object_or_404(FamilyName, user=user_pk, album=data['id'])
+            data['call'] = calls.call
+        return Response({"data": datas})
+    return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST'])
 def face(request, family_pk):
@@ -120,8 +138,59 @@ def face(request, family_pk):
                 albumSerializer2.save()
                 save_path = os.path.join(ROOT_DIR, image_path)
                 skimage.io.imsave(save_path, image)
+                if makeFamilyName(family_pk, request.data, albumSerializer.data['id'], title):
+                    album.delete()
+                    return Response(status=status.HTTP_400_BAD_REQUEST)
                 return Response(albumSerializer2.data)
+            else:
+                album.delete()
     return Response(status=status.HTTP_400_BAD_REQUEST)
+
+namedic={
+    '남동생엄마' : ['엄마', '아들'], '여동생엄마': ['엄마', '딸'], '남동생아빠': ['아빠', '아들'], '여동생아빠': ['아빠', '딸'],
+    '형엄마': ['엄마', '아들'], '누나엄마': ['엄마', '딸'], '형아빠': ['아빠', '아들'], '누나아빠': ['아빠', '딸'],
+    '오빠엄마': ['엄마', '아들'], '오빠아빠': ['아빠','아들'], '언니엄마': ['엄마', '딸'], '언니아빠': ['아빠','딸'],
+    '엄마남동생': ['아들', '엄마'], '엄마여동생': [ '딸', '엄마'], '아빠남동생': ['아들', '아빠'], '아빠여동생': ['딸','아빠'],
+    '엄마형': ['아들', '엄마'], '엄마누나': [ '딸','엄마'], '아빠형': ['아들','아빠'], '아빠누나': ['딸','아빠'],
+    '엄마오빠': ['아들', '엄마'], '아빠오빠': ['아들', '아빠'], '엄마언니': ['딸', '엄마'], '아빠언니': ['딸', '아빠'],
+    '아빠엄마': ['아내', '남편'], '엄마아빠': ['남편', '아내'],
+    '남동생누나': ['누나', '남동생'], '남동생형': ['형', '남동생'], '여동생누나': ['언니', '여동생'], '여동생형': ['오빠', '여동생'],
+    '남동생언니': ['누나', '남동생'], '남동생오빠': ['형', '남동생'], '여동생언니': ['언니', '여동생'], '여동생오빠': ['오빠', '여동생'],
+    '누나남동생': ['남동생', '누나'], '형남동생': ['남동생', '형'], '누나여동생': ['여동생', '언니'], '형여동생': ['여동생', '오빠'],
+    '언니남동생': ['남동생', '누나'], '오빠남동생': ['남동생', '형'], '언니여동생': ['여동생','언니'], '오빠여동생': ['여동생', '오빠'],
+    '언니언니': ['언니', '여동생'], '누나누나': ['언니', '여동생'], '형형': ['형', '남동생'], '오빠오빠': ['형', '남동생'],
+    '남동생남동생': ['형', '남동생'], '여동생여동생': ['언니', '여동생'], '누나형': ['남동생', '누나'], '형누나': ['여동생', '오빠'],
+    '언니오빠': ['남동생', '누나'], '오빠언니': ['여동생', '오빠'],
+    '나엄마': ['아들', '딸'], '나아빠': ['아들', '딸'], '나언니': ['여동생'], '나오빠': ['여동생'], '나형': ['남동생'], '나누나': ['남동생'],
+    '나여동생': ['오빠', '언니'], '나남동생': ['형', '누나']
+
+}
+def makeFamilyName(family_pk, data, album, title):
+    if title == "나":
+        familyNameSerializer = FamilyNameSerializer(data={'user': data['user_id'], 'owner': data['user_id'], 'album': album, 'call':title})
+        face = get_object_or_404(Album, pk=album)
+        serializer = EditFaceSerializer(data={'member': data['user_id']}, instance=face)
+        if serializer.is_valid():
+            serializer.save()
+        else:
+            return True
+    else:
+        familyNameSerializer = FamilyNameSerializer(data={'user': data['user_id'], 'album': album, 'call':title})
+    if familyNameSerializer.is_valid():
+        familyNameSerializer.save()
+        users = get_user_model().objects.filter(family=family_pk).exclude(pk=data['user_id'])
+        for user in users:
+            member = get_object_or_404(FamilyName, user=data['user_id'], owner=user.id)
+            try:
+                familyNameSerializer2 = FamilyNameSerializer(data={'user': user.id, 'album': album, 'call': namedic[member.call + title][0]})
+            except KeyError:
+                familyNameSerializer2 = FamilyNameSerializer(data={'user': user.id, 'album': album, 'call': title})
+            if familyNameSerializer2.is_valid():
+                familyNameSerializer2.save()
+    else:
+        return True
+            
+
 
 @api_view(['GET', 'POST', ])
 def all_photo(request, family_pk):

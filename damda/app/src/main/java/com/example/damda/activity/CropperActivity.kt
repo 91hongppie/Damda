@@ -6,8 +6,8 @@ import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.widget.ImageView
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
@@ -54,7 +54,28 @@ class CropperActivity : AppCompatActivity() {
         preview.setOnClickListener {
             ImagePicker()
         }
+        val spinner: Spinner = findViewById(R.id.family_name)
+        if (intent.getStringExtra("before")=="addFamily"){
+            family_name.visibility = View.GONE
+        }
+        else{
+            my.visibility = View.GONE
+            ArrayAdapter.createFromResource(
+                this,
+                R.array.familyName,
+                android.R.layout.simple_spinner_item
+            ).also { adapter ->
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinner.adapter = adapter
+            }
+        }
+
+
         save_member.setOnClickListener {
+            var albumCall = "나"
+            if (intent.getStringExtra("before") !="addFamily"){
+                albumCall = spinner.selectedItem.toString()
+            }
             save_member.clickable().accept(false)
             val directory = getApplicationContext().cacheDir
             val arr = uri.split("/")
@@ -64,7 +85,7 @@ class CropperActivity : AppCompatActivity() {
                 RequestBody.create(MediaType.parse("multipart/form-data"), file)
             val body =
                 MultipartBody.Part.createFormData("image", file.getName(), requestFile)
-            albumsService.updateFace(token, family_id, member_name.text.toString(), body).enqueue(object:
+            albumsService.updateFace(token, family_id, albumCall, prefs.user_id!!.toInt(), body).enqueue(object:
                 Callback<Face> {
                 override fun onFailure(call: Call<Face>, t: Throwable) {
                     Log.e("LOGIN",t.message)

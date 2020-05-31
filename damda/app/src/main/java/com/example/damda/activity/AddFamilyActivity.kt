@@ -35,7 +35,6 @@ class AddFamilyActivity : AppCompatActivity() {
             FamilyService::class.java)
         val token = "JWT " + GlobalApplication.prefs.token
         val state = GlobalApplication.prefs.state
-        Log.v("asdf", state)
         if (state == "0") {
             req_ing.visibility = View.GONE
             delete_btn.visibility = View.GONE
@@ -84,7 +83,8 @@ class AddFamilyActivity : AppCompatActivity() {
                     Log.v("response", family_info?.id.toString())
                     GlobalApplication.prefs.family_id = family_info?.id.toString()
                     GlobalApplication.prefs.state = "3"
-                    var intent = Intent(this@AddFamilyActivity, MainActivity::class.java)
+                    var intent = Intent(this@AddFamilyActivity, CropperActivity::class.java)
+                    intent.putExtra("before", "addFamily")
                     startActivity(intent)
                     finish()
                 }
