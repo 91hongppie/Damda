@@ -4,16 +4,17 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.os.Bundle
-import android.provider.FontsContract.Columns.RESULT_CODE
 import android.util.Log
 import android.view.MenuItem
-import android.widget.ImageView
-import android.widget.Toast
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AppCompatActivity
 import com.example.damda.GlobalApplication
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.retrofit.model.Face
 import com.example.damda.retrofit.service.AlbumsService
+import com.jakewharton.rxbinding2.view.clickable
 import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.activity_cropper.*
 import okhttp3.MediaType
@@ -34,23 +35,49 @@ class CropperActivity : AppCompatActivity() {
     var uri = ""
     val token = "JWT " + GlobalApplication.prefs.token.toString()
     val family_id = GlobalApplication.prefs.family_id.toString()
-    var retrofit = Retrofit.Builder()
-        .baseUrl("http://10.0.2.2:8000")
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    var albumsService: AlbumsService = retrofit.create(
-        AlbumsService::class.java)
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_cropper)
+        cropper = this
         setSupportActionBar(findViewById(R.id.toolbar))
         val actionBar = supportActionBar
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
-        imagePreview = findViewById<ImageView>(R.id.imagePreview) as ImageView
+        var retrofit = Retrofit.Builder()
+            .baseUrl(prefs.damdaServer)
+            .addConverterFactory(GsonConverterFactory.create())
+            .build()
+        var albumsService: AlbumsService = retrofit.create(
+            AlbumsService::class.java)
+        imagePreview = findViewById<ImageView>(R.id.preview) as ImageView
         ImagePicker()
+        preview.setOnClickListener {
+            ImagePicker()
+        }
+        val spinner: Spinner = findViewById(R.id.family_name)
+        if (intent.getStringExtra("before")=="addFamily"){
+            family_name.visibility = View.GONE
+        }
+        else{
+            my.visibility = View.GONE
+            ArrayAdapter.createFromResource(
+                this,
+                R.array.familyName,
+                android.R.layout.simple_spinner_item
+            ).also { adapter ->
+                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                spinner.adapter = adapter
+            }
+        }
+
+
         save_member.setOnClickListener {
+            var albumCall = "나"
+            if (intent.getStringExtra("before") !="addFamily"){
+                albumCall = spinner.selectedItem.toString()
+            }
+            save_member.clickable().accept(false)
             val directory = getApplicationContext().cacheDir
             val arr = uri.split("/")
             val file_name = arr[arr.size - 1]
@@ -59,7 +86,7 @@ class CropperActivity : AppCompatActivity() {
                 RequestBody.create(MediaType.parse("multipart/form-data"), file)
             val body =
                 MultipartBody.Part.createFormData("image", file.getName(), requestFile)
-            albumsService.updateFace(token, family_id, member_name.text.toString(), body).enqueue(object:
+            albumsService.updateFace(token, family_id, albumCall, prefs.user_id!!.toInt(), body).enqueue(object:
                 Callback<Face> {
                 override fun onFailure(call: Call<Face>, t: Throwable) {
                     Log.e("LOGIN",t.message)
@@ -69,26 +96,26 @@ class CropperActivity : AppCompatActivity() {
                     dialog.show()
                 }
                 override fun onResponse(call: Call<Face>, response: Response<Face>) {
-                    Log.v("result", response.body().toString())
+                    if (response.code() == 202) {
+                        Toast.makeText(this@CropperActivity, response.body()?.message, Toast.LENGTH_LONG).show()
+                        save_member.clickable().accept(true)
+                    } else {
                     val builder = AlertDialog.Builder(this@CropperActivity)
-                    builder.setTitle("앨범 생성 완료!").setMessage("앨범으로 이동하시겠습니까?")
+                    builder.setTitle("앨범").setMessage("앨범 생성이 완료되었습니다.")
                     builder.setPositiveButton(
-                        "앨범으로 가기"
+                        "확인"
                     ) { dialog, id ->
+                        if (intent.getStringExtra("before") =="addFamily"){
+                            prefs.my_album = true
+                        }
                         var intent = Intent(this@CropperActivity, MainActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         startActivity(intent)
                         finish()
                     }
 
-                    builder.setNegativeButton(
-                        "가족 목록으로"
-                    ) { dialog, id ->
-                        finish()
-                    }
-
                     val alertDialog = builder.create()
-                    alertDialog.show()
+                    alertDialog.show()}
                 }
             })
         }
@@ -98,7 +125,7 @@ class CropperActivity : AppCompatActivity() {
         intent.type = "image/*"
 //        intent.action = Intent.ACTION_GET_CONTENT
         intent.putExtra("crop", "true")
-        startActivityForResult(Intent.createChooser(intent, "Select Picture"), PICK_IMAGE_REQUEST)
+        startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_IMAGE_REQUEST)
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -129,5 +156,8 @@ class CropperActivity : AppCompatActivity() {
             }
         }
         return super.onOptionsItemSelected(item)
+    }
+    companion object {
+        var cropper = CropperActivity()
     }
 }

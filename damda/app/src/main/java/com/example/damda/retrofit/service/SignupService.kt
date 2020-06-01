@@ -8,7 +8,7 @@ import retrofit2.http.*
 
 interface SignupService{
     @Headers("Accept: application/json")
-    @GET("/api/accounts/checkemail/")
+    @GET("/api/accounts/signup/")
     fun requestCheckEmail(
         @Query ("username") text1:String
     ) : Call<CheckEmail>

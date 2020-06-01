@@ -1,14 +1,24 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
+import LoginPage from './LoginPage'
+import MainPage from './MainPage'
 Vue.use(VueRouter)
-const routes = [
-  
-]
 
-const router = new VueRouter({
-  mode: 'history',
-  base: process.env.BASE_URL,
-  routes
+export default new VueRouter({
+  mode: "history",
+    routes: [
+      {
+        path: '/login',
+        name: 'login',
+        component: LoginPage,
+      },
+      {
+        path: '/',
+        name: 'main',
+        component: MainPage,
+      },
+      {
+        path: '*',
+        component: MainPage,
+      }]
 })
-
-export default router

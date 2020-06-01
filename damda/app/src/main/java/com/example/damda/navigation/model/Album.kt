@@ -3,10 +3,11 @@ package com.example.damda.navigation.model
 import android.os.Parcel
 import android.os.Parcelable
 
-class Album(val title: String?, val id: Int, val image: String?) : Parcelable {
+class Album(val title: String?, val id: Int, val image: String?, val call: String?) : Parcelable {
     constructor(parcel: Parcel) : this(
         parcel.readString(),
         parcel.readInt(),
+        parcel.readString(),
         parcel.readString()) {
     }
 
@@ -14,6 +15,7 @@ class Album(val title: String?, val id: Int, val image: String?) : Parcelable {
         parcel.writeString(title)
         parcel.writeInt(id)
         parcel.writeString(image)
+        parcel.writeString(call)
     }
 
     override fun describeContents(): Int {

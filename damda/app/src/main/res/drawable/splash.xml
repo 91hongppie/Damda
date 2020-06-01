@@ -2,9 +2,8 @@
 <layer-list xmlns:android="http://schemas.android.com/apk/res/android">
     <item
         android:drawable="@color/bluebell"/>
-    <item>
-        <bitmap
-            android:gravity="center"
-            android:src="@drawable/ic_favorite"/>
+    <item
+        android:gravity="center"
+        android:drawable="@drawable/logo_splash">
     </item>
 </layer-list>

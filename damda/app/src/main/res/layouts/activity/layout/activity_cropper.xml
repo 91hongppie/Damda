@@ -10,35 +10,44 @@
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        app:title="가족 추가하기"
+        app:title="앨범 추가하기"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"/>
 
     <ImageView
-        android:id="@+id/imagePreview"
+        android:id="@+id/preview"
         android:layout_width="200dp"
         android:layout_height="200dp"
         android:layout_marginTop="10dp"
-        android:src="@mipmap/ic_launcher"
+        android:src="@drawable/no_image"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
-    <EditText
-        android:id="@+id/member_name"
-        android:layout_width="match_parent"
+
+    <Spinner
+        android:id="@+id/family_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginTop="25dp"
+        android:layout_marginRight="20dp" />
+
+    <TextView
+        android:id="@+id/my"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:inputType="text"
-        android:maxLines="1"
-        android:hint="이름을 입력해주세요." />
+        android:textSize="30sp"
+        android:text="나" />
+
     <Button
         android:id="@+id/save_member"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:text="등록하기"
         android:theme="@style/ButtonStyle" />
+
 </LinearLayout>

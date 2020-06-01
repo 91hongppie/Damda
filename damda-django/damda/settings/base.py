@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'rest_auth.registration',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.kakao',
-    'firebase_admin'
+    'django_celery_results',
 ]
 
 MIDDLEWARE = [
@@ -137,6 +137,12 @@ REST_FRAMEWORK = {
     ),
 }
 
+CORS_ORIGIN_ALLOW_ALL = True # CORS 모두 추가
+
+CORS_ORIGIN_WHITELIST = [
+    # 추후에 배포시 vue에서만 요청 보낼 수 있도록 정의!!
+]
+
 REST_USE_JWT = True
 AUTH_USER_MODEL = 'accounts.User'
 JWT_AUTH = {
@@ -161,3 +167,4 @@ SITE_ID = 1
 
 cred = credentials.Certificate(os.path.join(BASE_DIR, 'credentials.json'))
 default_app = firebase_admin.initialize_app(cred)
+

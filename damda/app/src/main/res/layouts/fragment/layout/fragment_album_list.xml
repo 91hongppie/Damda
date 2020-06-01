@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
@@ -8,30 +8,28 @@
         android:id="@+id/rv_album"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:background="@color/colorWhite"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:scrollbars="vertical"
+        app:layoutManager="GridLayoutManager"
         app:layout_constraintVertical_bias="1.0" />
 
-    <LinearLayout
-        android:id="@+id/add_member"
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
-        android:visibility="gone"
-        tools:layout_editor_absoluteX="-195dp"
-        tools:layout_editor_absoluteY="-270dp">
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/add_album_button"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="bottom|right"
+        android:layout_margin="16dp"
+        android:contentDescription="@string/favorite"
+        app:backgroundTint="@color/bluebell"
+        android:layout_alignParentBottom="true"
+        android:layout_alignEnd="@id/rv_album"
+        app:srcCompat="@drawable/baseline_add_black_24dp" />
+</RelativeLayout>
 
-        <Button
-            android:id="@+id/add_member_btn"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginLeft="20dp"
-            android:layout_marginTop="15dp"
-            android:layout_marginRight="20dp"
-            android:layout_marginBottom="5dp"
-            android:text="앨범 만들기"
-            android:theme="@style/ButtonStyle" />
-    </LinearLayout>
-</androidx.constraintlayout.widget.ConstraintLayout>
