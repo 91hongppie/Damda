@@ -79,8 +79,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 // Log and toast
                 val msg = getString(R.string.msg_token_fmt, token)
                 Log.d(TAG, msg)
-
-                Toast.makeText(baseContext, msg, Toast.LENGTH_SHORT).show()
             })
         if (intent.getBooleanExtra("사진업로드", false)){
             bottom_navigation.selectedItemId = R.id.action_photo_list
@@ -104,6 +102,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val callback = Callback1()
 
         client.newCall(request).enqueue(callback)
+
+        Log.d("SEND TOKEN", "MY PHONE: $token")
     }
 
     fun replaceFragment(fragment: Fragment){

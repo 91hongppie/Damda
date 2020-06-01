@@ -37,5 +37,5 @@ class MySharedPreferences(context: Context) {
         get() = prefs.getString("autoId", null)
         set(value) = prefs.edit().putString("autoId", value).apply()
 
-    val damdaServer = "http://10.0.2.2:8000"
+    val damdaServer = "https://k02b2051.p.ssafy.io"
 }

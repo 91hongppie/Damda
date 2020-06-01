@@ -12,11 +12,13 @@ class Album(models.Model):
     family = models.ForeignKey(Family, on_delete=models.CASCADE, related_name="face_album")
     image = models.CharField(max_length=500)
     member = models.ForeignKey(get_user_model(), on_delete=models.CASCADE, related_name="family_member", null=True)
+    updated_at = models.DateTimeField(auto_now_add=True)
 
 class Photo(models.Model):
     pic_name = models.CharField(max_length=500)
     title = models.TextField()
-    album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name="album_photo") 
+    album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name="album_photo")
+    uploaded_at = models.DateTimeField(auto_now_add=True)
     
 def get_file_name(instance, filename):
     ext = filename.split('.')[-1]

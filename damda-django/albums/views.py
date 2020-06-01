@@ -5,7 +5,7 @@ from rest_framework.permissions import IsAuthenticated, AllowAny
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
 from .models import Photo, Album, Video, FamilyName
-from accounts.models import Family
+from accounts.models import Family, Device
 from rest_framework import status
 from .serializers import PhotoSerializer, AlbumSerializer, GetMemberSerializer, AlbumPutSerializer, VideoSerializer, FamilyNameSerializer, EditFaceSerializer
 import face_recognition as fr
@@ -18,6 +18,8 @@ import json
 import numpy as np
 from rest_framework import generics
 from rest_framework.pagination import PageNumberPagination
+from decouple import config
+import requests
 # Create your views here.
 
 @api_view(['GET', 'POST'])
@@ -298,10 +300,54 @@ def addphoto(request):
             image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
             make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=album)
     skimage.io.imsave(image_path, image)
-        
-        
-
+    album.updated_at = make_image.uploaded_at
+    
     return Response(status=status.HTTP_200_OK)
+
+@api_view(['POST'])
+def uploadEnd(request):
+    User = get_user_model()
+    user_id = int(request.POST.get('user_id'))
+    user = get_object_or_404(User, id=user_id)
+
+    family = User.objects.filter(family_id=user.family_id).exclude(user_id=user.id)
+    devices = Device.objects.filter(owner__in=family)
+    url = 'https://fcm.googleapis.com/fcm/send'
+
+    headers = {
+        'Content-Type': 'application/json',
+        'Authorization': f'key={config("AUTHORIZATION_TOKEN")}'
+    }
+    
+    if len(devices) > 0:
+        if len(devices) > 1:
+            device_list = []
+
+            for device in devices:
+                device_list.append(device.device_token)
+            
+            data = {
+                "registration_ids": device_list,
+                "notification": {
+                    "title": "담다",
+                    "body": "새로운 사진이 올라왔습니다.",
+                    "android_channel_id": "NEW"
+                }
+            }
+        elif len(devices) == 1:
+            data = {
+                "to": f"{devices[0].device_token}",
+                "notification": {
+                    "title": "담다",
+                    "body": "새로운 사진이 올라왔습니다.",
+                    "android_channel_id": "NEW"
+                }
+            }
+        response = requests.post(url, data=json.dumps(data), headers=headers)
+        result = response.status_code
+    
+    return Response(status=status.HTTP_200_OK)
+
 
 @api_view(['GET', 'POST', ])
 def video(request,family_pk):

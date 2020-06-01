@@ -12,6 +12,7 @@ import android.graphics.drawable.Drawable
 import android.media.ExifInterface
 import android.media.Image
 import android.net.Uri
+import android.os.AsyncTask
 import android.os.Bundle
 import android.os.Environment
 import android.provider.MediaStore
@@ -148,6 +149,33 @@ class AddPhotoActivity : AppCompatActivity() {
             }
         }
     }
+
+//    private class UploadImagesTask : AsyncTask<ArrayList<Uri>, Int, Long>() {
+//
+//        // Do the long-running work in here
+//        override fun doInBackground(vararg urls: URL): Long? {
+//            val count: Float = urls.size.toFloat()
+//            var totalSize: Long = 0
+//            urls.forEachIndexed { index, url ->
+////                totalSize += Downloader.downloadFile(url)
+//                publishProgress((index / count * 100).toInt())
+//                // Escape early if cancel() is called
+//                if (isCancelled) return totalSize
+//            }
+//            return totalSize
+//        }
+//
+//        // This is called each time you call publishProgress()
+//        override fun onProgressUpdate(vararg progress: Int?) {
+//            setProgressPercent(progress.firstOrNull() ?: 0)
+//        }
+//
+//        // This is called when doInBackground() is finished
+//        override fun onPostExecute(result: Long?) {
+//            showNotification("Downloaded $result bytes")
+//        }
+//    }
+
 
     fun getFilePath(imageUri: Uri): String? {
         var result : String?

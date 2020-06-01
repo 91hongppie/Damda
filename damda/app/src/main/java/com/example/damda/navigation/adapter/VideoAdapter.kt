@@ -40,7 +40,7 @@ class VideoAdapter(val videolist: Array<Video>) : RecyclerView.Adapter<VideoAdap
             if (video.file != null) {
                 itemView.video_item_layout.setOnClickListener {
                     val it = Intent(Intent.ACTION_VIEW)
-                    val uri = Uri.parse(prefs.damdaServer + "${video.file}")
+                    val uri = Uri.parse(prefs.damdaServer + "/api/${video.file}")
                     it.setDataAndType(uri, "video/mp4")
                     context.startActivity(it)
                 }
