@@ -20,10 +20,6 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.FragmentManager.POP_BACK_STACK_INCLUSIVE
-import com.example.damda.navigation.VideoFragment
-import com.example.damda.navigation.AlbumListFragment
-import com.example.damda.navigation.PhotoListFragment
-import com.example.damda.navigation.UserFragment
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import kotlinx.android.synthetic.main.activity_main.*
 import okhttp3.*
@@ -35,6 +31,7 @@ import androidx.fragment.app.Fragment
 import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
+import com.example.damda.navigation.*
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
 import java.io.File
@@ -143,9 +140,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 return true
             }
             R.id.action_favorite_alarm -> {
-                var alarmFragment = VideoFragment()
+                var missionFragment = MissionFragment()
                 supportFragmentManager.popBackStack(null, POP_BACK_STACK_INCLUSIVE)
-                supportFragmentManager.beginTransaction().replace(R.id.main_content, alarmFragment)
+                supportFragmentManager.beginTransaction().replace(R.id.main_content, missionFragment)
                     .commit()
                 return true
             }
@@ -207,7 +204,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 while (true) {
                     val imageId = imageCursor.getString(imageIdIndex)
                     val imageData = imageCursor.getString(imageDataIndex!!)
-                    Log.e("bucket", imageData)
                     // 최종 동기화 아이디보다 이전 아이디일 경우 중지
                     if (!isValidDate(lastId, imageId)) {
                         break

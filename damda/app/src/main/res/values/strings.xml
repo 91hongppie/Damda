@@ -125,5 +125,21 @@
     <string name="channel_description1">일정 기간 활동하지 않으면 알림이 울립니다.</string>
     <string name="channel_description2">새로운 사진이 업로드되면 알림이 울립니다.</string>
 
+    <!--  가족 관계 선택  -->
+    <string-array name="familyName">
+        <item>엄마</item>
+        <item>아빠</item>
+        <item>누나</item>
+        <item>언니</item>
+        <item>오빠</item>
+        <item>형</item>
+        <item>남동생</item>
+        <item>여동생</item>
+    </string-array>
+    
+    <!--  Mission  -->
+    <string name="daily_mission">일일 미션</string>
+    <string name="weekly_mission">주간 미션</string>
+    <string name="monthly_mission">월간 미션</string>
 
 </resources>

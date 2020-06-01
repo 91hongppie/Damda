@@ -3,7 +3,6 @@ package com.example.damda.activity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
@@ -24,7 +23,6 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 class RequestListActivity : AppCompatActivity() {
-
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_request_list)
@@ -59,7 +57,7 @@ class RequestListActivity : AppCompatActivity() {
                 waitUsers = response.body()
                 waitList = waitUsers!!.data
                 if (waitList.size > 0) {
-                    rv_main_list.adapter = RequestAdapter(waitList)
+                    rv_main_list.adapter = RequestAdapter(waitList, this@RequestListActivity)
                     rv_main_list.addItemDecoration(DividerItemDecoration(this@RequestListActivity, LinearLayoutManager.VERTICAL))
                 }
             }
