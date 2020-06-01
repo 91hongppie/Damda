@@ -46,13 +46,20 @@ class MissionFragment: Fragment() {
             }
             override fun onResponse(call: Call<Score>, response: Response<Score>) {
                 var score:Score = response.body()!!
-                println(score)
                 view.tv_score.text = score.score.toString()
                 my_score = score.score
-                if (score.score < 10) {
-                    view.tv_thename.text = "초보 효자"
-                } else {
+                if (my_score < 50) {
+                    view.tv_thename.text = "병아리 효자"
+                } else if (my_score in 50..199) {
+                    view.tv_thename.text = "효자"
+                } else if (my_score in 200..599) {
+                    view.tv_thename.text = "프로 효자"
+                } else if (my_score in 600..999) {
+                    view.tv_thename.text = "대장 효자"
+                } else if (my_score in 1000..9999999) {
                     view.tv_thename.text = "전설의 효자"
+                } else {
+                    view.tv_thename.text = "집에서 놀고먹어도 인정하는 효자"
                 }
                 view.tv_name.text = score.name
             }
@@ -62,8 +69,6 @@ class MissionFragment: Fragment() {
         tl.addTab(tl.newTab().setText("주간 미션"))
         tl.addTab(tl.newTab().setText("월간 미션"))
         tl.tabGravity = TabLayout.GRAVITY_FILL
-        viewPager.adapter = MissionPagerAdapter(context, fragmentManager!!, tl.tabCount)
-        viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tl))
         tl.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager.currentItem = tab.position
@@ -73,6 +78,8 @@ class MissionFragment: Fragment() {
             override fun onTabUnselected(tab: TabLayout.Tab) {
             }
         })
+        viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tl))
+        viewPager.adapter = MissionPagerAdapter(context, childFragmentManager!!, tl.tabCount)
         return view
     }
     fun refreshMissionFragment(fragment: Fragment) {

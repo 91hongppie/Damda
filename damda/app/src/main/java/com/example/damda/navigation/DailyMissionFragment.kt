@@ -8,13 +8,10 @@ import android.view.ViewGroup
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
-import androidx.viewpager.widget.ViewPager
 import com.example.damda.GlobalApplication
 import com.example.damda.R
-import com.example.damda.activity.CropperActivity
 import com.example.damda.activity.MainActivity
 import com.example.damda.navigation.adapter.MissionAdapter
-import com.example.damda.navigation.adapter.MissionPagerAdapter.Companion.mission_period
 import com.example.damda.navigation.model.Mission
 import com.example.damda.navigation.model.Missions
 import com.example.damda.retrofit.service.MissionService
@@ -25,12 +22,13 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class MissionListFragment: Fragment() {
+class DailyMissionFragment: Fragment() {
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+        println("이거는 몇번째 탭에서 열리는거지? $mission_period")
         val context = activity as MainActivity
         val view = inflater.inflate(R.layout.fragment_mission_list, container, false)
         var missionList = emptyArray<Mission>()
@@ -42,7 +40,8 @@ class MissionListFragment: Fragment() {
         val user_id = GlobalApplication.prefs.user_id.toString()
         var missionService: MissionService = retrofit.create(
             MissionService::class.java)
-        missionService.requestMission("JWT $jwt", user_id, mission_period).enqueue(object: Callback<Missions> {
+        view.rv_mission.adapter = MissionAdapter(missionList, context,this@DailyMissionFragment)
+        missionService.requestMission("JWT $jwt", user_id, 0).enqueue(object: Callback<Missions> {
             override fun onFailure(call: Call<Missions>, t: Throwable) {
                 var dialog = AlertDialog.Builder(context)
                 dialog.setTitle("에러")
@@ -52,11 +51,14 @@ class MissionListFragment: Fragment() {
             override fun onResponse(call: Call<Missions>, response: Response<Missions>) {
                 val missions = response.body()
                 missionList = missions!!.data
-                view.rv_mission.adapter = MissionAdapter(missionList, context,this@MissionListFragment)
+                view.rv_mission.adapter = MissionAdapter(missionList, context,this@DailyMissionFragment)
             }
         })
         view.rv_mission?.layoutManager = GridLayoutManager(activity, 1)
 
         return view
+    }
+    companion object {
+        var mission_period = 0
     }
 }
