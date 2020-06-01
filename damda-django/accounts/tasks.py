@@ -1,21 +1,22 @@
 from __future__ import absolute_import, unicode_literals
 
-from damda.celery import app
-
 import os
 import signal
 
+from damda.celery_app import app
+
 import threading
+import datetime
 import requests, json
+
 import jwt
 from decouple import config
-from django.contrib.auth import get_user_model
-from .models import Device
-from albums.models import Album, Photo
-import datetime
 from korean_lunar_calendar import KoreanLunarCalendar
 
+from django.contrib.auth import get_user_model
 from django import db
+from albums.models import Album, Photo
+from .models import Device
 
 
 url = 'https://fcm.googleapis.com/fcm/send'
@@ -42,7 +43,7 @@ def sendPushWeekly():
 
     if len(devices) == 1:
         data = {
-            "to": f"{devices[0].device_token}",
+            "to": devices[0].device_token,
             "notification": {
                 "title": "담다",
                 "body": "오늘은 가족들과 사진 한장 어떠세요?",
@@ -50,12 +51,12 @@ def sendPushWeekly():
             }
         }
     elif len(devices) > 1:
-        dl = []
+        device_list = []
         for device in devices:
-            dl.append(device.device_token)
+            device_list.append(device.device_token)
 
         data = {
-            "registration_ids": f"{dl}",
+            "registration_ids": device_list,
             "notification": {
                 "title": "담다",
                 "body": "오늘은 가족들과 사진 한장 어떠세요?",

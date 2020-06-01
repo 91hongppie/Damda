@@ -5,12 +5,12 @@ from celery import Celery
 from celery.schedules import crontab
 
 #'셀러리' 프로그램을 위해 기본 장고 설정파일을 설정합니다.
-os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'damda.settings.local')
+os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'damda.settings.production')
 
 from django.conf import settings
 from datetime import timedelta
 
-app = Celery('damda_FCM', broker='django://')
+app = Celery('damda')
 
 
 #여기서 문자열을 사용하는 것은 워커(worker)가 자식 프로세스로 설정 객체를 직렬화(serialize)하지 않아도 된다는 뜻입니다.  
@@ -21,8 +21,10 @@ app.config_from_object('django.conf:settings', namespace='CELERY')
 app.autodiscover_tasks(lambda: settings.INSTALLED_APPS)  
 
 app.conf.update(
-    BROKER_URL='amqp://',
-    CELERY_RESULT_BACKEND = 'django-db',
+    CELERY_BACKEND = 'redis://localhost:6379/3',
+    CELERY_BROKER_URL = 'redis://localhost:6379/4',
+    CELERY_RESULT_BACKEND = 'redis://localhost:6379/5',
+    
     CELERY_TASK_SERIALIZER='json',
     CELERY_ACCEPT_CONTENT=['json'],  # Ignore other content
     CELERY_RESULT_SERIALIZER='json',
@@ -34,8 +36,8 @@ app.conf.update(
             'schedule': timedelta(days=1),
             'args': ()
         },
-        'send_push_new_image': {
-            'task': 'accounts.tasks.sendPushNew',
+        'send_push_congratulations': {
+            'task': 'accounts.tasks.sendPushCongrat',
             'schedule': timedelta(minutes=1),
             'args': ()
         },

@@ -336,7 +336,7 @@ def uploadEnd(request):
             }
         elif len(devices) == 1:
             data = {
-                "to": f"{devices[0].device_token}",
+                "to": devices[0].device_token,
                 "notification": {
                     "title": "담다",
                     "body": "새로운 사진이 올라왔습니다.",
