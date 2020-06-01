@@ -286,7 +286,6 @@ def checkDevice(request):
 def missions(request, user_pk, period):
     missions = Mission.objects.filter(user=user_pk, period=period)
     serializers = MissionSerializer(missions, many=True)
-    print(serializers.data)
     return Response({"data": serializers.data})
 
 
@@ -297,7 +296,6 @@ def score(request, user_pk):
         score = Score.objects.filter(user=user_pk)[0]
         serializer = ScoreSerializer(score)
         data = {"name": user.first_name, "score": score.score}
-        return Response(data)
     elif request.method == 'PUT':
         user = User.objects.filter(id=user_pk)[0]
         score = Score.objects.filter(user=user_pk)[0]
@@ -307,4 +305,4 @@ def score(request, user_pk):
         score.score = request.data['score']
         score.save()
         data = {"name": user.first_name, "score": score.score}
-        return Response(data)
+    return Response(data)

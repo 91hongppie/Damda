@@ -1,23 +1,19 @@
 package com.example.damda.navigation.adapter
 
 import android.annotation.SuppressLint
-import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.core.content.ContextCompat.startActivity
+import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.damda.GlobalApplication
 import com.example.damda.R
-import com.example.damda.activity.CropperActivity
-import com.example.damda.activity.CropperActivity.Companion.cropper
 import com.example.damda.activity.MainActivity
 import com.example.damda.navigation.MissionFragment
 import com.example.damda.navigation.MissionFragment.Companion.mission_fragment
 import com.example.damda.navigation.MissionFragment.Companion.my_score
-import com.example.damda.navigation.MissionListFragment
 import com.example.damda.navigation.model.Mission
 import com.example.damda.navigation.model.Score
 import com.example.damda.retrofit.service.ScoreService
@@ -26,9 +22,8 @@ import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
-import kotlin.coroutines.coroutineContext
 
-class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivity, val fragment: MissionListFragment) : RecyclerView.Adapter<MissionAdapter.CustomViewHolder>() {
+class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivity, val fragment: Fragment) : RecyclerView.Adapter<MissionAdapter.CustomViewHolder>() {
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): CustomViewHolder {
         val view =
             LayoutInflater.from(parent.context).inflate(R.layout.list_item_mission, parent, false)
@@ -56,7 +51,7 @@ class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivit
         fun bind(mission: Mission) {
             title.text = mission.title
             point.text = mission.point.toString() + " Point"
-            println("${mission.title}, ${mission.prize}")
+//            println("${mission.title}, ${mission.prize}")
             if (mission.prize == 0) {
                 if (mission.status == 1) {
                     proceed.text = "1 / 1"
