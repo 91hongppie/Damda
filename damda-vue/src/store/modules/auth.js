@@ -48,7 +48,8 @@ const getters = {
   },
   user(state) {
     if (state.token) {
-      return {id: jwtDecode(state.token),
+      const info = jwtDecode(state.token)
+      return {id: info.user_id,
               username: state.username,
               account: state.account}
     }

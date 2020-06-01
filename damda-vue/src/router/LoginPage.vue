@@ -11,9 +11,9 @@
             class="my-3 pa-6 d-none d-md-inline"
             outlined
             tile
-            :style="{'background-color': 'rgba(255,255,255,0)', 'border': 'none', }"
+            :style="{'background-color': 'rgba(255,255,255,0)', 'border': 'none'}"
           >
-            <v-img :src="require('../assets/logo_splash.png')" width="450"/>
+            <v-img :src="require('../assets/logo_splash.png')" class="mb-12" width="450"/>
           </v-card>
           <Login/>
         </v-row>
