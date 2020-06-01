@@ -5,8 +5,8 @@ import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
-import android.widget.DatePicker
-import android.widget.EditText
+import android.view.View
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import com.example.damda.*
@@ -30,6 +30,8 @@ import javax.xml.datatype.DatatypeConstants.MONTHS
 
 class SignupActivity : AppCompatActivity() {
     var checkemail: CheckEmail? = null
+    var gender= ""
+    val items = listOf("성별", "남자", "여자")
 
     internal val viewDisposables = CompositeDisposable()
 
@@ -63,12 +65,27 @@ class SignupActivity : AppCompatActivity() {
         inputInfoMessage = arrayOf(getString(R.string.error_discorrent_email), getString(
             R.string.txtInputInfoPWD
         ), getString(R.string.txtInputInfoRePWD))
+        val adapter = ArrayAdapter(this, R.layout.list_item_gender, items)
+        spinner.adapter = adapter
+        spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+            override fun onNothingSelected(parent: AdapterView<*>?) {
+//                TODO("Not yet implemented")
+            }
 
-        typingListener()
+            override fun onItemSelected(
+                parent: AdapterView<*>?,
+                view: View?,
+                position: Int,
+                id: Long
+            ) {
+//                TODO("Not yet implemented")
+                gender = position.toString()
+            }
+        }
     }
 
     private fun setListener() {
-
+        dataPicker.updateDate(1990, 0,1)
         isCheckID = false
         var retrofit = Retrofit.Builder()
             .baseUrl(prefs.damdaServer)
@@ -85,6 +102,7 @@ class SignupActivity : AppCompatActivity() {
             params.put("first_name", name.text.toString())
             params.put("birth", "${dataPicker.year}-${dataPicker.month + 1}-${dataPicker.dayOfMonth}")
             params.put("is_lunar", is_lunar.isChecked)
+            params.put("gender", gender)
 
             if (isCheckID) {
                 signupService.signUp(params).enqueue(object:Callback<SignUp>{
