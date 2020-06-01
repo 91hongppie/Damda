@@ -21,6 +21,7 @@ import android.view.View.OnClickListener
 import android.widget.Button
 import android.widget.ImageView
 import android.widget.Toast
+import androidx.activity.ComponentActivity
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.net.toUri
@@ -28,6 +29,7 @@ import androidx.fragment.app.FragmentManager
 import com.example.damda.MySharedPreferences
 import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
+import com.example.damda.ImageUpload
 import com.example.damda.R
 import com.example.damda.navigation.PhotoListFragment
 import com.jakewharton.rxbinding2.view.clickable
@@ -135,9 +137,13 @@ class AddPhotoActivity : AppCompatActivity() {
                     )
                 }
 
-                val url = URL(prefs.damdaServer+"/api/albums/addphoto/")
-
-                uploadImage(url, images, paths)
+                val uploadIntent = Intent(this, ImageUpload::class.java)
+                uploadIntent.putExtra("paths", paths)
+                startService(uploadIntent)
+                ImageUpload().enqueueWork(this, uploadIntent)
+                var intent = Intent(this, MainActivity::class.java)
+                startActivity(intent)
+                ActivityCompat.finishAffinity(this)
 
             }
         }
@@ -163,71 +169,5 @@ class AddPhotoActivity : AppCompatActivity() {
         addphoto_image.setImageURI(imageUris[0])
     }
 
-    fun uploadImage(url : URL, images: ArrayList<File>, paths: ArrayList<String>) {
-        try {
-            val MEDIA_TYPE_IMAGE = MediaType.parse("image/*")
 
-            val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("user_id", "${prefs.user_id}")
-                
-            for (i in 0 until images.size) {
-                val exif = ExifInterface(paths[i])
-                var fileDatetime : String
-
-                fileDatetime = if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
-                    val datetime = exif.getAttribute(ExifInterface.TAG_DATETIME)
-                    val datetime_split = datetime.split(" ")
-                    var date = datetime_split[0].split(":").joinToString("")
-                    var time = datetime_split[1].split(":").joinToString("")
-                    "${date}_${time}"
-                } else {
-                    val datetime = Calendar.getInstance(TimeZone.getDefault(), Locale.KOREA).time
-                    val today = SimpleDateFormat("yyyyMMdd_HHmmss").format(datetime)
-                    today + "_$i"
-                }
-                
-                Log.d("TIME", "$fileDatetime")
-                Log.d("USER", "id: ${prefs.user_id}")
-                requestBody.addFormDataPart("uploadImages", "damda_${prefs.user_id}_${fileDatetime}", RequestBody.create(MEDIA_TYPE_IMAGE, images[i]))
-
-            }
-
-            val body = requestBody.build()
-            val jwt = GlobalApplication.prefs.token
-            val request = Request.Builder().addHeader("Authorization", "JWT $jwt")
-                .url(url)
-                .post(body)
-                .build()
-
-            val client = OkHttpClient()
-
-            val callback = Callback1()
-
-            client.newCall(request).enqueue(callback)
-
-        } catch (e: UnknownHostException) {
-            Log.d("Error", "$e")
-        } catch (e: Exception) {
-            Log.d("Exception", "$e")
-        }
-    }
-
-    inner class Callback1 : Callback {
-        override fun onFailure(call: okhttp3.Call, e: IOException) {
-            Log.d("Sever response", "error: $e")
-
-        }
-
-        override fun onResponse(call: okhttp3.Call, response: Response) {
-            val status = response.code()
-            Log.d("server response", "$status")
-
-            val result = response.body()?.string()
-            Log.d("Sever response", "result: $result")
-            var intent = Intent(this@AddPhotoActivity, MainActivity::class.java)
-            intent.putExtra("사진업로드", true)
-            startActivity(intent)
-            ActivityCompat.finishAffinity(this@AddPhotoActivity)
-        }
-    }
 }

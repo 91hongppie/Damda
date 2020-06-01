@@ -225,7 +225,7 @@ def all_photo(request, family_pk):
 @csrf_exempt
 def addphoto(request):
     User = get_user_model()
-    image_list = request.FILES.getlist('uploadImages')
+    item = request.FILES.get('uploadImages')
 
     # 유저가 있는지 확인 
     try:
@@ -249,55 +249,55 @@ def addphoto(request):
 
     ROOT_DIR = os.path.abspath("./")
     os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/{}/{}'.format(user.family_id, album.id)), exist_ok=True)
-    for item in image_list:
-        image = fr.load_image_file(item)
+    
+    image = fr.load_image_file(item)
 
-        image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
-        if len(Photo.objects.filter(pic_name=image_path, album=album)):
-            print('이미 있는 사진입니다')
-            continue
-        save_path2 = os.path.join(ROOT_DIR, image_path)
-        faces = fr.face_locations(image)
-        if len(faces) != 0:
-            count = 0
-            for face in faces:
-                top, right, bottom, left = face
-                image_face = image[top:bottom, left:right]
-                unknown_face = fr.face_encodings(image_face)
-                if len(unknown_face) == 0:
-                    if not Photo.objects.filter(pic_name=image_path):
-                        image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
-                        make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=album)
-                    break
-                try:
-                    with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'r', encoding='utf-8') as family:
-                        data = json.load(family)
-                except:
-                    if not Photo.objects.filter(pic_name=image_path):
-                        image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
-                        make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=album)
-                    break
-                for album_name, data in data.items():
-                    for dt in data:
-                        dt = [np.asarray(dt)]
-                        distance = fr.face_distance(dt, unknown_face[0])
-                        if distance < 0.44:
-                            info = album_name.split('_')
-                            user_album = Album.objects.filter(family=info[0], title=info[1])[0]
-                            image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, user_album.id, item.name + '.jpg')
-                            make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=user_album)
-                            skimage.io.imsave(image_path, image)
-                            count += 1
-                            break
-            if count == 0:
+    image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
+    if len(Photo.objects.filter(pic_name=image_path, album=album)):
+        print('이미 있는 사진입니다')
+        return Response(status=status.HTTP_200_OK)
+    save_path2 = os.path.join(ROOT_DIR, image_path)
+    faces = fr.face_locations(image)
+    if len(faces) != 0:
+        count = 0
+        for face in faces:
+            top, right, bottom, left = face
+            image_face = image[top:bottom, left:right]
+            unknown_face = fr.face_encodings(image_face)
+            if len(unknown_face) == 0:
                 if not Photo.objects.filter(pic_name=image_path):
                     image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
                     make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=album)
-        else:
+                break
+            try:
+                with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'r', encoding='utf-8') as family:
+                    data = json.load(family)
+            except:
+                if not Photo.objects.filter(pic_name=image_path):
+                    image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
+                    make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=album)
+                break
+            for album_name, data in data.items():
+                for dt in data:
+                    dt = [np.asarray(dt)]
+                    distance = fr.face_distance(dt, unknown_face[0])
+                    if distance < 0.44:
+                        info = album_name.split('_')
+                        user_album = Album.objects.filter(family=info[0], title=info[1])[0]
+                        image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, user_album.id, item.name + '.jpg')
+                        make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=user_album)
+                        skimage.io.imsave(image_path, image)
+                        count += 1
+                        break
+        if count == 0:
             if not Photo.objects.filter(pic_name=image_path):
                 image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
                 make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=album)
-        skimage.io.imsave(image_path, image)
+    else:
+        if not Photo.objects.filter(pic_name=image_path):
+            image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
+            make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=album)
+    skimage.io.imsave(image_path, image)
         
         
 
