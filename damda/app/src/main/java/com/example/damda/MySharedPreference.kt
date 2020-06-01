@@ -21,6 +21,9 @@ class MySharedPreferences(context: Context) {
     var family_id: String?
         get() = prefs.getString("family_id", "")
         set(value) = prefs.edit().putString("family_id", value).apply()
+    var my_album: Boolean
+        get() = prefs.getBoolean("my_album", false)
+        set(value) = prefs.edit().putBoolean("my_album", value).apply()
 
     var state: String?
         get() = prefs.getString("state", "")

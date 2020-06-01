@@ -1,5 +1,6 @@
 package com.example.damda.activity
 
+import android.content.DialogInterface
 import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
@@ -13,8 +14,10 @@ import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.retrofit.model.Message
+import com.example.damda.retrofit.model.User
 import com.example.damda.retrofit.model.WaitUser
 import kotlinx.android.synthetic.main.activity_add_family.*
+import kotlinx.android.synthetic.main.list_item_request.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -83,10 +86,20 @@ class AddFamilyActivity : AppCompatActivity() {
                     Log.v("response", family_info?.id.toString())
                     GlobalApplication.prefs.family_id = family_info?.id.toString()
                     GlobalApplication.prefs.state = "3"
-                    var intent = Intent(this@AddFamilyActivity, CropperActivity::class.java)
-                    intent.putExtra("before", "addFamily")
-                    startActivity(intent)
-                    finish()
+                    var dialog = AlertDialog.Builder(this@AddFamilyActivity)
+                    dialog.setTitle("가족 생성 완료")
+                    dialog.setMessage("내 앨범을 만들어 주세요.")
+                    var dialogListener = object: DialogInterface.OnClickListener{
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                            when(which){
+                                DialogInterface.BUTTON_POSITIVE-> {
+                                    moveActivity()
+                                }
+                            }
+                        }
+                    }
+                    dialog.setPositiveButton("만들러 가기", dialogListener)
+                    dialog.show()
                 }
             })
         }
@@ -123,5 +136,11 @@ class AddFamilyActivity : AppCompatActivity() {
             startActivity(intent)
             finish()
         }
+    }
+    fun moveActivity(){
+        var intent = Intent(this@AddFamilyActivity, CropperActivity::class.java)
+        intent.putExtra("before", "addFamily")
+        startActivity(intent)
+        finish()
     }
 }

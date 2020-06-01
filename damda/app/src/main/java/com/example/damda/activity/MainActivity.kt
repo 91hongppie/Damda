@@ -47,6 +47,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
         bottom_navigation.setOnNavigationItemSelectedListener(this)
+        if (!prefs.my_album){
+            checkMyAlbum()
+        }
         val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
         if(activeNetwork?.type == ConnectivityManager.TYPE_WIFI && prefs.autoStatus){
@@ -306,5 +309,28 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             return lastId.compareTo(Id) < 0
         }
         return false
+    }
+    fun checkMyAlbum() {
+        var dialog = AlertDialog.Builder(this)
+        dialog.setTitle("내 앨범 만들기")
+        dialog.setMessage("내 앨범을 만들어 주세요.")
+        var dialogListener = object: DialogInterface.OnClickListener{
+            override fun onClick(dialog: DialogInterface?, which: Int) {
+                when(which){
+                    DialogInterface.BUTTON_POSITIVE-> {
+                        moveActivity()
+                    }
+                }
+            }
+        }
+        dialog.setPositiveButton("만들러 가기", dialogListener)
+        dialog.setCancelable(false)
+        dialog.show()
+    }
+    fun moveActivity() {
+        var intent = Intent(this, CropperActivity::class.java)
+        intent.putExtra("before", "addFamily")
+        startActivity(intent)
+        finish()
     }
 }

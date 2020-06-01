@@ -105,6 +105,9 @@ class CropperActivity : AppCompatActivity() {
                     builder.setPositiveButton(
                         "확인"
                     ) { dialog, id ->
+                        if (intent.getStringExtra("before") =="addFamily"){
+                            prefs.my_album = true
+                        }
                         var intent = Intent(this@CropperActivity, MainActivity::class.java)
                         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
                         startActivity(intent)

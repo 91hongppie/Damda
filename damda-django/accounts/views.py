@@ -218,6 +218,12 @@ def UserInfo(request):
     User = get_user_model()
     user = get_object_or_404(User, username=request.user)
     serializer = UserSerializer(user)
+    data = serializer.data
+    album = FamilyName.objects.filter(user=data.id, owner=data.id)
+    if len(album) > 0:
+        data['my_album'] = True
+    else:
+        data['my_album'] = False
     return Response(serializer.data)
 
 

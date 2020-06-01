@@ -78,6 +78,7 @@ class LoginActivity : AppCompatActivity() {
                         GlobalApplication.prefs.user_id = login?.id.toString()
                         GlobalApplication.prefs.family_id = login?.family.toString()
                         GlobalApplication.prefs.state = login?.state.toString()
+                        prefs.my_album = login?.my_album!!
                         moveActivity(login?.state!!.toInt())
                     }
                 }
@@ -137,6 +138,7 @@ class LoginActivity : AppCompatActivity() {
                                     GlobalApplication.prefs.user_id = userInfo?.id.toString()
                                     GlobalApplication.prefs.family_id = userInfo?.family.toString()
                                     GlobalApplication.prefs.state = userInfo?.state.toString()
+                                    prefs.my_album = userInfo?.my_album!!
                                     Log.v("UserInfo",userInfo?.toString())
                                     moveActivity(userInfo?.state!!.toInt())
                                 }
