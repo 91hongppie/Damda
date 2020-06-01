@@ -98,6 +98,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val callback = Callback1()
 
         client.newCall(request).enqueue(callback)
+
+        Log.d("SEND TOKEN", "MY PHONE: $token")
     }
 
     fun replaceFragment(fragment: Fragment){

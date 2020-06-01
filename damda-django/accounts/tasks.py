@@ -8,30 +8,30 @@ import signal
 import threading
 import requests, json
 import jwt
-import requests
 from decouple import config
 from django.contrib.auth import get_user_model
 from .models import Device
 from albums.models import Album, Photo
 import datetime
+from korean_lunar_calendar import KoreanLunarCalendar
 
 from django import db
-from celery import shared_task
-
-
-@app.task
-def say_hello():
-    print('hello, celery!')
 
 
 url = 'https://fcm.googleapis.com/fcm/send'
+
+headers = {
+    'Content-Type': 'application/json',
+    'Authorization': f'key={config("AUTHORIZATION_TOKEN")}'
+}
+
 User = get_user_model()
 
 images_for_family = dict()
 
 @app.task
 def sendPushWeekly():
-    global url
+    global url, headers, User, images_for_family
     today = datetime.datetime.now(datetime.timezone.utc)
     week = datetime.timedelta(minutes=1)
     week_ago = today - week
@@ -64,11 +64,6 @@ def sendPushWeekly():
         }
     else:
         return '알맞은 대상이 없습니다.'
-
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'key={config("AUTHORIZATION_TOKEN")}'
-    }
     
     response = requests.post(url, data=json.dumps(data), headers=headers)
     result = response.status_code
@@ -76,75 +71,77 @@ def sendPushWeekly():
     return result
 
 @app.task
-def sendPushNew():
-    global images_for_family
-    albums = Album.objects.all()
-    for album in albums:
-        family_id = album.family_id
-        album_id = album.id
-        # 가족에 대한 기록이 없으면,
-        if family_id not in images_for_family.keys():
-            images_for_family[family_id] = {
-                'album': dict(),
-                'NEW': False
-            }
+def sendPushCongrat():
+    global url, headers, User
+    
+    KST = datetime.timezone(datetime.timedelta(hours=9))
+    today = datetime.datetime.now(tz=KST)
+    calendar = KoreanLunarCalendar()
+    year = today.year
+    month = today.month
+    day = today.day
 
-        # 가족에 해당 앨범 기록이 남아있으면,
-        now = len(Photo.objects.filter(album_id=album_id))
-        if album_id in images_for_family[family_id]['album'].keys():
-            pre = images_for_family[family_id]['album'][album_id]
-            # 현재가 전보다 커졌으면,
-            if now > pre:
-                images_for_family[family_id]['NEW'] = True
-        # 가족에 해당 앨범 기록이 남아있지 않으면,
+    today_to_lunar = calendar.setSolarDate(year, month, day)
+
+    congrat_users = User.objects.filter(birth=today, is_lunar=False) | User.objects.filter(birth=today_to_lunar, is_lunar=True)
+
+    target_familys = dict()
+
+    devices = []
+    me = []
+    for user in congrat_users:
+        # 생일 대상의 가족들 조회
+        congrat_family = User.objects.filter(family_id=user.family_id)
+        # 가족들 기기 조회
+        for device in Device.objects.filter(owner__in=congrat_family):
+            if device.owner == user:
+                me.append(device.device_token)
+            else:
+                devices.append(device.device_token)
+        # 알림 보낼 대상 결정
+        target_familys[user.first_name] = devices
+
+    result = []
+
+    if len(me) > 0:
+        message = "생일 축하드려요~!! 와아아아~!!! (짝짝짝)"
+        if len(me) > 1:
+            data = {
+                "registration_ids": me,
+                "notification": {
+                    "body": message
+                }
+            }
         else:
-            images_for_family[family_id]['NEW'] = True
-        images_for_family[family_id]['album'][album_id] = now
-
-    target_list = []
-
-    for family, info in images_for_family.items():
-        if info['NEW']:
-            target_list.append(family)
-    
-    User = get_user_model()
-    targets = User.objects.filter(family_id__in=target_list)
-    devices = Device.objects.filter(owner__in=targets)
-
-    if len(devices) == 1:
-        data = {
-            "to": f"{devices[0].device_token}",
-            "notification": {
-                "title": "담다",
-                "body": "새로운 사진이 올라왔습니다.",
-                "android_channel_id": "NEW"
+            data = {
+                "to": me[0],
+                "notification": {
+                    "body": message
+                }
             }
-        }
-    elif len(devices) > 1:
-        dl = []
-        for device in devices:
-            dl.append(device.device_token)
-
-        data = {
-            "registration_ids": f"{dl}",
-            "notification": {
-                "title": "담다",
-                "body": "새로운 사진이 올라왔습니다.",
-                "android_channel_id": "NEW"
-            }
-        }
+        response = requests.post(url, data=json.dumps(data), headers=headers)
+        result.append(response)
     else:
-        return '알맞은 대상이 없습니다.'
+        return "알맞은 대상이 없습니다."
 
-    headers = {
-        'Content-Type': 'application/json',
-        'Authorization': f'key={config("AUTHORIZATION_TOKEN")}'
-    }
+    for uname, fmem in target_familys.items():
+        message = f'빠라밤~! {uname} 님의 생일입니다! 잊지않으셨죠?'
+        if len(target_familys[uname]) > 0:
+            if len(target_familys[uname]) > 1:
+                data = {
+                    "registration_ids": fmem,
+                    "notification": {
+                        "body": message
+                    }
+                }
+            else:
+                data = {
+                    "to": fmem[0],
+                    "notification": {
+                        "body": message
+                    }
+                }
+            response = requests.post(url, data=json.dumps(data), headers=headers)
+            result.append(response.status_code)
     
-    response = requests.post(url, data=json.dumps(data), headers=headers)
-    result = response.status_code
-
-    for family in images_for_family.keys():
-        images_for_family[family]['NEW'] = False
-
     return result

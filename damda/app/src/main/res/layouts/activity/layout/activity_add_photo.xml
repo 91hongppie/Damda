@@ -25,32 +25,22 @@
         android:layout_below="@id/my_toolbar"
         android:orientation="horizontal" />
 
-    <ScrollView
-        android:id="@+id/image_scroll"
+    <ImageView
+        android:id="@+id/addphoto_image"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/top_division"
-        android:gravity="center"
-        android:orientation="horizontal">
-
-        <ImageView
-            android:id="@+id/addphoto_image"
-            android:layout_width="match_parent"
-            android:layout_height="400dp"
-            android:minHeight="400dp"
-            android:layout_margin="8dp"
-            android:adjustViewBounds="true"
-            android:autofillHints="사진"
-            android:contentDescription="사진을 등록해주세요"
-            android:scaleType="fitCenter" />
-
-    </ScrollView>
+        android:layout_height="400dp"
+        android:minHeight="400dp"
+        android:layout_margin="8dp"
+        android:adjustViewBounds="true"
+        android:autofillHints="사진"
+        android:contentDescription="사진을 등록해주세요"
+        android:scaleType="fitCenter" />
 
     <LinearLayout
         android:id="@+id/image_division"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@+id/image_scroll"
+        android:layout_below="@+id/addphoto_image"
         android:orientation="horizontal" />
 
     <LinearLayout
