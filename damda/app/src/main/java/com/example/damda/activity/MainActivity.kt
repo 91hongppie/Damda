@@ -30,6 +30,7 @@ import retrofit2.http.GET
 import androidx.fragment.app.Fragment
 import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
+import com.example.damda.ImageUpload
 import com.example.damda.R
 import com.example.damda.navigation.*
 import com.google.android.gms.tasks.OnCompleteListener
@@ -234,7 +235,10 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                         override fun onClick(dialog: DialogInterface?, which: Int) {
                             when(which){
                                 DialogInterface.BUTTON_NEUTRAL -> {
-                                    uploadImage(url, images, paths)
+                                    val uploadIntent = Intent(this@MainActivity, ImageUpload::class.java)
+                                    uploadIntent.putExtra("paths", paths)
+                                    startService(uploadIntent)
+                                    ImageUpload().enqueueWork(this@MainActivity, uploadIntent)
                                 }
                             }
                         }
@@ -246,50 +250,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             }
         }
         return
-    }
-
-    fun uploadImage(url : URL, images: ArrayList<File>, paths: ArrayList<String>) {
-        try {
-            val MEDIA_TYPE_IMAGE = MediaType.parse("image/*")
-
-            val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("user_id", "${prefs.user_id}")
-
-            for (i in 0 until images.size) {
-                val exif = ExifInterface(paths[i])
-                var date: String
-                var time: String
-                if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
-                    val datetime = exif.getAttribute(ExifInterface.TAG_DATETIME)
-                    val datetime_split = datetime.split(" ")
-                    date = datetime_split[0].split(":").joinToString("")
-                    time = datetime_split[1].split(":").joinToString("")
-                } else {
-                    val today = Date()
-                    date = today.year.toString() + today.month.toString() + today.day.toString()
-                    time = today.hours.toString() + today.minutes.toString() + today.seconds.toString()
-                }
-                requestBody.addFormDataPart("uploadImages", "damda_${prefs.user_id}_${date}_${time}", RequestBody.create(MEDIA_TYPE_IMAGE, images[i]))
-            }
-
-            val body = requestBody.build()
-            val jwt = prefs.token
-            val request = Request.Builder().addHeader("Authorization", "JWT $jwt")
-                .url(url)
-                .post(body)
-                .build()
-
-            val client = OkHttpClient()
-
-            val callback = Callback1()
-
-            client.newCall(request).enqueue(callback)
-
-        } catch (e: UnknownHostException) {
-            Log.d("Error", "$e")
-        } catch (e: Exception) {
-            Log.d("Exception", "$e")
-        }
     }
 
     inner class Callback1 : Callback {
