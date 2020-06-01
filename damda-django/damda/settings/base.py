@@ -13,9 +13,6 @@ https://docs.djangoproject.com/en/3.0/ref/settings/
 import os
 import datetime
 
-import firebase_admin
-from firebase_admin import credentials
-
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 
@@ -50,6 +47,7 @@ INSTALLED_APPS = [
     'allauth.socialaccount',
     'allauth.socialaccount.providers.kakao',
     'django_celery_results',
+    'django_celery_beat'
 ]
 
 MIDDLEWARE = [
@@ -164,7 +162,3 @@ ACCOUNT_LOGOUT_ON_GET = True
 # ACCOUNT_USERNAME_REQUIRED = False
 
 SITE_ID = 1
-
-cred = credentials.Certificate(os.path.join(BASE_DIR, 'credentials.json'))
-default_app = firebase_admin.initialize_app(cred)
-

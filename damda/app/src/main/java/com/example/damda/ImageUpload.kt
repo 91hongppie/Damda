@@ -35,14 +35,13 @@ class ImageUpload : JobIntentService() {
     }
     override fun onHandleWork(intent: Intent) {
         val url = URL(GlobalApplication.prefs.damdaServer+"/api/albums/addphoto/")
-        var i = 0
         val paths = intent.getStringArrayListExtra("paths")!!
-        for (path in paths) {
-            val image = File(path)
-            uploadImage(url, image, path, i)
+        for (i in 0 until paths.size) {
+            val image = File(paths[i])
+            uploadImage(url, image, paths[i], i)
             Thread.sleep(500)
         }
-        onDestroy()
+//        onDestroy()
     }
 
     override fun onDestroy() {
@@ -65,6 +64,7 @@ class ImageUpload : JobIntentService() {
             }
             requestBody.addFormDataPart("uploadImages", "damda_${GlobalApplication.prefs.user_id}_${fileDatetime}", RequestBody.create(MEDIA_TYPE_IMAGE, image))
 
+            Log.d("사진 순서", ": $i")
 
             val body = requestBody.build()
             val request = Request.Builder().addHeader("Authorization", "JWT $jwt")

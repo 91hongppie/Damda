@@ -141,7 +141,7 @@ class AddPhotoActivity : AppCompatActivity() {
                 val uploadIntent = Intent(this, ImageUpload::class.java)
                 uploadIntent.putExtra("paths", paths)
                 startService(uploadIntent)
-                ImageUpload().enqueueWork(this, uploadIntent)
+//                ImageUpload().enqueueWork(this, uploadIntent)
                 var intent = Intent(this, MainActivity::class.java)
                 startActivity(intent)
                 ActivityCompat.finishAffinity(this)
