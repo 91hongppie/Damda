@@ -5,7 +5,7 @@ from .models import WaitUser, Family, Score, Mission
 class UserCreatSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ['id', 'username', 'email', 'password', 'first_name', 'birth', 'is_lunar']
+        fields = ['id', 'username', 'email', 'password', 'first_name', 'birth', 'is_lunar','gender']
 
     def create(self, validated_data):
         user = get_user_model().objects.create_user(**self.validated_data)
