@@ -86,7 +86,7 @@ class RequestAdapter(
 
                         var albumId = 0
                         var dialogBuilder = AlertDialog.Builder(parentContext)
-                        dialogBuilder.setTitle("가족 설정")
+                        dialogBuilder.setTitle("앨범 선택")
                         var fnl = NullAlbumAdapter(nullalbumList)
                         dialogBuilder.setSingleChoiceItems( fnl,-1, DialogInterface.OnClickListener { dialog, which ->
                             albumId = fnl.getItem(which) as Int
@@ -103,10 +103,17 @@ class RequestAdapter(
                                                 Log.e("LOGIN",t.message)
                                             }
                                             override fun onResponse(call: Call<User>, response: Response<User>) {
-                                                button1.visibility = View.GONE
-                                                button2.visibility = View.GONE
-                                                itemView.response.visibility = View.VISIBLE
-                                                itemView.response.text = "요청이 수락되었습니다."
+                                                if (response.code() == 200) {
+                                                    button1.visibility = View.GONE
+                                                    button2.visibility = View.GONE
+                                                    itemView.response.visibility = View.VISIBLE
+                                                    itemView.response.text = "요청이 수락되었습니다."
+                                                } else {
+                                                    var dialog = androidx.appcompat.app.AlertDialog.Builder(parentContext)
+                                                    dialog.setTitle("에러")
+                                                    dialog.setMessage("앨범을 등록해주세요.")
+                                                    dialog.show()
+                                                }
                                             }
                                         })
                                     }
