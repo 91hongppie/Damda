@@ -88,6 +88,7 @@ class RequestAdapter(
                         var dialogBuilder = AlertDialog.Builder(parentContext)
                         dialogBuilder.setTitle("가족 설정")
                         var fnl = NullAlbumAdapter(nullalbumList)
+                        var fn = R.array.familyName
                         dialogBuilder.setSingleChoiceItems( fnl,-1, DialogInterface.OnClickListener { dialog, which ->
                             albumId = fnl.getItem(which) as Int
                         })

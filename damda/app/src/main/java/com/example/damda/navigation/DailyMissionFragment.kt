@@ -28,7 +28,6 @@ class DailyMissionFragment: Fragment() {
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        println("이거는 몇번째 탭에서 열리는거지? $mission_period")
         val context = activity as MainActivity
         val view = inflater.inflate(R.layout.fragment_mission_list, container, false)
         var missionList = emptyArray<Mission>()
@@ -58,7 +57,10 @@ class DailyMissionFragment: Fragment() {
 
         return view
     }
-    companion object {
-        var mission_period = 0
+    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
+        if (resultCode == 1) {
+            this.fragmentManager?.beginTransaction()?.detach(this)?.attach(this)?.commit()
+        }
     }
 }

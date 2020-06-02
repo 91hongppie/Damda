@@ -43,6 +43,7 @@ class NullAlbumAdapter(val albumList: Array<Album>) : BaseAdapter()
                 .load(prefs.damdaServer + "/${albumList[position].image}")
                 .error(R.drawable.album).apply(RequestOptions().override(600, 600))
                 .apply(RequestOptions.centerCropTransform()).into(image)
+
         }
 
         return view

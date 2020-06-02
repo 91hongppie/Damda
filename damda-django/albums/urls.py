@@ -15,4 +15,5 @@ urlpatterns = [
     path('addphoto/', views.addphoto),
     path('<int:family_pk>/video/', views.video),
     path('<int:family_pk>/video/<int:video_pk>/', views.detail_video),
+    path('mission/<int:family_pk>/<int:user_pk>/', views.parentphotos)
 ]
