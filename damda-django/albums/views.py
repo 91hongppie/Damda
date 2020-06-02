@@ -99,11 +99,15 @@ def albumMember(request, family_pk, user_pk):
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST'])
-def face(request, family_pk):
+def face(request, family_pk, user_pk):
     if request.method == 'GET':
         faces = Album.objects.filter(family=family_pk).exclude(title="기본 앨범")
         serializers = GetMemberSerializer(faces, many=True)
-        return Response({"data": serializers.data})
+        datas = serializers.data
+        for data in datas:
+            calls = get_object_or_404(FamilyName, user=user_pk, album=data['id'])
+            data['call'] = calls.call
+        return Response({"data": datas})
     elif request.method == 'POST':
         image = fr.load_image_file(request.FILES['image'])
         faces_locations = fr.face_locations(image)
@@ -144,7 +148,9 @@ def face(request, family_pk):
                 if makeFamilyName(family_pk, request.data, albumSerializer.data['id'], title):
                     album.delete()
                     return Response(status=status.HTTP_400_BAD_REQUEST)
-                return Response(albumSerializer2.data)
+                response_data = albumSerializer2.data
+                response_data['call'] = title
+                return Response(response_data)
             else:
                 album.delete()
     return Response(status=status.HTTP_400_BAD_REQUEST)
