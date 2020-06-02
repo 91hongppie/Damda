@@ -20,10 +20,13 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".activity.SelectAlbumActivity"></activity>
+        <activity android:name=".activity.EditUserActivity" />
+
         <service
             android:name=".retrofit.service.ScoreService"
             android:enabled="true"
-            android:exported="true"></service>
+            android:exported="true" />
         <service
             android:name=".retrofit.service.MissionService"
             android:enabled="true"

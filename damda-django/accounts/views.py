@@ -40,6 +40,8 @@ def JoinFamily(request, user_pk):
         if serializer.is_valid(raise_exception=True):
             serializer.save()
             if makeFamilyName(main_member.family_id, user_pk, serializer.data['id'], request.data.get('albumId')):
+                tmp_user = get_object_or_404(User, pk=serializer.data['id'])
+                tmp_user.delete()
                 return Response(status=status.HTTP_400_BAD_REQUEST)
             wait_user = get_object_or_404(WaitUser, wait_user=user.username)
             wait_user.delete()
