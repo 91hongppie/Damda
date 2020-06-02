@@ -46,6 +46,21 @@ class ImageUpload : JobIntentService() {
 
     override fun onDestroy() {
         super.onDestroy()
+        val url = URL(GlobalApplication.prefs.damdaServer+"/api/albums/uploadend/")
+
+        val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("user_id", "${GlobalApplication.prefs.user_id}").build()
+
+        val request = Request.Builder().addHeader("Authorization", "JWT $jwt")
+            .url(url)
+            .post(requestBody)
+            .build()
+
+        val client = OkHttpClient()
+        val callback = Callback1()
+
+        client.newCall(request).enqueue(callback)
+
         Log.d(TAG,"끝끝끝")
     }
     fun uploadImage(url : URL, image: File, path: String, i: Int) {
@@ -92,7 +107,7 @@ class ImageUpload : JobIntentService() {
 
         override fun onResponse(call: okhttp3.Call, response: Response) {
             val status = response.code()
-            Log.d("server response", "$status")
+            Log.d("server response", "푸시도 보냈어요~ $status")
         }
     }
 
