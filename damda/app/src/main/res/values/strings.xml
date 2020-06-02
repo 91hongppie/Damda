@@ -66,6 +66,7 @@
     <string name="birth">생년월일</string>
     <string name="ok">확인</string>
     <string name="join_done">가입하기</string>
+    <string name="edit_done">수정하기</string>
     <string name="done">확인</string>
     <string name="join">회원가입</string>
     <string name="clear">초기화</string>

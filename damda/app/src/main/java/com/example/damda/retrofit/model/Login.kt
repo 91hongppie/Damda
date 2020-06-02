@@ -19,7 +19,11 @@ data class UserInfo(
     val username: String,
     val state: Int,
     val family: Int,
-    val my_album: Boolean
+    val my_album: Boolean,
+    val first_name: String,
+    val birth: String,
+    val is_lunar: Boolean,
+    val gender: Int
 )
 
 data class Account(
