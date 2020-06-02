@@ -23,8 +23,8 @@
     <!-- Bottom Navigation View -->
     <string name="home">Album</string>
     <string name="search">Photos</string>
-    <string name="gallery">Gallery</string>
-    <string name="favorite">Video</string>
+    <string name="gallery">Upload</string>
+    <string name="favorite">Challenge</string>
     <string name="account">Account</string>
 
     <!-- Account -->

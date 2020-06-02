@@ -204,10 +204,9 @@ def all_photo(request, family_pk):
     return_list = []
     if request.method == 'GET':
         albums = Album.objects.filter(family=family_pk)
-        for album in albums:
-            photos = Photo.objects.filter(album=album.id)
-            serializers = PhotoSerializer(photos, many=True)
-            return_list += serializers.data
+        photos = Photo.objects.filter(album__in=albums)
+        serializers = PhotoSerializer(photos, many=True)
+        return_list = serializers.data
         return Response(return_list)
     elif request.method == 'POST':
         photos = request.data['photos']
@@ -409,3 +408,10 @@ class ListAPIView(generics.ListAPIView):
         return serializers.data
     serializer_class = PhotoSerializer
     pagination_class = PostPagination
+
+
+@api_view(['GET', ])
+def parentphotos(request, family_pk, user_pk):
+    albums = Album.objects.filter(family=family_pk)
+    photos = Photo.objects.filter(album__in=albums)
+    return Response(len(photos))
