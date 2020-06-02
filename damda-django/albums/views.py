@@ -89,7 +89,7 @@ def album(request, album_pk):
 @api_view(['GET', 'POST'])
 def albumMember(request, family_pk, user_pk):
     if request.method == 'GET':
-        albums = Album.objects.filter(family=family_pk).exclude(title="기본 앨범")
+        albums = Album.objects.filter(family=family_pk, member=None).exclude(title="기본 앨범")
         serializers = AlbumSerializer(albums, many=True)
         datas = serializers.data
         for data in datas:

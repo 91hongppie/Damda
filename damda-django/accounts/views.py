@@ -64,17 +64,19 @@ def JoinFamily(request, user_pk):
 namedic={
     '남동생엄마' : ['엄마'], '여동생엄마': ['엄마'], '남동생아빠': ['아빠'], '여동생아빠': ['아빠'],
     '형엄마': ['엄마'], '누나엄마': ['엄마'], '형아빠': ['아빠'], '누나아빠': ['아빠'],
-    '오빠엄마': ['엄마'], '오빠아빠': ['아빠'], '언니엄마': ['엄마'], '언니아빠': ['아빠''],
-    '엄마남동생': ['아들'], '엄마여동생': [ '딸'], '아빠남동생': ['아들'], '아빠여동생': ['딸'],
-    '엄마형': ['아들'], '엄마누나': [ '딸'], '아빠형': ['아들'], '아빠누나': ['딸'],
+    '오빠엄마': ['엄마'], '오빠아빠': ['아빠'], '언니엄마': ['엄마'], '언니아빠': ['아빠'],
+    '엄마남동생': ['아들'], '엄마여동생': ['딸'], '아빠남동생': ['아들'], '아빠여동생': ['딸'],
+    '엄마형': ['아들'], '엄마누나': ['딸'], '아빠형': ['아들'], '아빠누나': ['딸'],
     '엄마오빠': ['아들'], '아빠오빠': ['아들'], '엄마언니': ['딸'], '아빠언니': ['딸'],
     '아빠엄마': ['아내'], '엄마아빠': ['남편'],
     '남동생누나': ['누나'], '남동생형': ['형'], '여동생누나': ['언니'], '여동생형': ['오빠'],
     '남동생언니': ['누나'], '남동생오빠': ['형'], '여동생언니': ['언니'], '여동생오빠': ['오빠'],
     '누나남동생': ['남동생'], '형남동생': ['남동생'], '누나여동생': ['여동생'], '형여동생': ['여동생'],
     '언니남동생': ['남동생'], '오빠남동생': ['남동생'], '언니여동생': ['여동생'], '오빠여동생': ['여동생'],
+
     '언니': ['여동생'], '오빠': ['여동생'], '형': ['남동생'], '누나': ['남동생'],
     '엄마': ['아들', '딸'], '아빠': ['아들', '딸'],'여동생': ['오빠', '언니'], '남동생': ['형', '누나'],
+
     '언니언니': ['언니', '여동생'], '누나누나': ['언니', '여동생'], '형형': ['형', '남동생'], '오빠오빠': ['형', '남동생'],
     '남동생남동생': ['형', '남동생'], '여동생여동생': ['언니', '여동생'],
     '누나형': ['남동생', '누나'], '형누나': ['여동생', '오빠'],
@@ -100,21 +102,26 @@ def makeFamilyName(family_pk, user_pk, owner, albumId, familyName):
                     serializer = EditFaceSerializer(data={'member': owner}, instance=face)
                     if serializer.is_valid():
                         serializer.save()
+                    else:
+                        return True
                 else:
                     return True
             # 가족원이 담장일 경우 새로운 가족원이 담장을 부르는 경우만 새로 생성
             # 담장은 맨 위에서 담장이 선택한 call로 이미 지정함.
             elif user.id == user_pk:
-                try:
-                    # 관계로만 호칭 선정이 어려운 경우 "ex. 나와 엄마 -> 내가 아들인지 딸인지 판별"
-                    if user.gender == 2 and (familyName.call=='엄마' or familyName.call=='아빠' familyName.call=='여동생'or familyName.call=='남동생'):
+                member = get_object_or_404(FamilyName, user=user_pk, owner=user.id)
+                # 관계로만 호칭 선정이 어려운 경우 "ex. 나와 엄마 -> 내가 아들인지 딸인지 판별, 나와 여동생 -> 내가 언니인지 오빠인지"
+                if user.gender == 2 and (familyName.call=='엄마' or familyName.call=='아빠' or familyName.call=='여동생' or familyName.call=='남동생'):
+                    try:
                         familyNameSerializer3 = FamilyNameSerializer(data={'user': owner, 'owner': user_pk, 'album': member.album.id, 'call': namedic[familyName.call][1]})
-                    # 관계만으로 호칭 선정 가능한 경우 "ex. 누나남동생 -> 남동생"
-                    else:
+                    except KeyError:
+                        familyNameSerializer3 = FamilyNameSerializer(data={'user': owner, 'owner': user_pk, 'album': member.album.id, 'call': user.first_name})
+                # 관계만으로 호칭 선정 가능한 경우 "ex. 나와 오빠 -> 여동생"
+                else:
+                    try:
                         familyNameSerializer3 = FamilyNameSerializer(data={'user': owner, 'owner': user_pk, 'album': member.album.id, 'call': namedic[familyName.call][0]})
-                # 네임 딕셔너리에 관계가 없을 경우 유저의 네임으로 call 선정
-                except KeyError:
-                    familyNameSerializer3 = FamilyNameSerializer(data={'user': owner, 'owner': user_pk, 'album': member.album.id, 'call': user.first_name})
+                    except KeyError:
+                        familyNameSerializer3 = FamilyNameSerializer(data={'user': owner, 'owner': user_pk, 'album': member.album.id, 'call': user.first_name})
                 if familyNameSerializer3.is_valid():
                     familyNameSerializer3.save()
                 else:
@@ -134,9 +141,8 @@ def makeFamilyName(family_pk, user_pk, owner, albumId, familyName):
                 # 담장이 기존 가족원과 새로운 가족원을 부르는 호칭이 같은 경우 "형형, 누나누나"
                 # 기존 가족원과 새로운 가족원의 생년을 비교하여 호칭 변경
                 if familyName.call==member.call:
-                    if ownerInfo.birth > user.birth:
-                        try:
-                            familyNameSerializer2 = FamilyNameupdateSerializer(data={'user': user.id, 'owner': owner, 'album': albumId}, instance=album)
+                    if ownerInfo.birth < user.birth:
+                        familyNameSerializer2 = FamilyNameupdateSerializer(data={'user': user.id, 'owner': owner, 'album': albumId}, instance=album)
                         try:
                             familyNameSerializer3 = FamilyNameSerializer(data={'user': owner, 'owner': user.id, 'album': member.album.id, 'call': namedic[familyName.call+member.call][1]})
                         except KeyError:
@@ -152,11 +158,11 @@ def makeFamilyName(family_pk, user_pk, owner, albumId, familyName):
                             familyNameSerializer3 = FamilyNameSerializer(data={'user': owner, 'owner': user.id, 'album': member.album.id, 'call': user.first_name})
 
                 elif familyName.call+member.call in ['누나형', '형누나', '언니오빠', '오빠언니']:
-                    if ownerInfo.birth > user.birth:
+                    if ownerInfo.birth < user.birth:
                         try:
                             familyNameSerializer2 = FamilyNameupdateSerializer(data={'user': user.id, 'owner': owner, 'album': albumId, 'call': namedic[familyName.call+member.call][1]}, instance=album)
                         except KeyError:
-                            familyNameSerializer3 = FamilyNameSerializer(data={'user': owner, 'owner': user.id, 'album': member.album.id, 'call': user.first_name})
+                            familyNameSerializer2 = FamilyNameSerializer(data={'user': owner, 'owner': user.id, 'album': member.album.id, 'call': user.first_name})
                         try:
                             familyNameSerializer3 = FamilyNameSerializer(data={'user': owner, 'owner': user.id, 'album': member.album.id, 'call': namedic[familyName.call+member.call][0]})
                         except KeyError:
@@ -165,11 +171,18 @@ def makeFamilyName(family_pk, user_pk, owner, albumId, familyName):
                         try:
                             familyNameSerializer2 = FamilyNameupdateSerializer(data={'user': user.id, 'owner': owner, 'album': albumId, 'call': namedic[member.call+familyName.call][0]}, instance=album)
                         except KeyError:
-                            familyNameSerializer3 = FamilyNameSerializer(data={'user': owner, 'owner': user.id, 'album': member.album.id, 'call': user.first_name})
+                            familyNameSerializer2 = FamilyNameSerializer(data={'user': owner, 'owner': user.id, 'album': member.album.id, 'call': user.first_name})
                         try:
                             familyNameSerializer3 = FamilyNameSerializer(data={'user': owner, 'owner': user.id, 'album': member.album.id, 'call': namedic[member.call+familyName.call][1]})
                         except KeyError:
                             familyNameSerializer3 = FamilyNameSerializer(data={'user': owner, 'owner': user.id, 'album': member.album.id, 'call': user.first_name})
+                else:
+                    familyNameSerializer2 = FamilyNameupdateSerializer(data={'user': user.id, 'owner': owner, 'album': albumId}, instance=album)
+                    try:
+                        familyNameSerializer3 = FamilyNameSerializer(data={'user': owner, 'owner': user.id, 'album': member.album.id, 'call': namedic[familyName.call+member.call][0]})
+                    except KeyError:
+                        familyNameSerializer3 = FamilyNameSerializer(data={'user': owner, 'owner': user.id, 'album': member.album.id, 'call': user.first_name})
+
 
                 if familyNameSerializer2.is_valid():
                     familyNameSerializer2.save()
@@ -179,6 +192,17 @@ def makeFamilyName(family_pk, user_pk, owner, albumId, familyName):
                     familyNameSerializer3.save()
                 else:
                     return True
+
+        nullOwnerAlbum = Album.objects.filter(member=None).exclude(title="기본 앨범")
+        for noa in nullOwnerAlbum:
+            member = get_object_or_404(FamilyName, user=user_pk, album=noa.id)
+            try:
+                familyNameSerializer2 = FamilyNameSerializer(data={'user': owner, 'album': noa.id, 'call': namedic[familyName.call+member.call][0]})
+            except KeyError:
+                familyNameSerializer2 = FamilyNameSerializer(data={'user': owner, 'album': noa.id, 'call': member.call})
+            if familyNameSerializer2.is_valid():
+                familyNameSerializer2.save()
+
         
     else:
         return True
