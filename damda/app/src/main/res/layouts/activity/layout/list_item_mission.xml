@@ -24,14 +24,30 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
+    <Button
+        android:id="@+id/btn_checkmission"
+        android:layout_width="109dp"
+        android:layout_height="92dp"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="0dp"
+        android:background="@drawable/ripple_effect"
+        android:backgroundTint="#86FFEB3B"
+        android:backgroundTintMode="src_over"
+        android:hapticFeedbackEnabled="true"
+        android:text="도전!"
+        android:textColor="#000000"
+        android:textSize="24sp"
+        android:visibility="invisible" />
+
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/relativeLayout"
+        android:id="@+id/cl_mission"
         android:layout_width="109dp"
         android:layout_height="92dp"
         android:layout_alignParentEnd="true"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="0dp"
         android:background="#817878"
+        android:visibility="visible"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toEndOf="@+id/pb_mission"
@@ -63,6 +79,7 @@
             android:layout_marginEnd="10dp"
             android:layout_marginBottom="10dp"
             android:background="#7F9497"
+            android:backgroundTint="#AB2196F3"
             android:text="포인트 받기"
             android:textSize="12sp"
             android:visibility="invisible"
@@ -99,7 +116,8 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="1.0"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            tools:ignore="RtlCompat" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 

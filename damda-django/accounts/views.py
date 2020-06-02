@@ -290,11 +290,21 @@ def checkDevice(request):
         else:
             return Response('what!', status=status.HTTP_401_UNAUTHORIZED)
 
-@api_view(['GET', ])
+@api_view(['GET', 'PUT'])
 def missions(request, user_pk, period):
-    missions = Mission.objects.filter(user=user_pk, period=period)
-    serializers = MissionSerializer(missions, many=True)
-    return Response({"data": serializers.data})
+    if request.method == 'GET':
+        missions = Mission.objects.filter(user=user_pk, period=period)
+        serializers = MissionSerializer(missions, many=True)
+        return Response({"data": serializers.data})
+    if request.method == 'PUT':
+        mission_title = json.loads(request.data.get('mission_title'))
+        mission_id = json.loads(request.data.get('mission_id'))
+        mission = Mission.objects.filter(id=mission_id, user=user_pk, title=mission_title, period=period)[0]
+        mission.status = 1
+        mission.save()
+        serializer = MissionSerializer(mission)
+        print(serializer.data)
+        return Response(serializer.data)
 
 
 @api_view(['GET', 'PUT', ])
