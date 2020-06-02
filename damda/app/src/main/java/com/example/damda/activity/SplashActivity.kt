@@ -20,17 +20,21 @@ class SplashActivity : AppCompatActivity() {
             // Create the NotificationChannel
             val name1 = getString(R.string.channel_name1)
             val name2 = getString(R.string.channel_name2)
+            val name3 = getString(R.string.channel_name3)
 
             val descriptionText1 = getString(R.string.channel_description1)
             val descriptionText2 = getString(R.string.channel_description2)
+            val descriptionText3 = getString(R.string.channel_description3)
 
             val importance = NotificationManager.IMPORTANCE_DEFAULT
 
             val mChannel1 = NotificationChannel("RE-HI", name1, importance)
             val mChannel2 = NotificationChannel("NEW", name2, importance)
+            val mChannel3 = NotificationChannel("CONGRATULATIONS", name3, importance)
 
             mChannel1.description = descriptionText1
             mChannel2.description = descriptionText2
+            mChannel3.description = descriptionText3
 
             // Register the channel with the system; you can't change the importance
             // or other notification behaviors after this

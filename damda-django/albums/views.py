@@ -309,12 +309,14 @@ def addphoto(request):
     return Response(status=status.HTTP_200_OK)
 
 @api_view(['POST'])
+@permission_classes([AllowAny])
+@csrf_exempt
 def uploadEnd(request):
     User = get_user_model()
     user_id = int(request.POST.get('user_id'))
     user = get_object_or_404(User, id=user_id)
 
-    family = User.objects.filter(family_id=user.family_id).exclude(user_id=user.id)
+    family = User.objects.filter(family_id=user.family_id).exclude(id=user.id)
     devices = Device.objects.filter(owner__in=family)
     url = 'https://fcm.googleapis.com/fcm/send'
 
