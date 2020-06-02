@@ -78,29 +78,40 @@ def sendPushCongrat():
     KST = datetime.timezone(datetime.timedelta(hours=9))
     today = datetime.datetime.now(tz=KST)
     calendar = KoreanLunarCalendar()
-    year = today.year
-    month = today.month
-    day = today.day
+    
+    congrat_users = User.objects.filter(birth=today, is_lunar=False)
+    
+    targets = []
+    for user in congrat_users:
+        targets.append((user.id, user.first_name, user.family_id))
 
-    today_to_lunar = calendar.setSolarDate(year, month, day)
+    users = User.objects.filter(is_lunar=True)
+    
+    calendar.setSolarDate(today.year, today.month, today.day)
+    today_to_lunar = list(map(int, calendar.LunarIsoFormat().split(' ')[0].split('-')))
 
-    congrat_users = User.objects.filter(birth=today, is_lunar=False) | User.objects.filter(birth=today_to_lunar, is_lunar=True)
-
+    for user in users:
+        birth = user.birth
+        month = birth.month
+        day = birth.day
+        if today_to_lunar[1] == month and today_to_lunar[2] == day:
+            targets.append((user.id, user.first_name, user.family_id))
+    
     target_familys = dict()
 
     devices = []
     me = []
-    for user in congrat_users:
+    for user in targets:
         # 생일 대상의 가족들 조회
-        congrat_family = User.objects.filter(family_id=user.family_id)
+        congrat_family = User.objects.filter(family_id=user[2])
         # 가족들 기기 조회
         for device in Device.objects.filter(owner__in=congrat_family):
-            if device.owner == user:
+            if device.owner_id == user[0]:
                 me.append(device.device_token)
             else:
                 devices.append(device.device_token)
         # 알림 보낼 대상 결정
-        target_familys[user.first_name] = devices
+        target_familys[user[1]] = devices
 
     result = []
 
@@ -110,18 +121,23 @@ def sendPushCongrat():
             data = {
                 "registration_ids": me,
                 "notification": {
-                    "body": message
+                    "title": "담다",
+                    "body": message,
+                    "android_channel_id": "CONGRATULATIONS"
                 }
             }
         else:
             data = {
                 "to": me[0],
                 "notification": {
-                    "body": message
+                    "title": "담다",
+                    "body": message,
+                    "android_channel_id": "CONGRATULATIONS"
                 }
             }
         response = requests.post(url, data=json.dumps(data), headers=headers)
         result.append(response)
+    
     else:
         return "알맞은 대상이 없습니다."
 
@@ -132,14 +148,18 @@ def sendPushCongrat():
                 data = {
                     "registration_ids": fmem,
                     "notification": {
-                        "body": message
+                        "title": "담다",
+                        "body": message,
+                        "android_channel_id": "CONGRATULATIONS"
                     }
                 }
             else:
                 data = {
                     "to": fmem[0],
                     "notification": {
-                        "body": message
+                        "title": "담다",
+                        "body": message,
+                        "android_channel_id": "CONGRATULATIONS"
                     }
                 }
             response = requests.post(url, data=json.dumps(data), headers=headers)

@@ -122,8 +122,10 @@
     <!--  Notification channel  -->
     <string name="channel_name1">안부 묻기</string>
     <string name="channel_name2">새로운 사진</string>
+    <string name="channel_name3">생일 축하</string>
     <string name="channel_description1">일정 기간 활동하지 않으면 알림이 울립니다.</string>
     <string name="channel_description2">새로운 사진이 업로드되면 알림이 울립니다.</string>
+    <string name="channel_description3">생일 축하메세지를 보여줍니다.</string>
 
     <!--  가족 관계 선택  -->
     <string-array name="familyName">
