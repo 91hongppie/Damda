@@ -1,9 +1,11 @@
 package com.example.damda.navigation
 
 import android.os.Bundle
+import android.provider.Settings
 import android.view.*
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
+import androidx.fragment.app.FragmentManager
 import com.example.damda.GlobalApplication
 import com.example.damda.R
 import com.example.damda.activity.MainActivity
@@ -69,6 +71,8 @@ class MissionFragment: Fragment() {
         tl.addTab(tl.newTab().setText("주간 미션"))
         tl.addTab(tl.newTab().setText("월간 미션"))
         tl.tabGravity = TabLayout.GRAVITY_FILL
+        viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tl))
+        viewPager.adapter = MissionPagerAdapter(context, childFragmentManager!!, tl.tabCount)
         tl.addOnTabSelectedListener(object : TabLayout.OnTabSelectedListener {
             override fun onTabSelected(tab: TabLayout.Tab) {
                 viewPager.currentItem = tab.position
@@ -76,10 +80,9 @@ class MissionFragment: Fragment() {
             override fun onTabReselected(p0: TabLayout.Tab?) {
             }
             override fun onTabUnselected(tab: TabLayout.Tab) {
+
             }
         })
-        viewPager.addOnPageChangeListener(TabLayout.TabLayoutOnPageChangeListener(tl))
-        viewPager.adapter = MissionPagerAdapter(context, childFragmentManager!!, tl.tabCount)
         return view
     }
     fun refreshMissionFragment(fragment: Fragment) {
