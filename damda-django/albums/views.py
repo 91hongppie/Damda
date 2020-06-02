@@ -88,11 +88,15 @@ def album(request, album_pk):
 def albumMember(request, family_pk, user_pk):
     if request.method == 'GET':
         albums = Album.objects.filter(family=family_pk)[2:]
+        if albums.count() == 0:
+            return Response({"data": [{'title': '', 'image': '', 'id': None}]})
         serializers = AlbumSerializer(albums, many=True)
         datas = serializers.data
         for data in datas:
             calls = get_object_or_404(FamilyName, user=user_pk, album=data['id'])
             data['call'] = calls.call
+        datas.append({'title': '', 'image': '', 'id': None})
+        print(datas)
         return Response({"data": datas})
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
