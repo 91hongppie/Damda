@@ -28,14 +28,14 @@
             android:paddingStart="15dp"
             android:paddingEnd="20dp"
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="15dp">
+            android:layout_marginBottom="20dp">
 
             <Switch
                 android:id="@+id/switch_all"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:text="푸시 알림 켜기 / 끄기"
-                android:textSize="9pt" />
+                android:textSize="12pt" />
 
         </LinearLayout>
         <LinearLayout
@@ -49,11 +49,11 @@
                 android:id="@+id/rehi_alarm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_marginBottom="10dp"
+                android:layout_marginBottom="15dp"
                 android:paddingStart="15dp"
                 android:paddingEnd="20dp"
                 android:text="안부 묻기"
-                tools:checked="false" />
+                android:textSize="10pt" />
 
             <Switch
                 android:id="@+id/new_alarm"
@@ -61,8 +61,9 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="15dp"
                 android:paddingEnd="20dp"
-                android:layout_marginBottom="10dp"
-                android:text="새롭게 업로드된 사진" />
+                android:layout_marginBottom="15dp"
+                android:text="새롭게 업로드된 사진"
+                android:textSize="10pt" />
 
             <Switch
                 android:id="@+id/congratulations_alarm"
@@ -70,8 +71,9 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="15dp"
                 android:paddingEnd="20dp"
-                android:layout_marginBottom="10dp"
-                android:text="생일" />
+                android:layout_marginBottom="15dp"
+                android:text="생일"
+                android:textSize="10pt" />
 
             <Switch
                 android:id="@+id/mission_alarm"
@@ -79,8 +81,9 @@
                 android:layout_height="wrap_content"
                 android:paddingStart="15dp"
                 android:paddingEnd="20dp"
-                android:layout_marginBottom="10dp"
-                android:text="미션" />
+                android:layout_marginBottom="15dp"
+                android:text="미션"
+                android:textSize="10pt" />
 
         </LinearLayout>
 
