@@ -14,7 +14,7 @@ class User(AbstractUser):
     family = models.ForeignKey(Family, related_name='user_family', on_delete=models.SET_NULL, blank=True, null=True)
     birth = models.DateField(null=True)
     is_lunar = models.BooleanField(default=False)
-    gender = models.IntegerField()
+    gender = models.IntegerField(null=True)
 
 class WaitUser(models.Model):
     main_member = models.ForeignKey(User, on_delete=models.CASCADE)
