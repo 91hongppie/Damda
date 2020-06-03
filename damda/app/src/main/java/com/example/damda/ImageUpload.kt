@@ -121,6 +121,7 @@ class ImageUpload : JobIntentService() {
 
         override fun onResponse(call: okhttp3.Call, response: Response) {
             val status = response.code()
+            Log.d("server response", "푸시는 $response")
             Log.d("server response", "푸시도 보냈어요! = $status")
         }
     }

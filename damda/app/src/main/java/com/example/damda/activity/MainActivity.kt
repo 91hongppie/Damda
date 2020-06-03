@@ -89,6 +89,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     private fun sendRegistrationToServer(token: String) {
+        prefs.device_token = token
+        Log.d("SharedPreference", "${prefs.device_token}")
+
         val url = URL(prefs.damdaServer+"/api/accounts/device/")
         val jwt = GlobalApplication.prefs.token
         val formBody = FormBody.Builder()
@@ -103,7 +106,6 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         client.newCall(request).enqueue(callback)
 
-        prefs.device_token = token
         Log.d("SEND TOKEN", "MY PHONE: $token")
     }
 

@@ -20,7 +20,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.SelectAlbumActivity"></activity>
+        <activity android:name=".activity.AlarmSwitchActivity"></activity>
+        <activity android:name=".activity.SelectAlbumActivity" />
         <activity android:name=".activity.EditUserActivity" />
 
         <service
@@ -109,15 +110,14 @@
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
-        <activity android:name=".activity.MissionAddPhotoActivity">
-
-        </activity>
+        <activity android:name=".activity.MissionAddPhotoActivity" />
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
 
-        <service android:name=".ImageUpload"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service
+            android:name=".ImageUpload"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>
