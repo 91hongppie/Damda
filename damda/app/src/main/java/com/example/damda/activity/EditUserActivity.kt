@@ -11,6 +11,7 @@ import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.damda.GlobalApplication
+import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.adapter.FamilyListAdapter
 import com.example.damda.retrofit.model.CheckEmail

@@ -35,6 +35,7 @@ import com.example.damda.R
 import com.example.damda.navigation.*
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -47,6 +48,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        FirebaseMessaging.getInstance().isAutoInitEnabled = true
+
         bottom_navigation.setOnNavigationItemSelectedListener(this)
         if (!prefs.my_album){
             checkMyAlbum()
