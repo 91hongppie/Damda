@@ -79,6 +79,7 @@ class LoginActivity : AppCompatActivity() {
                         GlobalApplication.prefs.family_id = login?.family.toString()
                         GlobalApplication.prefs.state = login?.state.toString()
                         prefs.my_album = login?.my_album!!
+                        Log.e("sdfsdfsdfsdfsdfsdf", "${login?.my_album!!}")
                         prefs.gender = login?.gender!!
                         moveActivity(login?.state!!.toInt())
                     }

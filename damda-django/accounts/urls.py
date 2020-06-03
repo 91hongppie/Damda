@@ -16,5 +16,6 @@ urlpatterns = [
     path('family_info/<int:family_pk>/', views.GetFamily),
     path('mission/<int:user_pk>/<int:period>/', views.missions),
     path('score/<int:user_pk>/', views.score),
-    path('quiz/<int:family_pk>/<int:user_pk>/', views.makequiz)
+    path('quiz/<int:family_pk>/<int:user_pk>/', views.makequiz),
+    path('quiz/<int:user_pk>/', views.getquiz)
 ]

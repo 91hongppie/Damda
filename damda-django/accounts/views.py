@@ -389,18 +389,30 @@ def missions(request, user_pk, period):
         today = datetime.date.today()
         user = get_object_or_404(User, id=user_pk)
         if period == 0:
-            if missions[0].created_at.day != today.day:
-                missions.delete()
+            if len(missions) != 0:
+                if missions[0].created_at.day != today.day:
+                    missions.delete()
+                    for i in range(5):
+                        Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
+            else:
                 for i in range(5):
                     Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
-        elif period == 0:
-            if today.weekday() == 1 and missions[0].created_at.day != today.day:
-                    missions.delete()
-                    for i in range(5, 10, 1):
-                        Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
+        elif period == 1:
+            if len(missions) != 0:
+                if today.weekday() == 1 and missions[0].created_at.day != today.day:
+                        missions.delete()
+                        for i in range(5, 10, 1):
+                            Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
+            else:
+                for i in range(5, 10, 1):
+                    Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
         elif period == 2:
-            if today.day == 0 and missions[0].created_at.month != today.month:
-                missions.delete()
+            if len(missions) != 0:
+                if today.day == 0 and missions[0].created_at.month != today.month:
+                    missions.delete()
+                    for i in range(100, 105, 1):
+                        Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
+            else:
                 for i in range(100, 105, 1):
                     Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
         missions = Mission.objects.filter(user=user_pk, period=period)
@@ -441,14 +453,18 @@ def makequiz(request, family_pk, user_pk):
         user = get_object_or_404(User, id=user_pk)
         quizs = Quiz.objects.filter(user=user_pk)
         today = datetime.date.today()
-        if quizs[0].created_at.day != today.day:
-            quizs.delete()
-            with open(f'quiz/quiz.json', 'r', encoding='utf-8') as quiz:
-                data = json.load(quiz)
-            quizs = data['parent']
-            todays_quiz = random.sample(range(0, len(quizs)), 2)
+        with open(f'quiz/quiz.json', 'r', encoding='utf-8') as quiz:
+            data = json.load(quiz)
+        quiz_question = data['parent']
+        todays_quiz = random.sample(range(0, len(quiz_question)), 2)
+        if len(quizs) != 0:
+            if quizs[0].created_at.day != today.day:
+                quizs.delete()
+                for i in range(2):
+                    Quiz.objects.create(user=user, quiz=quiz_question[todays_quiz[i]])
+        else:
             for i in range(2):
-                Quiz.objects.create(user=user, quiz=quizs[todays_quiz[i]])
+                Quiz.objects.create(user=user, quiz=quiz_question[todays_quiz[i]])
         quizs = Quiz.objects.filter(user=user_pk)
         serializers = QuizSerializer(quizs, many=True)
         return Response({'data': serializers.data, 'name': user.first_name})
@@ -457,13 +473,28 @@ def makequiz(request, family_pk, user_pk):
         users = User.objects.filter(family=family_pk).exclude(state=4)
         quiz_id = request.data['id']
         quiz = Quiz.objects.filter(id=quiz_id, user=user_pk)[0]
-        answer = request.data['answer']
+        answer = json.loads(request.data['answer'])
         quiz.answer = answer
         quiz.save()
         for user in users:
             Quiz.objects.create(user=user, quiz=f'{parent_user.first_name}님의 {quiz.quiz}', answer=answer)
-        return Response(1)
+        return Response(1, status=status.HTTP_200_OK)
 
 
-
-
+@api_view(['GET', 'POST', ])
+def getquiz(request, user_pk):
+    if request.method == 'GET':
+        quizs = Quiz.objects.filter(user=user_pk)
+        if len(quizs) == 0:
+            return Response(0, status=status.HTTP_400_BAD_REQUEST)
+        else:
+            serializer = QuizSerializer(quizs[0])
+            return Response(serializer.data)
+    elif request.method == 'POST':
+        quiz_id = json.loads(request.data.get('quiz_id'))
+        score = Score.objects.filter(user=user_pk)[0]
+        score.score += 5
+        score.save()
+        quiz = Quiz.objects.filter(user=user_pk, id=quiz_id)[0]
+        quiz.delete()
+        return Response(1, status=status.HTTP_200_OK)
