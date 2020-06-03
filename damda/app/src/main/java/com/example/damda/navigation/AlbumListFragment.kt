@@ -1,13 +1,17 @@
 package com.example.damda.navigation
 
 import android.Manifest
+import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
+import android.util.Log
 import android.view.*
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
+import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
@@ -32,7 +36,8 @@ import retrofit2.converter.gson.GsonConverterFactory
 
 
 class AlbumListFragment : Fragment() {
-    private val STORAGE_PERMISSION_CODE: Int = 1000
+    private val STORAGE_PERMISSION_CODE = 1000
+
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
         navStatus = 0
         val context = activity as MainActivity
@@ -86,6 +91,7 @@ class AlbumListFragment : Fragment() {
         }
         return view
     }
+
     fun perm(): Boolean {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
             if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
@@ -108,20 +114,4 @@ class AlbumListFragment : Fragment() {
         }
     }
 
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        when(requestCode){
-            STORAGE_PERMISSION_CODE -> {
-                if(grantResults.isNotEmpty() && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    return
-                }
-                else{
-                    Toast.makeText(this.context, "필수 권한이 거부되었습니다.", Toast.LENGTH_LONG).show()
-                }
-            }
-        }
-    }
 }

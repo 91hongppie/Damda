@@ -293,20 +293,31 @@ def GetFamily(request, family_pk):
             return Response(serializer.data)
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
-@api_view(['GET'])
+@api_view(['GET', 'PUT'])
 @permission_classes([IsAuthenticated])
 @authentication_classes((JSONWebTokenAuthentication,))
 def UserInfo(request):
-    User = get_user_model()
-    user = get_object_or_404(User, username=request.user)
-    serializer = UserSerializer(user)
-    data = serializer.data
-    album = FamilyName.objects.filter(user=data.id, owner=data.id)
-    if len(album) > 0:
-        data['my_album'] = True
-    else:
-        data['my_album'] = False
-    return Response(serializer.data)
+    if request.method == 'GET':
+        User = get_user_model()
+        user = get_object_or_404(User, username=request.user)
+        serializer = UserSerializer(user)
+        data = serializer.data
+        album = FamilyName.objects.filter(user=data.id, owner=data.id)
+        if len(album) > 0:
+            data['my_album'] = True
+        else:
+            data['my_album'] = False
+        return Response(serializer.data)
+    elif request.method == 'PUT':
+        User = get_user_model()
+        user = get_object_or_404(User, username=request.user)
+        serializer = UserSerializer(data=request.data, instance=user)
+        if serializer.is_valid(raise_exception=True):
+            serializer.save()
+            return Response(serializer.data)
+    return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 
 
 @api_view(['GET', 'POST'])

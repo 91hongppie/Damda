@@ -78,6 +78,10 @@ class UserFragment : Fragment() {
             var intent = Intent(context, AddMemberActivity::class.java)
             startActivity(intent)
         }
+        view.editUser.setOnClickListener {
+            var intent = Intent(context, EditUserActivity::class.java)
+            startActivity(intent)
+        }
         return view
     }
 }
