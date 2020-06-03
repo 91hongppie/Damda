@@ -271,7 +271,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         if (lastId != null) {
             return lastId.compareTo(Id) < 0
         }
-        return false
+        return true
     }
     fun checkMyAlbum() {
         var dialog = AlertDialog.Builder(this)

@@ -1,6 +1,7 @@
 package com.example.damda.navigation
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
@@ -38,6 +39,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 class AlbumListFragment : Fragment() {
     private val STORAGE_PERMISSION_CODE = 1000
 
+    @SuppressLint("RestrictedApi")
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle? ): View? {
         navStatus = 0
         val context = activity as MainActivity
@@ -85,9 +87,14 @@ class AlbumListFragment : Fragment() {
             }
         })
         view.rv_album.layoutManager = GridLayoutManager(activity, 3)
-        view.add_album_button.setOnClickListener {
-            var intent = Intent(context, CropperActivity::class.java)
-            startActivity(intent)
+        if(prefs.state == "3"){
+            view.add_album_button.setOnClickListener {
+                var intent = Intent(context, CropperActivity::class.java)
+                startActivity(intent)
+            }
+        }
+        else {
+            view.add_album_button.visibility = View.GONE
         }
         return view
     }
