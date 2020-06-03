@@ -64,7 +64,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(p0: RemoteMessage) {
-        Log.d(TAG, "MessageType" + p0.messageType)
         Log.d(TAG, "From: " + p0.from);
 
         // Check if message contains a data payload.

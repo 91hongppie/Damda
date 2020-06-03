@@ -1,7 +1,10 @@
 package com.example.damda.navigation
 
+import android.app.NotificationChannel
 import android.content.Intent
+import android.graphics.Color
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,6 +19,7 @@ import com.example.damda.retrofit.model.DetailFamily
 import com.example.damda.retrofit.model.Message
 import com.example.damda.retrofit.model.User
 import com.example.damda.retrofit.service.FamilyService
+import com.jakewharton.rxbinding2.widget.color
 import kotlinx.android.synthetic.main.fragment_user.*
 import kotlinx.android.synthetic.main.fragment_user.view.*
 import kotlinx.android.synthetic.main.list_item_request.view.*
@@ -107,6 +111,27 @@ class UserFragment : Fragment() {
             intent.putExtra("isKakao", 0)
             startActivity(intent)
         }
+        view.auto_upload_switch.setOnCheckedChangeListener{ buttonView, isChecked ->
+            prefs.autoStatus = isChecked
+            if (isChecked) {
+                use_data_switch.isClickable = true
+                use_data_switch.setTextColor(Color.BLACK)
+            } else {
+                prefs.mobileAutoUpload = false
+                use_data_switch.isChecked = false
+                use_data_switch.isClickable = false
+                use_data_switch.setTextColor(Color.GRAY)
+            }
+        }
+        if (prefs.autoStatus) {
+            view.use_data_switch.setTextColor(Color.BLACK)
+        } else {
+            view.use_data_switch.setTextColor(Color.GRAY)
+        }
+        view.use_data_switch.setOnCheckedChangeListener { buttonView, isChecked ->
+            prefs.mobileAutoUpload = isChecked
+        }
+
         return view
     }
 
