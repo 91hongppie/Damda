@@ -106,8 +106,8 @@ class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val f
                         }
                         R.id.album_menu_item3 -> {
                             var dialogBuilder = AlertDialog.Builder(itemView.context)
-                            dialogBuilder.setTitle("앨범 삭제")
-                            dialogBuilder.setMessage("앨범을 삭제하시겠습니까?")
+                            dialogBuilder.setTitle("앨범 비우기")
+                            dialogBuilder.setMessage("앨범에 있는 \"모든 사진\"을\n삭제하시겠습니까?")
                             var dialogListener = object:DialogInterface.OnClickListener{
                                 override fun onClick(dialog: DialogInterface?, which: Int) {
                                     when(which){
