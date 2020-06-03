@@ -17,4 +17,5 @@ urlpatterns = [
     path('mission/<int:user_pk>/<int:period>/', views.missions),
     path('score/<int:user_pk>/', views.score),
     path('logout/', views.logout)
+    path('quiz/<int:family_pk>/<int:user_pk>/', views.makequiz)
 ]
