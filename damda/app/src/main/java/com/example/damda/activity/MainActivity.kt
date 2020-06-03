@@ -195,7 +195,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         {
             val imageProjection =
                 arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA)
-            val lastId = null
+            val lastId = prefs.autoId
             val selection = "${MediaStore.Images.Media.DATA} NOT LIKE ?"
             val selectionArgs = arrayOf(
                 "%damda%"
