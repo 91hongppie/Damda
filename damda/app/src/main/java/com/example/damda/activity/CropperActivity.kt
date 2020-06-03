@@ -78,14 +78,19 @@ class CropperActivity : AppCompatActivity() {
         }
         else{
             my.visibility = View.GONE
+            var nameArray = R.array.familyNameM
+            if (prefs.gender == 2) {
+                nameArray = R.array.familyNameF
+            }
             ArrayAdapter.createFromResource(
                 this,
-                R.array.familyName,
+                nameArray,
                 android.R.layout.simple_spinner_item
             ).also { adapter ->
                 adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
                 spinner.adapter = adapter
             }
+
         }
 
 

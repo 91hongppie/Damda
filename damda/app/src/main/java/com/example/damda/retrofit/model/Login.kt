@@ -7,7 +7,8 @@ data class Login(
     val username: String,
     val state: Int,
     val family: Int,
-    val my_album: Boolean
+    val my_album: Boolean,
+    val gender: Int
 )
 
 data class KakaoLogin(
