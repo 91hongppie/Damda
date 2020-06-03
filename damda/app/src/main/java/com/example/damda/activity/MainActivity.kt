@@ -256,6 +256,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                     dialogBuilder.setPositiveButton("나중에 하기", dialogListener)
                     dialogBuilder.setNegativeButton("안하기", dialogListener)
                     dialogBuilder.setNeutralButton("지금 업로드", dialogListener)
+                    dialogBuilder.setCancelable(false)
                     dialogBuilder.show()
                 }
             }
