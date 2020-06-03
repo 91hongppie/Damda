@@ -6,7 +6,6 @@ import android.content.Context
 import android.content.DialogInterface
 import android.content.Intent
 import android.content.pm.PackageManager
-import android.media.ExifInterface
 import android.net.ConnectivityManager
 import android.net.NetworkInfo
 import android.os.Bundle
@@ -40,9 +39,6 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.URL
-import java.net.UnknownHostException
-import java.util.*
-
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
     var mBackWait:Long = 0
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -51,14 +47,19 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         FirebaseMessaging.getInstance().isAutoInitEnabled = true
 
         bottom_navigation.setOnNavigationItemSelectedListener(this)
+
         if (!prefs.my_album){
             checkMyAlbum()
         }
+
         val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-        if(activeNetwork?.type == ConnectivityManager.TYPE_WIFI && prefs.autoStatus){
-            checkMidea()
+        if(prefs.autoStatus && intent.getStringExtra("before") != "AddPhoto"){
+            if((activeNetwork?.type == ConnectivityManager.TYPE_MOBILE && prefs.mobileUpload)||(activeNetwork?.type == ConnectivityManager.TYPE_WIFI )){
+                checkMidea()
+            }
         }
+
         if (navStatus == 1) {
             bottom_navigation.layoutParams.height = 0
         } else {
@@ -246,10 +247,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                                     startService(uploadIntent)
                                     ImageUpload().enqueueWork(this@MainActivity, uploadIntent)
                                 }
+                                DialogInterface.BUTTON_POSITIVE -> {
+                                    prefs.autoId = lastId
+                                }
                             }
                         }
                     }
                     dialogBuilder.setPositiveButton("나중에 하기", dialogListener)
+                    dialogBuilder.setNegativeButton("안하기", dialogListener)
                     dialogBuilder.setNeutralButton("지금 업로드", dialogListener)
                     dialogBuilder.show()
                 }
