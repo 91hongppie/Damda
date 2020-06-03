@@ -301,6 +301,8 @@ def UserInfo(request):
     if request.method == 'GET':
         User = get_user_model()
         user = get_object_or_404(User, username=request.user)
+        if not Score.objects.filter(user=user):
+            Score.objects.create(user=user)
         serializer = UserSerializer(user)
         data = serializer.data
         album = FamilyName.objects.filter(user=data['id'], owner=data['id'])
