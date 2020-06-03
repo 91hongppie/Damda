@@ -1,5 +1,6 @@
 package com.example.damda.retrofit.service
 
+import com.example.damda.navigation.model.Quiz
 import com.example.damda.navigation.model.Quizs
 import retrofit2.Call
 import retrofit2.http.*
@@ -17,5 +18,15 @@ interface QuizService {
                  @Path("user_id") user_id: String,
                  @Part("id") quiz_id: Int,
                  @Part("answer") quiz_answer: String) : Call<Int>
+
+    @GET("/api/accounts/quiz/{user_id}/")
+    fun getQuiz(@Header("Authorization") jwt:String,
+                    @Path("user_id") user_id:String) : Call<Quiz>
+
+    @Multipart
+    @POST("/api/accounts/quiz/{user_id}/")
+    fun postQuiz(@Header("Authorization") jwt:String,
+                 @Path("user_id") user_id:String,
+                 @Part("quiz_id") quiz_id:String) : Call<Int>
 
 }
