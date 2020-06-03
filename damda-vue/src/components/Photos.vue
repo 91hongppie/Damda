@@ -15,7 +15,13 @@
             ></v-img>
         </v-col>
         </v-row>
-        <infinite-loading @infinite="infiniteHandler" spinner="spiral"></infinite-loading>
+        <infinite-loading @infinite="infiniteHandler" spinner="spiral">
+            <div slot="no-more">등록된 사진이 없습니다 :(</div>
+            <div slot="no-results">더 이상 사진이 없습니다 :)</div>
+            <div slot="error" slot-scope="{ trigger }">
+                에러가 발생했습니다 :( <a href="javascript:;" @click="trigger">다시 시도하기</a>
+            </div>
+        </infinite-loading>
         <v-dialog v-model="dialog"
                     fullscreen
                     hide-overlay

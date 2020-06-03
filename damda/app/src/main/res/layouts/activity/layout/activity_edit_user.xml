@@ -22,34 +22,21 @@
         android:layout_marginRight="20dp"
         android:orientation="vertical">
 
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent">
         <TextView
             android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:layout_marginLeft="4dp"
             android:text="이메일"
-            android:textColor="@color/black"
             />
-        <Space
-            android:layout_width="0dp"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
         <TextView
             android:id="@+id/editEmail"
-            android:layout_marginTop="10dp"
+            android:layout_marginTop="2dp"
             android:layout_marginBottom="20dp"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginRight="4dp"
+            android:textColor="@color/black"
             android:textSize="18sp"
             />
-    </LinearLayout>
-
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"

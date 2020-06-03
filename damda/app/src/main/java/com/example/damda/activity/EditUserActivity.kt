@@ -30,10 +30,10 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
 class EditUserActivity : AppCompatActivity() {
-    var gender= ""
-    val items = listOf("성별", "남자", "여자")
-    val token = "JWT " + GlobalApplication.prefs.token
-    var retrofit = Retrofit.Builder()
+    private var gender= ""
+    private val items = listOf("성별", "남자", "여자")
+    private val token = "JWT " + GlobalApplication.prefs.token
+    private var retrofit = Retrofit.Builder()
         .baseUrl(GlobalApplication.prefs.damdaServer)
         .addConverterFactory(GsonConverterFactory.create())
         .build()
@@ -45,10 +45,11 @@ class EditUserActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
-        init()
-        setListener()
+        var isKakao = intent.getIntExtra("isKakao", 0)
+        init(isKakao)
+        setListener(isKakao)
     }
-    private fun init() {
+    private fun init(isKakao: Int) {
         val adapter = ArrayAdapter(this, R.layout.list_item_gender, items)
         var email = findViewById<TextView>(R.id.editEmail)
         var loginService: LoginService = retrofit.create(
@@ -67,6 +68,7 @@ class EditUserActivity : AppCompatActivity() {
                 gender = position.toString()
             }
         }
+        if (isKakao == 0) {
         loginService?.requestUser(token)?.enqueue(object: Callback<UserInfo>{
             override fun onFailure(call: Call<UserInfo>, t: Throwable) {
                 var dialog = AlertDialog.Builder(this@EditUserActivity)
@@ -84,12 +86,20 @@ class EditUserActivity : AppCompatActivity() {
                 dataPicker.updateDate(array[0].toInt(), array[1].toInt()-1, array[2].toInt())
             }
         })
+    } else {
+            email.setText(intent.getStringExtra("username"))
+            name.setText(intent.getStringExtra("name"))
+            dataPicker.updateDate(1990, 0,1)
+        }
     }
 
-    private fun setListener() {
+    private fun setListener(isKakao: Int) {
         var signupService: SignupService = retrofit.create(
             SignupService::class.java)
         btnDone.setOnClickListener {
+            if (gender == "0") {
+                toast("성별을 선택해주세요.")
+            } else {
             var params:HashMap<String, Any> = HashMap<String, Any>()
             var text1 = findViewById<TextView>(R.id.editEmail)
             params.put("username", text1.text)
@@ -97,6 +107,7 @@ class EditUserActivity : AppCompatActivity() {
             params.put("birth", "${dataPicker.year}-${dataPicker.month + 1}-${dataPicker.dayOfMonth}")
             params.put("is_lunar", is_lunar.isChecked)
             params.put("gender", gender)
+            Log.v("asdf", gender)
             signupService.ediUser(token, params).enqueue(object:Callback<SignUp>{
                 override fun onFailure(call: Call<SignUp>, t: Throwable) {
                     Log.e("LOGIN", t.message)
@@ -108,10 +119,20 @@ class EditUserActivity : AppCompatActivity() {
 
                 override fun onResponse(call: Call<SignUp>, response: Response<SignUp>) {
                     toast("수정 되었습니다.")
+                    if (isKakao == 1) {
+                        if (GlobalApplication.prefs.state!!.toInt() < 2) {
+                            var intent = Intent(this@EditUserActivity, AddFamilyActivity::class.java)
+                            startActivity(intent)
+                        } else {
+                            var intent = Intent(this@EditUserActivity, MainActivity::class.java)
+                            startActivity(intent)
+                        }
+                    }
                     finish()
                 }
             })
             }
+        }
         }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {

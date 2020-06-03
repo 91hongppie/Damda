@@ -8,14 +8,12 @@ import android.util.Log
 import android.view.View
 import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import com.example.damda.retrofit.model.Family
 import com.example.damda.retrofit.service.FamilyService
 import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
-import com.example.damda.retrofit.model.Message
-import com.example.damda.retrofit.model.User
-import com.example.damda.retrofit.model.WaitUser
+import com.example.damda.retrofit.model.*
+import com.example.damda.retrofit.service.LoginService
 import kotlinx.android.synthetic.main.activity_add_family.*
 import kotlinx.android.synthetic.main.list_item_request.view.*
 import retrofit2.Call
@@ -36,16 +34,47 @@ class AddFamilyActivity : AppCompatActivity() {
             .build()
         var familyService: FamilyService = retrofit.create(
             FamilyService::class.java)
-        val token = "JWT " + GlobalApplication.prefs.token
-        val state = GlobalApplication.prefs.state
+        var loginService: LoginService = retrofit.create(
+            LoginService::class.java)
+        val token = "JWT " + prefs.token
+        val state = prefs.state
+        var gender: Int? = null
+        var birth: String? = null
+        var username: String? = null
+        var name: String? = null
         if (state == "0") {
             req_ing.visibility = View.GONE
             delete_btn.visibility = View.GONE
         } else {
             req_btn.visibility = View.GONE
             req.visibility = View.GONE
-            make_family.isEnabled = false
+            make_family.visibility = View.GONE
         }
+        loginService?.requestUser(token)?.enqueue(object: Callback<UserInfo>{
+            override fun onFailure(call: Call<UserInfo>, t: Throwable) {
+                Log.e("LOGIN",t.message)
+                var dialog = AlertDialog.Builder(this@AddFamilyActivity)
+                dialog.setTitle("에러")
+                dialog.setMessage("호출실패했습니다.")
+                dialog.show()
+            }
+            override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
+                var userInfo = response.body()
+                prefs.family_id = userInfo?.family.toString()
+                prefs.state = userInfo?.state.toString()
+                birth = userInfo?.birth
+                gender = userInfo?.gender
+                username = userInfo?.username
+                name = userInfo?.first_name
+                if (gender == null || birth == null) {
+                    var intent = Intent(this@AddFamilyActivity, EditUserActivity::class.java)
+                    intent.putExtra("isKakao", 1)
+                    intent.putExtra("username", username)
+                    intent.putExtra("name", name)
+                    startActivity(intent)
+                }
+            }
+        })
         delete_btn.setOnClickListener {
             familyService.deleteRequest(token).enqueue(object: Callback<Message> {
                 override fun onFailure(call: Call<Message>, t: Throwable) {
@@ -62,7 +91,7 @@ class AddFamilyActivity : AppCompatActivity() {
                         delete_btn.visibility = View.GONE
                         req_btn.visibility = View.VISIBLE
                         req.visibility = View.VISIBLE
-                        make_family.isEnabled = true
+                        make_family.visibility = View.VISIBLE
                         GlobalApplication.prefs.state = "0" }
                     Toast.makeText(
                         this@AddFamilyActivity,
@@ -73,6 +102,13 @@ class AddFamilyActivity : AppCompatActivity() {
         }
 
         make_family.setOnClickListener{
+            if (gender == null || birth == null) {
+                var intent = Intent(this@AddFamilyActivity, EditUserActivity::class.java)
+                intent.putExtra("isKakao", 1)
+                intent.putExtra("username", username)
+                intent.putExtra("name", name)
+                startActivity(intent)
+            } else {
             familyService.makeFamily(token).enqueue(object: Callback<Family> {
                 override fun onFailure(call: Call<Family>, t: Throwable) {
                     Log.e("LOGIN",t.message)
@@ -102,36 +138,50 @@ class AddFamilyActivity : AppCompatActivity() {
                     dialog.show()
                 }
             })
-        }
+        }}
         req_btn.setOnClickListener{
-            familyService.requestFamily(token, req.text.toString()).enqueue(object: Callback<WaitUser> {
-                override fun onFailure(call: Call<WaitUser>, t: Throwable) {
-                    Log.e("LOGIN",t.message)
-                    var dialog = AlertDialog.Builder(this@AddFamilyActivity)
-                    dialog.setTitle("에러")
-                    dialog.setMessage("호출실패했습니다.")
-                    dialog.show()
-                }
-                override fun onResponse(call: Call<WaitUser>, response: Response<WaitUser>) {
-                    req_ing.visibility = View.VISIBLE
-                    delete_btn.visibility = View.VISIBLE
-                    req_btn.visibility = View.GONE
-                    req.visibility = View.GONE
-                    make_family.isEnabled = false
-                    req?.text = null
-                    GlobalApplication.prefs.state = "1"
-                    Toast.makeText(
-                        this@AddFamilyActivity,
-                        "요청이 완료되었습니다.",
-                        Toast.LENGTH_SHORT).show()
-                }
-            })
+            if (gender == null || birth == null) {
+                var intent = Intent(this@AddFamilyActivity, EditUserActivity::class.java)
+                intent.putExtra("isKakao", 1)
+                intent.putExtra("username", username)
+                intent.putExtra("name", name)
+                startActivity(intent)
+            } else {
+            familyService.requestFamily(token, req.text.toString())
+                .enqueue(object : Callback<WaitUser> {
+                    override fun onFailure(call: Call<WaitUser>, t: Throwable) {
+                        Log.e("LOGIN", t.message)
+                        var dialog = AlertDialog.Builder(this@AddFamilyActivity)
+                        dialog.setTitle("에러")
+                        dialog.setMessage("호출실패했습니다.")
+                        dialog.show()
+                    }
+
+                    override fun onResponse(
+                        call: Call<WaitUser>,
+                        response: Response<WaitUser>
+                    ) {
+                        req_ing.visibility = View.VISIBLE
+                        delete_btn.visibility = View.VISIBLE
+                        req_btn.visibility = View.GONE
+                        req.visibility = View.GONE
+                        make_family.visibility = View.GONE
+                        req?.text = null
+                        GlobalApplication.prefs.state = "1"
+                        Toast.makeText(
+                            this@AddFamilyActivity,
+                            "요청이 완료되었습니다.",
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                })
+            }
         }
         logout.setOnClickListener {
-            GlobalApplication.prefs.token = ""
-            GlobalApplication.prefs.user_id = ""
-            GlobalApplication.prefs.family_id = ""
-            GlobalApplication.prefs.state = ""
+            prefs.token = ""
+            prefs.user_id = ""
+            prefs.family_id = ""
+            prefs.state = ""
             var intent = Intent(this@AddFamilyActivity, LoginActivity::class.java)
             startActivity(intent)
             finish()
