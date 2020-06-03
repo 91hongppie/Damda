@@ -89,7 +89,7 @@ def album(request, album_pk):
 @api_view(['GET', 'POST'])
 def albumMember(request, family_pk, user_pk):
     if request.method == 'GET':
-        albums = Album.objects.filter(family=family_pk)[2:]
+        albums = Album.objects.filter(family=family_pk, member=None).exclude(title="기본 앨범")
         if albums.count() == 0:
             return Response({"data": [{'title': '', 'image': '', 'id': None}]})
         serializers = AlbumSerializer(albums, many=True)
@@ -103,11 +103,15 @@ def albumMember(request, family_pk, user_pk):
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST'])
-def face(request, family_pk):
+def face(request, family_pk, user_pk):
     if request.method == 'GET':
         faces = Album.objects.filter(family=family_pk).exclude(title="기본 앨범")
         serializers = GetMemberSerializer(faces, many=True)
-        return Response({"data": serializers.data})
+        datas = serializers.data
+        for data in datas:
+            calls = get_object_or_404(FamilyName, user=user_pk, album=data['id'])
+            data['call'] = calls.call
+        return Response({"data": datas})
     elif request.method == 'POST':
         image = fr.load_image_file(request.FILES['image'])
         faces_locations = fr.face_locations(image)
@@ -148,28 +152,31 @@ def face(request, family_pk):
                 if makeFamilyName(family_pk, request.data, albumSerializer.data['id'], title):
                     album.delete()
                     return Response(status=status.HTTP_400_BAD_REQUEST)
-                return Response(albumSerializer2.data)
+                response_data = albumSerializer2.data
+                response_data['call'] = title
+                return Response(response_data)
             else:
                 album.delete()
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 namedic={
-    '남동생엄마' : ['엄마', '아들'], '여동생엄마': ['엄마', '딸'], '남동생아빠': ['아빠', '아들'], '여동생아빠': ['아빠', '딸'],
-    '형엄마': ['엄마', '아들'], '누나엄마': ['엄마', '딸'], '형아빠': ['아빠', '아들'], '누나아빠': ['아빠', '딸'],
-    '오빠엄마': ['엄마', '아들'], '오빠아빠': ['아빠','아들'], '언니엄마': ['엄마', '딸'], '언니아빠': ['아빠','딸'],
-    '엄마남동생': ['아들', '엄마'], '엄마여동생': [ '딸', '엄마'], '아빠남동생': ['아들', '아빠'], '아빠여동생': ['딸','아빠'],
-    '엄마형': ['아들', '엄마'], '엄마누나': [ '딸','엄마'], '아빠형': ['아들','아빠'], '아빠누나': ['딸','아빠'],
-    '엄마오빠': ['아들', '엄마'], '아빠오빠': ['아들', '아빠'], '엄마언니': ['딸', '엄마'], '아빠언니': ['딸', '아빠'],
-    '아빠엄마': ['아내', '남편'], '엄마아빠': ['남편', '아내'],
-    '남동생누나': ['누나', '남동생'], '남동생형': ['형', '남동생'], '여동생누나': ['언니', '여동생'], '여동생형': ['오빠', '여동생'],
-    '남동생언니': ['누나', '남동생'], '남동생오빠': ['형', '남동생'], '여동생언니': ['언니', '여동생'], '여동생오빠': ['오빠', '여동생'],
-    '누나남동생': ['남동생', '누나'], '형남동생': ['남동생', '형'], '누나여동생': ['여동생', '언니'], '형여동생': ['여동생', '오빠'],
-    '언니남동생': ['남동생', '누나'], '오빠남동생': ['남동생', '형'], '언니여동생': ['여동생','언니'], '오빠여동생': ['여동생', '오빠'],
-    '언니언니': ['언니', '여동생'], '누나누나': ['언니', '여동생'], '형형': ['형', '남동생'], '오빠오빠': ['형', '남동생'],
-    '남동생남동생': ['형', '남동생'], '여동생여동생': ['언니', '여동생'], '누나형': ['남동생', '누나'], '형누나': ['여동생', '오빠'],
-    '언니오빠': ['남동생', '누나'], '오빠언니': ['여동생', '오빠'],
-    '나엄마': ['아들', '딸'], '나아빠': ['아들', '딸'], '나언니': ['여동생'], '나오빠': ['여동생'], '나형': ['남동생'], '나누나': ['남동생'],
-    '나여동생': ['오빠', '언니'], '나남동생': ['형', '누나']
+    '남동생엄마' : '엄마', '여동생엄마': '엄마', '남동생아빠': '아빠', '여동생아빠': '아빠',
+    '형엄마': '엄마', '누나엄마': '엄마', '형아빠': '아빠', '누나아빠': '아빠',
+    '오빠엄마': '엄마', '오빠아빠': '아빠', '언니엄마': '엄마', '언니아빠': '아빠',
+    '엄마남동생': '아들', '엄마여동생': '딸', '아빠남동생': '아들', '아빠여동생': '딸',
+    '엄마형': '아들', '엄마누나': '딸', '아빠형': '아들', '아빠누나': '딸',
+    '엄마오빠': '아들', '아빠오빠': '아들', '엄마언니': '딸', '아빠언니': '딸',
+    '아빠엄마': '아내', '엄마아빠': '남편',
+    '남동생누나': '누나', '남동생형': '형', '여동생누나': '언니', '여동생형': '오빠',
+    '남동생언니': '누나', '남동생오빠': '형', '여동생언니': '언니', '여동생오빠': '오빠',
+    '누나남동생': '남동생', '형남동생': '남동생', '누나여동생': '여동생', '형여동생': '여동생',
+    '언니남동생': '남동생', '오빠남동생': '남동생', '언니여동생': '여동생', '오빠여동생': '여동생',
+
+    '언니언니': '언니', '누나누나': '언니', '형형': '형', '오빠오빠': '형',
+    '남동생남동생': '형', '여동생여동생': '언니',
+
+    '누나형': '남동생', '형누나': '여동생',
+    '언니오빠': '남동생', '오빠언니': '여동생'
 
 }
 def makeFamilyName(family_pk, data, album, title):
@@ -189,7 +196,7 @@ def makeFamilyName(family_pk, data, album, title):
         for user in users:
             member = get_object_or_404(FamilyName, user=data['user_id'], owner=user.id)
             try:
-                familyNameSerializer2 = FamilyNameSerializer(data={'user': user.id, 'album': album, 'call': namedic[member.call + title][0]})
+                familyNameSerializer2 = FamilyNameSerializer(data={'user': user.id, 'album': album, 'call': namedic[member.call + title]})
             except KeyError:
                 familyNameSerializer2 = FamilyNameSerializer(data={'user': user.id, 'album': album, 'call': title})
             if familyNameSerializer2.is_valid():

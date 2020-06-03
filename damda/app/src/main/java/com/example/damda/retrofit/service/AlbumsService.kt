@@ -13,9 +13,10 @@ interface AlbumsService {
                       @Path("family_id") family_id:String,
                       @Path("user_id") user_id: String) : Call<Albums>
 
-    @GET("/api/albums/{id}/face/")
+    @GET("/api/albums/{family_id}/{user_id}/face/")
     fun requestFaces(@Header("Authorization") jwt:String,
-                      @Path("id") id:String) : Call<Faces>
+                     @Path("family_id") family_id:String,
+                     @Path("user_id") user_id:String) : Call<Faces>
 
     @GET("/api/albums/{family_id}/albums/{user_id}/")
     fun nullAlbums(@Header("Authorization") jwt:String,
@@ -23,10 +24,11 @@ interface AlbumsService {
                    @Path("user_id") user_id: String) : Call<Albums>
 
     @Multipart
-    @POST("/api/albums/{id}/face/")
+    @POST("/api/albums/{family_id}/{path_id}/face/")
     fun updateFace(
         @Header("Authorization") jwt:String,
-        @Path("id") id: String,
+        @Path("family_id") family_id: String,
+        @Path("path_id") path_id: String,
         @Part("album_name") album_name: String,
         @Part("user_id") user_id: Int,
         @Part img_name: MultipartBody.Part?

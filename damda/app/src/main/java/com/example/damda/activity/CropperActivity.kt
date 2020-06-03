@@ -86,7 +86,7 @@ class CropperActivity : AppCompatActivity() {
                 RequestBody.create(MediaType.parse("multipart/form-data"), file)
             val body =
                 MultipartBody.Part.createFormData("image", file.getName(), requestFile)
-            albumsService.updateFace(token, family_id, albumCall, prefs.user_id!!.toInt(), body).enqueue(object:
+            albumsService.updateFace(token, family_id, prefs.user_id!!, albumCall, prefs.user_id!!.toInt(), body).enqueue(object:
                 Callback<Face> {
                 override fun onFailure(call: Call<Face>, t: Throwable) {
                     Log.e("LOGIN",t.message)
