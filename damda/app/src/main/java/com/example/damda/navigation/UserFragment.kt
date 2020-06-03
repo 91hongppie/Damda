@@ -80,6 +80,7 @@ class UserFragment : Fragment() {
         }
         view.editUser.setOnClickListener {
             var intent = Intent(context, EditUserActivity::class.java)
+            intent.putExtra("isKakao", 0)
             startActivity(intent)
         }
         return view

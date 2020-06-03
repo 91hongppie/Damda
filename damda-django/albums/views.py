@@ -141,6 +141,7 @@ def face(request, family_pk, user_pk):
         if albumSerializer.is_valid():
             albumSerializer.save()
             os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/{}/{}'.format(family_pk, albumSerializer.data['id'])), exist_ok=True)
+            print(request.FILES)
             image_path = 'uploads/albums/{}/{}/{}'.format(family_pk, albumSerializer.data['id'], request.FILES['image'])
             album = get_object_or_404(Album, pk=albumSerializer.data['id'])
             albumSerializer2 = AlbumSerializer(
