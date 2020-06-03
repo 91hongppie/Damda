@@ -82,6 +82,8 @@ class LoginActivity : AppCompatActivity() {
                         GlobalApplication.prefs.family_id = login?.family.toString()
                         GlobalApplication.prefs.state = login?.state.toString()
                         prefs.my_album = login?.my_album!!
+                        Log.e("sdfsdfsdfsdfsdfsdf", "${login?.my_album!!}")
+                        prefs.gender = login?.gender!!
                         moveActivity(login?.state!!.toInt())
                     }
                 }
@@ -114,7 +116,6 @@ class LoginActivity : AppCompatActivity() {
                     val accessToken = Session.getCurrentSession().tokenInfo.accessToken
                     var params:HashMap<String, Any> = HashMap<String, Any>()
                     params.put("access_token", accessToken)
-
                     loginService?.requestKakao(params)?.enqueue(object: Callback<KakaoLogin>{
                         override fun onFailure(call: Call<KakaoLogin>, t: Throwable) {
                             Log.e("LOGIN",t.message)
@@ -138,12 +139,23 @@ class LoginActivity : AppCompatActivity() {
                                 }
                                 override fun onResponse(call: Call<UserInfo>, response: Response<UserInfo>) {
                                     userInfo = response.body()
-                                    GlobalApplication.prefs.user_id = userInfo?.id.toString()
-                                    GlobalApplication.prefs.family_id = userInfo?.family.toString()
-                                    GlobalApplication.prefs.state = userInfo?.state.toString()
+                                    prefs.user_id = userInfo?.id.toString()
+                                    prefs.family_id = userInfo?.family.toString()
+                                    prefs.state = userInfo?.state.toString()
                                     prefs.my_album = userInfo?.my_album!!
-                                    Log.v("UserInfo",userInfo?.toString())
-                                    moveActivity(userInfo?.state!!.toInt())
+                                    val birth = userInfo?.birth
+                                    val gender = userInfo?.gender
+                                    if (gender == null || birth == null) {
+                                        var intent = Intent(this@LoginActivity, EditUserActivity::class.java)
+                                        intent.putExtra("isKakao", 1)
+                                        intent.putExtra("username", userInfo?.username)
+                                        intent.putExtra("name", userInfo?.first_name)
+                                        startActivity(intent)
+                                        finish()
+                                    } else {
+                                        prefs.gender = userInfo?.gender!!
+                                        moveActivity(userInfo?.state!!.toInt())
+                                    }
                                 }
                             })
                         }

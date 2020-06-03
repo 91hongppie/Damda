@@ -90,7 +90,8 @@
             android:layout_weight="1"/>
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/ic_next"/>
     </LinearLayout>
 
@@ -127,7 +128,8 @@
             android:layout_weight="1"/>
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/ic_next"/>
     </LinearLayout>
     <LinearLayout
@@ -150,7 +152,8 @@
             android:layout_weight="1"/>
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/ic_next"/>
     </LinearLayout>
 
@@ -170,9 +173,10 @@
     <LinearLayout
         android:id="@+id/alarm"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:padding="5dp"
         android:background="?attr/selectableItemBackground"
+        android:orientation="vertical"
         >
         <TextView
             android:layout_width="wrap_content"
@@ -180,14 +184,17 @@
             android:text="푸시 알람 설정"
             android:textSize="15sp"
             android:gravity="center_vertical"
-            android:textColor="@color/black"/>
+            android:textColor="@color/black"
+            android:height="50dp"/>
+
     </LinearLayout>
     <LinearLayout
         android:id="@+id/setting"
         android:layout_width="match_parent"
-        android:layout_height="60dp"
+        android:layout_height="wrap_content"
         android:padding="5dp"
         android:background="?attr/selectableItemBackground"
+        android:orientation="vertical"
         >
         <TextView
             android:layout_width="wrap_content"
@@ -195,15 +202,32 @@
             android:text="자동업로드 설정"
             android:textSize="15sp"
             android:gravity="center_vertical"
-            android:textColor="@color/black"/>
-        <Space
+            android:textColor="@color/black"
+            android:height="50dp"/>
+        <LinearLayout
+            android:orientation="vertical"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_weight="1"/>
-        <ImageView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:src="@drawable/ic_next"/>
+            android:layout_height="wrap_content">
+
+            <Switch
+                android:id="@+id/auto_upload_switch"
+                android:paddingStart="20dp"
+                android:paddingEnd="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:text="자동 업로드"
+                android:textSize="14sp"/>
+
+            <Switch
+                android:id="@+id/use_data_switch"
+                android:paddingStart="20dp"
+                android:paddingEnd="15dp"
+                android:layout_width="match_parent"
+                android:layout_height="45dp"
+                android:text="모바일 데이터 사용 설정"
+                android:textColor="@color/black"
+                android:textSize="14sp"/>
+        </LinearLayout>
     </LinearLayout>
     <TextView
         android:layout_marginTop="4dp"
@@ -236,7 +260,8 @@
             android:layout_weight="1"/>
         <ImageView
             android:layout_width="wrap_content"
-            android:layout_height="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
             android:src="@drawable/ic_next"/>
     </LinearLayout>
 

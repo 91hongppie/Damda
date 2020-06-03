@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    tools:context=".activity.AddMemberActivity">
+
+    <androidx.appcompat.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:elevation="4dp"
+        app:title="푸시 알림 설정" />
+
+    <LinearLayout
+        android:id="@+id/push_list"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_below="@+id/toolbar"
+        android:orientation="vertical">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="50dp"
+            android:elevation="2dp"
+            android:gravity="center"
+            android:paddingStart="15dp"
+            android:paddingEnd="20dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp">
+
+            <Switch
+                android:id="@+id/switch_all"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="푸시 알림 켜기 / 끄기"
+                android:textSize="12pt" />
+
+        </LinearLayout>
+        <LinearLayout
+            android:id="@+id/switch_each"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:visibility="visible">
+
+            <Switch
+                android:id="@+id/rehi_alarm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
+                android:paddingStart="15dp"
+                android:paddingEnd="20dp"
+                android:text="안부 묻기"
+                android:textSize="10pt" />
+
+            <Switch
+                android:id="@+id/new_alarm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="15dp"
+                android:paddingEnd="20dp"
+                android:layout_marginBottom="15dp"
+                android:text="새롭게 업로드된 사진"
+                android:textSize="10pt" />
+
+            <Switch
+                android:id="@+id/congratulations_alarm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="15dp"
+                android:paddingEnd="20dp"
+                android:layout_marginBottom="15dp"
+                android:text="생일"
+                android:textSize="10pt" />
+
+            <Switch
+                android:id="@+id/mission_alarm"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:paddingStart="15dp"
+                android:paddingEnd="20dp"
+                android:layout_marginBottom="15dp"
+                android:text="미션"
+                android:textSize="10pt" />
+
+        </LinearLayout>
+
+    </LinearLayout>
+</RelativeLayout>

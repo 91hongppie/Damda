@@ -1,6 +1,8 @@
 package com.example.damda.activity
 
 
+
+
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
@@ -66,11 +68,11 @@ class SignupActivity : AppCompatActivity() {
         inputInfoMessage = arrayOf(getString(R.string.error_discorrent_email), getString(
             R.string.txtInputInfoPWD
         ), getString(R.string.txtInputInfoRePWD))
+        typingListener()
         val adapter = ArrayAdapter(this, R.layout.list_item_gender, items)
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
-//                TODO("Not yet implemented")
             }
 
             override fun onItemSelected(
@@ -79,7 +81,6 @@ class SignupActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-//                TODO("Not yet implemented")
                 gender = position.toString()
             }
         }
@@ -95,16 +96,25 @@ class SignupActivity : AppCompatActivity() {
         var signupService: SignupService = retrofit.create(
             SignupService::class.java)
         btnDone.setOnClickListener {
-            var params:HashMap<String, Any> = HashMap<String, Any>()
-            params.put("username", editEmail.text.toString())
-            params.put("password",editPWD.text.toString())
+
+            var params: HashMap<String, Any> = HashMap<String, Any>()
+            var text1 = editEmail.text.toString()
+            var text2 = editPWD.text.toString()
+            params.put("username", text1)
+            params.put("password", text2)
             params.put("first_name", name.text.toString())
-            params.put("birth", "${dataPicker.year}-${dataPicker.month + 1}-${dataPicker.dayOfMonth}")
+            params.put(
+                "birth",
+                "${dataPicker.year}-${dataPicker.month + 1}-${dataPicker.dayOfMonth}"
+            )
             params.put("is_lunar", is_lunar.isChecked)
             params.put("gender", gender)
 
             if (isCheckID) {
-                signupService.signUp(params).enqueue(object:Callback<SignUp>{
+                if (gender == "0") {
+                    toast("성별을 선택해주세요.")
+                } else {
+                signupService.signUp(params).enqueue(object : Callback<SignUp> {
                     override fun onFailure(call: Call<SignUp>, t: Throwable) {
                         Log.e("LOGIN", t.message)
                         var dialog = AlertDialog.Builder(this@SignupActivity)
@@ -119,10 +129,11 @@ class SignupActivity : AppCompatActivity() {
                         startActivity(intent)
                         finish()
                     }
-                })
+                })}
             } else {
                 toast(getString(R.string.error_do_not_check_id))
             }
+
         }
         btnCheckExistID.setOnClickListener {
             var text1 = editEmail.text.toString()
@@ -191,15 +202,6 @@ class SignupActivity : AppCompatActivity() {
             }
 
 
-        //Email
-//        val disposableEmail = RxTextView.textChanges(inputDataField[3])
-//            .map { t -> t.isEmpty() || Pattern.matches(Constants.EMAIL_RULS, t) }
-//            .subscribe({
-//                reactiveInputTextViewData(3, it)
-//            }){
-//                //Error Block
-//            }
-
         viewDisposables.addAll(disposableID, disposablePwd, disposableRePwd)
     }
 
@@ -243,3 +245,4 @@ class SignupActivity : AppCompatActivity() {
         textInputLayoutArray[indexPath].isErrorEnabled = false
     }
 }
+

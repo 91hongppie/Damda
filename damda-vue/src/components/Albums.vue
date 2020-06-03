@@ -26,7 +26,7 @@
               height="200px"
             >
             </v-img>
-            <v-card-title>{{ album.title }}</v-card-title>
+            <v-card-title>{{ album.call }}</v-card-title>
           </v-card>
         </v-col>
       </v-row>

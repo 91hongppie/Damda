@@ -31,9 +31,10 @@ class NullAlbumAdapter(val albumList: Array<Album>) : BaseAdapter()
         }
         else if (albumList[position].image != "empty") {
             Glide.with(view.context)
-                .load(prefs.damdaServer + "/api/${albumList[position].image}")
+                .load(prefs.damdaServer + "/${albumList[position].image}")
                 .error(R.drawable.album).apply(RequestOptions().override(600, 600))
                 .apply(RequestOptions.centerCropTransform()).into(image)
+
         }
 
         return view

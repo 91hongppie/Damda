@@ -42,7 +42,7 @@ class AddMemberActivity : AppCompatActivity() {
         val family_id = GlobalApplication.prefs.family_id.toString()
         var albumsService: AlbumsService = retrofit.create(
             AlbumsService::class.java)
-        albumsService.requestFaces("JWT $jwt", family_id).enqueue(object: Callback<Faces> {
+        albumsService.requestFaces("JWT $jwt", family_id, prefs.user_id!!).enqueue(object: Callback<Faces> {
             override fun onFailure(call: Call<Faces>, t: Throwable) {
                 Log.v("face", t.toString())
                 var dialog = AlertDialog.Builder(this@AddMemberActivity)

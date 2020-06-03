@@ -5,6 +5,7 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.os.Message
 import android.util.Log
 import com.example.damda.GlobalApplication.Companion.prefs
@@ -17,8 +18,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
+        Looper.prepare()
 
         var msgHandler : Handler? = null
+        
         msgHandler = Handler()
         msgHandler.handleMessage(Message())
 
@@ -46,6 +49,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         client.newCall(request).enqueue(callback)
 
+        prefs.device_token = token
+
     }
 
     inner class Callback1: Callback {
@@ -62,7 +67,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(p0: RemoteMessage) {
-
         Log.d(TAG, "From: " + p0.from);
 
         // Check if message contains a data payload.
@@ -75,4 +79,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             Log.d(TAG, "Message Notification Body: " + p0.notification!!.body);
         }
     }
+
+
 }

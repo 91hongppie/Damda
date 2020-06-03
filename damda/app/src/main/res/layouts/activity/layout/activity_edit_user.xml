@@ -13,30 +13,92 @@
         android:elevation="4dp"
         app:title="개인정보 설정" />
 
-    <RelativeLayout
-        android:layout_width="match_parent"
-        android:layout_height="match_parent"
+    <LinearLayout
+        android:id="@+id/signin_layout"
         android:layout_below="@+id/toolbar"
-        android:paddingLeft="10dp"
-        android:paddingRight="10dp"
-        >
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:orientation="vertical">
+
         <TextView
-            android:id="@+id/member_info"
-            android:layout_width="match_parent"
+            android:layout_marginTop="10dp"
+            android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:gravity="center_vertical"
-            android:padding="4dp"
-            android:text="@string/family_info"
+            android:text="이메일"
             />
-        <View
-            android:layout_below="@+id/member_info"
+        <TextView
+            android:id="@+id/editEmail"
+            android:layout_marginTop="2dp"
+            android:layout_marginBottom="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:textColor="@color/black"
+            android:textSize="18sp"
+            />
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="1dp"
-            android:background="#000000"/>
-        <androidx.recyclerview.widget.RecyclerView
-            android:id="@+id/family_list"
-            android:layout_below="@+id/member_info"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="10dp">
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/nameLayout"
+                android:layout_width="0dp"
+                android:layout_weight="2"
+                android:hint="이름"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp">
+
+                <EditText
+                    android:id="@+id/name"
+                    android:layout_width="match_parent"
+                    android:maxLines="1"
+                    android:maxLength="20"
+                    android:inputType="text"
+                    android:layout_height="match_parent"
+                    />
+            </com.google.android.material.textfield.TextInputLayout>
+            <Spinner
+                android:layout_marginTop="5dp"
+                android:id="@+id/spinner"
+                android:layout_width="0dp"
+                android:layout_weight="1"
+                android:layout_height="match_parent"
+                />
+        </LinearLayout>
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_marginTop="4dp"
+            android:paddingLeft="4dp"
+            android:text="생일"
+            android:gravity="center_vertical"/>
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"/>
-    </RelativeLayout>
+            android:layout_height="wrap_content">
+            <CheckBox
+                android:id="@+id/is_lunar"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:gravity="center"
+                android:text="음력"/>
+
+            <DatePicker
+                android:id="@+id/dataPicker"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:datePickerMode="spinner"
+                android:calendarViewShown="false"/>
+
+        </LinearLayout>
+
+        <Button
+            android:id="@+id/btnDone"
+            android:layout_marginTop="5dp"
+            android:layout_width="match_parent"
+            android:layout_height="40dp"
+            android:text="@string/edit_done"/>
+    </LinearLayout>
 </RelativeLayout>

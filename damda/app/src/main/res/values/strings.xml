@@ -23,8 +23,8 @@
     <!-- Bottom Navigation View -->
     <string name="home">Album</string>
     <string name="search">Photos</string>
-    <string name="gallery">Gallery</string>
-    <string name="favorite">Video</string>
+    <string name="gallery">Upload</string>
+    <string name="favorite">Challenge</string>
     <string name="account">Account</string>
 
     <!-- Account -->
@@ -66,6 +66,7 @@
     <string name="birth">생년월일</string>
     <string name="ok">확인</string>
     <string name="join_done">가입하기</string>
+    <string name="edit_done">수정하기</string>
     <string name="done">확인</string>
     <string name="join">회원가입</string>
     <string name="clear">초기화</string>
@@ -98,7 +99,7 @@
     <string name="saveAlbum">저장</string>
     <string name="album_image">앨범 이미지</string>
     <string name="albumImageChange">대표 이미지 변경</string>
-    <string name="deleteAlbum">삭제</string>
+    <string name="deleteAlbum">앨범 비우기</string>
 
     <!-- Photo -->
     <string name="savePhoto">저장</string>
@@ -123,20 +124,29 @@
     <string name="trimming_progress">Trimming your video...</string>
 
     <!--  Notification channel  -->
+    <string name="default_notification_channel_id">PUSH</string>
     <string name="channel_name1">안부 묻기</string>
-    <string name="channel_name2">새로운 사진</string>
-    <string name="channel_name3">생일 축하</string>
+    <string name="channel_name2">새로운 사진 알림</string>
+    <string name="channel_name3">생일 알림</string>
+    <string name="channel_name4">미션 알림</string>
     <string name="channel_description1">일정 기간 활동하지 않으면 알림이 울립니다.</string>
     <string name="channel_description2">새로운 사진이 업로드되면 알림이 울립니다.</string>
     <string name="channel_description3">생일 축하메세지를 보여줍니다.</string>
+    <string name="channel_description4">부모님이 새로운 미션을 등록하면 알림이 울립니다.</string>
 
     <!--  가족 관계 선택  -->
-    <string-array name="familyName">
+    <string-array name="familyNameF">
+        <item>엄마</item>
+        <item>아빠</item>
+        <item>언니</item>
+        <item>오빠</item>
+        <item>남동생</item>
+        <item>여동생</item>
+    </string-array>
+    <string-array name="familyNameM">
         <item>엄마</item>
         <item>아빠</item>
         <item>누나</item>
-        <item>언니</item>
-        <item>오빠</item>
         <item>형</item>
         <item>남동생</item>
         <item>여동생</item>

@@ -18,21 +18,21 @@ import java.util.*
 class ImageUpload : JobIntentService() {
     companion object {
         const val TAG = "ImageUpload"
-        const val JOB_ID = 1001
+        const val JOB_ID = 1004
     }
     val MEDIA_TYPE_IMAGE = MediaType.parse("image/*")
 
-    val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-        .addFormDataPart("user_id", "${GlobalApplication.prefs.user_id}")
     val jwt = GlobalApplication.prefs.token
 
     fun enqueueWork(context: Context, work: Intent){
         enqueueWork(context, ImageUpload::class.java, JOB_ID, work)
     }
+
     override fun onCreate() {
         super.onCreate()
         Log.d(TAG,"이미지 업로드 시작하자")
     }
+
     override fun onHandleWork(intent: Intent) {
         val url = URL(GlobalApplication.prefs.damdaServer+"/api/albums/addphoto/")
         val paths = intent.getStringArrayListExtra("paths")!!
@@ -41,14 +41,31 @@ class ImageUpload : JobIntentService() {
             uploadImage(url, image, paths[i], i)
             Thread.sleep(500)
         }
-//        onDestroy()
     }
 
     override fun onDestroy() {
         super.onDestroy()
+        val url = URL(GlobalApplication.prefs.damdaServer+"/api/albums/uploadend/")
+
+        val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("user_id", "${GlobalApplication.prefs.user_id}").build()
+
+        val request = Request.Builder().addHeader("Authorization", "JWT $jwt")
+            .url(url)
+            .post(requestBody)
+            .build()
+
+        val client = OkHttpClient()
+        val callback = Callback2()
+
+        client.newCall(request).enqueue(callback)
+
         Log.d(TAG,"끝끝끝")
     }
     fun uploadImage(url : URL, image: File, path: String, i: Int) {
+        val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
+            .addFormDataPart("user_id", "${GlobalApplication.prefs.user_id}")
+
         try {
             val exif = ExifInterface(path)
             var fileDatetime : String = if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
@@ -93,6 +110,19 @@ class ImageUpload : JobIntentService() {
         override fun onResponse(call: okhttp3.Call, response: Response) {
             val status = response.code()
             Log.d("server response", "$status")
+        }
+    }
+
+    inner class Callback2 : Callback {
+        override fun onFailure(call: okhttp3.Call, e: IOException) {
+            Log.d("Sever response", "error: $e")
+
+        }
+
+        override fun onResponse(call: okhttp3.Call, response: Response) {
+            val status = response.code()
+            Log.d("server response", "푸시는 $response")
+            Log.d("server response", "푸시도 보냈어요! = $status")
         }
     }
 

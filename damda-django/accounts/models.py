@@ -14,7 +14,7 @@ class User(AbstractUser):
     family = models.ForeignKey(Family, related_name='user_family', on_delete=models.SET_NULL, blank=True, null=True)
     birth = models.DateField(null=True)
     is_lunar = models.BooleanField(default=False)
-    gender = models.IntegerField()
+    gender = models.IntegerField(null=True)
 
 class WaitUser(models.Model):
     main_member = models.ForeignKey(User, on_delete=models.CASCADE)
@@ -41,3 +41,11 @@ class Mission(models.Model):
     point = models.IntegerField()
     prize = models.IntegerField(default=0)
     period = models.IntegerField()
+    created_at = models.DateField(auto_now_add=True)
+
+
+class Quiz(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    quiz = models.CharField(max_length=250)
+    answer = models.CharField(max_length=50, default='no answer')
+    created_at = models.DateField(auto_now_add=True)

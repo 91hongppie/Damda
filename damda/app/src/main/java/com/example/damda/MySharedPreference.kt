@@ -2,6 +2,7 @@ package com.example.damda
 
 import android.content.Context
 import android.content.SharedPreferences
+import java.util.*
 
 class MySharedPreferences(context: Context) {
     val PREFS_FILENAME = "prefs"
@@ -21,9 +22,14 @@ class MySharedPreferences(context: Context) {
     var family_id: String?
         get() = prefs.getString("family_id", "")
         set(value) = prefs.edit().putString("family_id", value).apply()
+
     var my_album: Boolean
         get() = prefs.getBoolean("my_album", false)
         set(value) = prefs.edit().putBoolean("my_album", value).apply()
+
+    var gender: Int
+        get() = prefs.getInt("gender", 0)
+        set(value) = prefs.edit().putInt("gender", value).apply()
 
     var state: String?
         get() = prefs.getString("state", "")
@@ -33,9 +39,37 @@ class MySharedPreferences(context: Context) {
         get() = prefs.getBoolean("autoStatus", true)
         set(value) = prefs.edit().putBoolean("autoStatus", value).apply()
 
+    var mobileAutoUpload: Boolean
+        get() = prefs.getBoolean("mobileAutoUpload", false)
+        set(value) = prefs.edit().putBoolean("mobileAutoUpload", value).apply()
+
     var autoId: String?
         get() = prefs.getString("autoId", null)
         set(value) = prefs.edit().putString("autoId", value).apply()
 
     val damdaServer = "http://10.0.2.2:8000"
+
+    var device_token: String?
+        get() = prefs.getString("device_token", "")
+        set(value) = prefs.edit().putString("device_token", value).apply()
+
+    var push_all: Boolean
+        get() = prefs.getBoolean("push_all", true)
+        set(value) = prefs.edit().putBoolean("push_all", value).apply()
+
+    var push_rehi: Boolean
+        get() = prefs.getBoolean("push_rehi", true)
+        set(value) = prefs.edit().putBoolean("push_rehi", value).apply()
+
+    var push_new: Boolean
+        get() = prefs.getBoolean("push_new", true)
+        set(value) = prefs.edit().putBoolean("push_new", value).apply()
+
+    var push_congrat: Boolean
+        get() = prefs.getBoolean("push_congrat", true)
+        set(value) = prefs.edit().putBoolean("push_congrat", value).apply()
+
+    var push_mission: Boolean
+        get() = prefs.getBoolean("push_mission", true)
+        set(value) = prefs.edit().putBoolean("push_mission", value).apply()
 }
