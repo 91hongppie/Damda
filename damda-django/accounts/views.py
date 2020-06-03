@@ -308,7 +308,7 @@ def UserInfo(request):
             data['my_album'] = True
         else:
             data['my_album'] = False
-        return Response(serializer.data)
+        return Response(data)
     elif request.method == 'PUT':
         User = get_user_model()
         user = get_object_or_404(User, username=request.user)
