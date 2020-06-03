@@ -38,6 +38,10 @@ class MySharedPreferences(context: Context) {
         get() = prefs.getBoolean("autoStatus", true)
         set(value) = prefs.edit().putBoolean("autoStatus", value).apply()
 
+    var mobileUpload: Boolean
+        get() = prefs.getBoolean("mobileUpload", false)
+        set(value) = prefs.edit().putBoolean("mobileUpload", value).apply()
+
     var autoId: String?
         get() = prefs.getString("autoId", null)
         set(value) = prefs.edit().putString("autoId", value).apply()
