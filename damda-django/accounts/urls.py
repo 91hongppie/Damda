@@ -16,5 +16,5 @@ urlpatterns = [
     path('family/<int:family_pk>/', views.DetailFamily),
     path('family_info/<int:family_pk>/', views.GetFamily),
     path('mission/<int:user_pk>/<int:period>/', views.missions),
-    path('score/<int:user_pk>/', views.score)
+    path('score/<int:user_pk>/', views.score),
 ]
