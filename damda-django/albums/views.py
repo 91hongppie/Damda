@@ -355,7 +355,7 @@ def uploadEnd(request):
         response = requests.post(url, data=json.dumps(data), headers=headers)
         result = response.status_code
     
-    return Response(status=status.HTTP_200_OK)
+    return Response(result, status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST', ])

@@ -46,6 +46,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         client.newCall(request).enqueue(callback)
 
+        prefs.device_token = token
+
     }
 
     inner class Callback1: Callback {
@@ -62,7 +64,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
     }
 
     override fun onMessageReceived(p0: RemoteMessage) {
-
         Log.d(TAG, "From: " + p0.from);
 
         // Check if message contains a data payload.

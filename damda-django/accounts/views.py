@@ -435,6 +435,19 @@ def score(request, user_pk):
     return Response(data)
 
 
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@csrf_exempt
+def logout(request):
+    device_token = request.POST.get('device_token')
+    target = get_object_or_404(Device, device_token=device_token)
+    try:
+        target.delete()
+        return Response(status=status.HTTP_200_OK)
+    except:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        
 @api_view(['GET', 'PUT'])
 def makequiz(request, family_pk, user_pk):
     if request.method == 'GET':
