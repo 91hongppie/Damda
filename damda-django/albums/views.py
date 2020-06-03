@@ -69,21 +69,17 @@ def album(request, album_pk):
         return Response(status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         album = get_object_or_404(Album, pk=album_pk)
+        photos = Photo.objects.filter(album=album_pk)
         file_path = settings.MEDIA_ROOT + '/albums/' + str(album.family.id) + '/' + str(album_pk)
-        try:
-            with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json') as family:
-                    data = json.load(family)
-                    if data.get(f'{album.family.id}_{album.title}'):
-                        data.pop(f'{album.family.id}_{album.title}', None)
-            with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'w', encoding='utf-8') as family:
-                json.dump(data, family, cls=NumpyArrayEncoder, ensure_ascii=-False, indent=2)
-            if os.path.isdir(file_path):
-                shutil.rmtree(file_path)
-            album.delete()
-            return Response({"data": "삭제완료"})
-        except:
-            album.delete()
-            return Response({"data": "삭제완료"})
+        if os.path.isdir(file_path):
+            shutil.rmtree(file_path)
+        ROOT_DIR = os.path.abspath("./")
+        os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/' + str(album.family.id) + '/' + str(album_pk)), exist_ok=True)
+        photos.delete()
+        serializers = AlbumPutSerializer(data={'id': album_pk, 'image': 'empty'}, instance=album)
+        if serializers.is_valid():
+            serializers.save()
+        return Response({"data": "삭제완료"})
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
 @api_view(['GET', 'POST'])
@@ -359,7 +355,7 @@ def uploadEnd(request):
         response = requests.post(url, data=json.dumps(data), headers=headers)
         result = response.status_code
     
-    return Response(status=status.HTTP_200_OK)
+    return Response(result, status=status.HTTP_200_OK)
 
 
 @api_view(['GET', 'POST', ])

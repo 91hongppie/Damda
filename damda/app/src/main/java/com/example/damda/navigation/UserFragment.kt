@@ -1,7 +1,13 @@
 package com.example.damda.navigation
 
+import android.app.NotificationChannel
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
@@ -16,15 +22,19 @@ import com.example.damda.retrofit.model.DetailFamily
 import com.example.damda.retrofit.model.Message
 import com.example.damda.retrofit.model.User
 import com.example.damda.retrofit.service.FamilyService
+import com.jakewharton.rxbinding2.widget.color
 import kotlinx.android.synthetic.main.fragment_user.*
 import kotlinx.android.synthetic.main.fragment_user.view.*
 import kotlinx.android.synthetic.main.list_item_request.view.*
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
 
 class UserFragment : Fragment() {
     override fun onCreateView(
@@ -58,6 +68,23 @@ class UserFragment : Fragment() {
             GlobalApplication.prefs.user_id = ""
             GlobalApplication.prefs.family_id = ""
             GlobalApplication.prefs.state = ""
+
+            val jwt = GlobalApplication.prefs.token
+            val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
+                .addFormDataPart("user_id", "${GlobalApplication.prefs.user_id}")
+                .addFormDataPart("device_token", "${GlobalApplication.prefs.device_token}")
+                .build()
+
+            val request = Request.Builder().addHeader("Authorization", "JWT $jwt")
+                .url(prefs.damdaServer + "/api/accounts/logout")
+                .post(requestBody)
+                .build()
+
+            val client = OkHttpClient()
+            val callback = Callback1()
+
+            client.newCall(request).enqueue(callback)
+
             var intent = Intent(activity, LoginActivity::class.java)
             startActivity(intent)
             activity?.finish()
@@ -78,11 +105,55 @@ class UserFragment : Fragment() {
             var intent = Intent(context, AddMemberActivity::class.java)
             startActivity(intent)
         }
+        view.alarm.setOnClickListener {
+            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+            Log.d("packageName", "${context!!.packageName}")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, activity?.packageName)
+            } else {
+                intent.putExtra("app_package", activity?.packageName)
+                intent.putExtra("app_uid", activity?.applicationInfo?.uid)
+            }
+            startActivity(intent)
+        }
         view.editUser.setOnClickListener {
             var intent = Intent(context, EditUserActivity::class.java)
             intent.putExtra("isKakao", 0)
             startActivity(intent)
         }
+        view.auto_upload_switch.setOnCheckedChangeListener{ buttonView, isChecked ->
+            prefs.autoStatus = isChecked
+            if (isChecked) {
+                use_data_switch.isClickable = true
+                use_data_switch.setTextColor(Color.BLACK)
+            } else {
+                prefs.mobileAutoUpload = false
+                use_data_switch.isChecked = false
+                use_data_switch.isClickable = false
+                use_data_switch.setTextColor(Color.GRAY)
+            }
+        }
+        if (prefs.autoStatus) {
+            view.use_data_switch.setTextColor(Color.BLACK)
+        } else {
+            view.use_data_switch.setTextColor(Color.GRAY)
+        }
+        view.use_data_switch.setOnCheckedChangeListener { buttonView, isChecked ->
+            prefs.mobileAutoUpload = isChecked
+        }
+
         return view
+    }
+
+    inner class Callback1 : okhttp3.Callback {
+        override fun onFailure(call: okhttp3.Call, e: IOException) {
+            Log.d("Sever response", "error: $e")
+
+        }
+
+        override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+            val status = response.code()
+            Log.d("server response", "$status - 디바이스 삭제 완료")
+        }
     }
 }

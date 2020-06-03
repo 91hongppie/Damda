@@ -34,6 +34,7 @@ import com.example.damda.R
 import com.example.damda.navigation.*
 import com.google.android.gms.tasks.OnCompleteListener
 import com.google.firebase.iid.FirebaseInstanceId
+import com.google.firebase.messaging.FirebaseMessaging
 import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
@@ -43,6 +44,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
+        FirebaseMessaging.getInstance().isAutoInitEnabled = true
+
         bottom_navigation.setOnNavigationItemSelectedListener(this)
 
         if (!prefs.my_album){
@@ -52,7 +55,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
         if(prefs.autoStatus && intent.getStringExtra("before") != "AddPhoto"){
-            if((activeNetwork?.type == ConnectivityManager.TYPE_MOBILE && prefs.mobileUpload)||(activeNetwork?.type == ConnectivityManager.TYPE_WIFI )){
+            if((activeNetwork?.type == ConnectivityManager.TYPE_MOBILE && prefs.mobileAutoUpload)||(activeNetwork?.type == ConnectivityManager.TYPE_WIFI )){
                 checkMidea()
             }
         }
@@ -90,6 +93,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     private fun sendRegistrationToServer(token: String) {
+        prefs.device_token = token
+        Log.d("SharedPreference", "${prefs.device_token}")
+
         val url = URL(prefs.damdaServer+"/api/accounts/device/")
         val jwt = GlobalApplication.prefs.token
         val formBody = FormBody.Builder()

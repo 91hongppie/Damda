@@ -52,11 +52,7 @@ class MissionFragment: Fragment() {
         val user_id = GlobalApplication.prefs.user_id.toString()
         val family_id = GlobalApplication.prefs.family_id.toString()
         val state = GlobalApplication.prefs.state.toString()
-        println("11111111111111111111111111111")
-        println(state)
-        println("11111111111111111111111111111")
         if (state == "4") {
-            println("여기로 들어오나")
             quizPagerAdapter = QuizPagerAdapter()
             val view = LayoutInflater.from(activity).inflate(R.layout.fragment_quiz, container, false)
             val viewPager = view.vp_quiz
@@ -83,7 +79,6 @@ class MissionFragment: Fragment() {
 
             return view
         } else {
-            println("여기로 들어오지")
             val view =
                 LayoutInflater.from(activity).inflate(R.layout.fragment_mission, container, false)
             val tl = view.findViewById<TabLayout>(R.id.tl_mission)
@@ -162,7 +157,6 @@ class MissionFragment: Fragment() {
             val quiz_id = quiz.id
             var quiz_answer: String? = null
             question.text = quiz.quiz
-            println(quiz.answer?.contains("no answer"))
             if (quiz.answer!!.contains("no answer").not()) {
                 button.visibility = View.INVISIBLE
                 answer.visibility = View.INVISIBLE

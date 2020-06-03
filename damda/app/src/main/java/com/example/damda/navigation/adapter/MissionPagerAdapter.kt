@@ -14,19 +14,18 @@ import java.time.Month
 class MissionPagerAdapter(private val myContext: Context, fm: FragmentManager, private var totalTabs: Int) : FragmentStatePagerAdapter(fm) {
     // this is for fragment tabs
     override fun getItem(position: Int): Fragment {
-        println("여기는 몇번째입니까? ${position}")
-        when (position) {
+        return when (position) {
             0 -> {
-                return DailyMissionFragment()
+                DailyMissionFragment()
             }
             1 -> {
-                return WeeklyMissionFragment()
+                WeeklyMissionFragment()
             }
             2 -> {
-                return MonthlyMissionFragment()
+                MonthlyMissionFragment()
             }
             else -> {
-                return QuizFragment()
+                QuizFragment()
             }
         }
     }

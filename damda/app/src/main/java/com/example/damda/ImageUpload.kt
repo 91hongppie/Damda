@@ -34,7 +34,7 @@ class ImageUpload : JobIntentService() {
     }
 
     override fun onHandleWork(intent: Intent) {
-        val url = URL(GlobalApplication.prefs.damdaServer+"/api/albums/addphoto/")
+        val url = URL(GlobalApplication.prefs.damdaServer+"/albums/addphoto/")
         val paths = intent.getStringArrayListExtra("paths")!!
         for (i in 0 until paths.size) {
             val image = File(paths[i])
@@ -45,7 +45,7 @@ class ImageUpload : JobIntentService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        val url = URL(GlobalApplication.prefs.damdaServer+"/api/albums/uploadend/")
+        val url = URL(GlobalApplication.prefs.damdaServer+"/albums/uploadend/")
 
         val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
             .addFormDataPart("user_id", "${GlobalApplication.prefs.user_id}").build()
@@ -121,6 +121,7 @@ class ImageUpload : JobIntentService() {
 
         override fun onResponse(call: okhttp3.Call, response: Response) {
             val status = response.code()
+            Log.d("server response", "푸시는 $response")
             Log.d("server response", "푸시도 보냈어요! = $status")
         }
     }
