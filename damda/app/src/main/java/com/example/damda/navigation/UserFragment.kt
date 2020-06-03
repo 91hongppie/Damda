@@ -111,26 +111,28 @@ class UserFragment : Fragment() {
             intent.putExtra("isKakao", 0)
             startActivity(intent)
         }
+
         view.auto_upload_switch.setOnCheckedChangeListener{ buttonView, isChecked ->
             prefs.autoStatus = isChecked
             if (isChecked) {
-                use_data_switch.isClickable = true
-                use_data_switch.setTextColor(Color.BLACK)
+                view.use_data_switch.isClickable = true
+                view.use_data_switch.setTextColor(Color.BLACK)
             } else {
-                prefs.mobileAutoUpload = false
-                use_data_switch.isChecked = false
-                use_data_switch.isClickable = false
-                use_data_switch.setTextColor(Color.GRAY)
+                view.use_data_switch.isClickable = false
+                view.use_data_switch.setTextColor(Color.GRAY)
             }
         }
         if (prefs.autoStatus) {
             view.use_data_switch.setTextColor(Color.BLACK)
         } else {
+            view.use_data_switch.isClickable = false
             view.use_data_switch.setTextColor(Color.GRAY)
         }
         view.use_data_switch.setOnCheckedChangeListener { buttonView, isChecked ->
             prefs.mobileAutoUpload = isChecked
         }
+        view.auto_upload_switch.isChecked = prefs.autoStatus
+        view.use_data_switch.isChecked = prefs.mobileAutoUpload
 
         return view
     }
