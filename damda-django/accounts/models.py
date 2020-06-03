@@ -41,3 +41,11 @@ class Mission(models.Model):
     point = models.IntegerField()
     prize = models.IntegerField(default=0)
     period = models.IntegerField()
+    created_at = models.DateField(auto_now_add=True)
+
+
+class Quiz(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    quiz = models.CharField(max_length=250)
+    answer = models.CharField(max_length=50, default='no answer')
+    created_at = models.DateField(auto_now_add=True)

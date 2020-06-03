@@ -1,5 +1,5 @@
 from django.views.decorators.csrf import csrf_exempt
-from .models import User, Family, WaitUser, Device, Mission, Score
+from .models import User, Family, WaitUser, Device, Mission, Score, Quiz
 from rest_framework.response import Response
 from django.http import JsonResponse
 from rest_framework import status
@@ -14,13 +14,14 @@ from rest_framework.response import Response
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from albums.models import Album, FamilyName
 from albums.serializers import EditFaceSerializer, AlbumSerializer, FamilyNameSerializer, FamilyNameupdateSerializer
-from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, WaitUserSerializer, DetailFamilySerializer, MissionSerializer, ScoreSerializer
+from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, WaitUserSerializer, DetailFamilySerializer, MissionSerializer, ScoreSerializer, QuizSerializer
 import requests, json
 import jwt
 from decouple import config
 from .forms import DeviceForm
 from korean_lunar_calendar import KoreanLunarCalendar
 import datetime
+import random
 
 
 # Create your views here.
@@ -385,6 +386,24 @@ def checkDevice(request):
 def missions(request, user_pk, period):
     if request.method == 'GET':
         missions = Mission.objects.filter(user=user_pk, period=period)
+        today = datetime.date.today()
+        user = get_object_or_404(User, id=user_pk)
+        if period == 0:
+            if missions[0].created_at.day != today.day:
+                missions.delete()
+                for i in range(5):
+                    Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
+        elif period == 0:
+            if today.weekday() == 1 and missions[0].created_at.day != today.day:
+                    missions.delete()
+                    for i in range(5, 10, 1):
+                        Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
+        elif period == 2:
+            if today.day == 0 and missions[0].created_at.month != today.month:
+                missions.delete()
+                for i in range(100, 105, 1):
+                    Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
+        missions = Mission.objects.filter(user=user_pk, period=period)
         serializers = MissionSerializer(missions, many=True)
         return Response({"data": serializers.data})
     if request.method == 'PUT':
@@ -394,14 +413,13 @@ def missions(request, user_pk, period):
         mission.status = 1
         mission.save()
         serializer = MissionSerializer(mission)
-        print(serializer.data)
         return Response(serializer.data)
 
 
 @api_view(['GET', 'PUT', ])
 def score(request, user_pk):
     if request.method == 'GET':
-        user = User.objects.filter(id=user_pk)[0]
+        user = get_object_or_404(User, id=user_pk)
         score = Score.objects.filter(user=user_pk)[0]
         serializer = ScoreSerializer(score)
         data = {"name": user.first_name, "score": score.score}
@@ -415,3 +433,37 @@ def score(request, user_pk):
         score.save()
         data = {"name": user.first_name, "score": score.score}
     return Response(data)
+
+
+@api_view(['GET', 'PUT'])
+def makequiz(request, family_pk, user_pk):
+    if request.method == 'GET':
+        user = get_object_or_404(User, id=user_pk)
+        quizs = Quiz.objects.filter(user=user_pk)
+        today = datetime.date.today()
+        if quizs[0].created_at.day != today.day:
+            quizs.delete()
+            with open(f'quiz/quiz.json', 'r', encoding='utf-8') as quiz:
+                data = json.load(quiz)
+            quizs = data['parent']
+            todays_quiz = random.sample(range(0, len(quizs)), 2)
+            for i in range(2):
+                Quiz.objects.create(user=user, quiz=quizs[todays_quiz[i]])
+        quizs = Quiz.objects.filter(user=user_pk)
+        serializers = QuizSerializer(quizs, many=True)
+        return Response({'data': serializers.data, 'name': user.first_name})
+    elif request.method == 'PUT':
+        parent_user = get_object_or_404(User, id=user_pk)
+        users = User.objects.filter(family=family_pk).exclude(state=4)
+        quiz_id = request.data['id']
+        quiz = Quiz.objects.filter(id=quiz_id, user=user_pk)[0]
+        answer = request.data['answer']
+        quiz.answer = answer
+        quiz.save()
+        for user in users:
+            Quiz.objects.create(user=user, quiz=f'{parent_user.first_name}님의 {quiz.quiz}', answer=answer)
+        return Response(1)
+
+
+
+
