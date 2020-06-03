@@ -1,6 +1,8 @@
 package com.example.damda.activity
 
 
+
+
 import android.app.DatePickerDialog
 import android.content.Intent
 import android.os.Bundle
@@ -65,11 +67,11 @@ class SignupActivity : AppCompatActivity() {
         inputInfoMessage = arrayOf(getString(R.string.error_discorrent_email), getString(
             R.string.txtInputInfoPWD
         ), getString(R.string.txtInputInfoRePWD))
+        typingListener()
         val adapter = ArrayAdapter(this, R.layout.list_item_gender, items)
         spinner.adapter = adapter
         spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
-//                TODO("Not yet implemented")
             }
 
             override fun onItemSelected(
@@ -78,7 +80,6 @@ class SignupActivity : AppCompatActivity() {
                 position: Int,
                 id: Long
             ) {
-//                TODO("Not yet implemented")
                 gender = position.toString()
             }
         }
@@ -192,15 +193,6 @@ class SignupActivity : AppCompatActivity() {
             }
 
 
-        //Email
-//        val disposableEmail = RxTextView.textChanges(inputDataField[3])
-//            .map { t -> t.isEmpty() || Pattern.matches(Constants.EMAIL_RULS, t) }
-//            .subscribe({
-//                reactiveInputTextViewData(3, it)
-//            }){
-//                //Error Block
-//            }
-
         viewDisposables.addAll(disposableID, disposablePwd, disposableRePwd)
     }
 
@@ -244,3 +236,4 @@ class SignupActivity : AppCompatActivity() {
         textInputLayoutArray[indexPath].isErrorEnabled = false
     }
 }
+

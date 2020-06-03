@@ -1,21 +1,30 @@
 package com.example.damda.activity
 
+import android.Manifest
 import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
+import android.content.pm.PackageManager
+import android.net.Uri
+import android.os.Build
 import android.os.Bundle
+import android.provider.MediaStore
 import android.util.Log
 import android.view.MenuItem
 import android.view.View
-import android.widget.*
+import android.widget.ArrayAdapter
+import android.widget.ImageView
+import android.widget.Spinner
+import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.app.ActivityCompat
+import androidx.core.content.ContextCompat
 import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.retrofit.model.Face
 import com.example.damda.retrofit.service.AlbumsService
 import com.jakewharton.rxbinding2.view.clickable
-import com.theartofdev.edmodo.cropper.CropImage
 import kotlinx.android.synthetic.main.activity_cropper.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
@@ -26,15 +35,19 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
+import java.net.URLEncoder
 
 
 class CropperActivity : AppCompatActivity() {
     val PIC_CROP_REQUEST = 1
     val PICK_IMAGE_REQUEST = 2
+    val STORAGE_PERMISSION = arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE, Manifest.permission.WRITE_EXTERNAL_STORAGE)
+    val FLAG_PERM_STORAGE = 99
+    val FLAG_REQ_STORAGE = 102
     var imagePreview: ImageView?=null
-    var uri = ""
     val token = "JWT " + GlobalApplication.prefs.token.toString()
     val family_id = GlobalApplication.prefs.family_id.toString()
+    var uri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -44,6 +57,9 @@ class CropperActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
+        if (checkPermission(STORAGE_PERMISSION, FLAG_PERM_STORAGE)) {
+            setViews()
+        }
         var retrofit = Retrofit.Builder()
             .baseUrl(prefs.damdaServer)
             .addConverterFactory(GsonConverterFactory.create())
@@ -51,10 +67,11 @@ class CropperActivity : AppCompatActivity() {
         var albumsService: AlbumsService = retrofit.create(
             AlbumsService::class.java)
         imagePreview = findViewById<ImageView>(R.id.preview) as ImageView
-        ImagePicker()
-        preview.setOnClickListener {
-            ImagePicker()
-        }
+//        imagePreview?.setImageURI(uri)
+//        ImagePicker()
+//        preview.setOnClickListener {
+//            ImagePicker()
+//        }
         val spinner: Spinner = findViewById(R.id.family_name)
         if (intent.getStringExtra("before")=="addFamily"){
             family_name.visibility = View.GONE
@@ -78,15 +95,12 @@ class CropperActivity : AppCompatActivity() {
                 albumCall = spinner.selectedItem.toString()
             }
             save_member.clickable().accept(false)
-            val directory = getApplicationContext().cacheDir
-            val arr = uri.split("/")
-            val file_name = arr[arr.size - 1]
-            val file = File(directory, file_name)
+            val file = File(getPath(uri!!))
             val requestFile: RequestBody =
                 RequestBody.create(MediaType.parse("multipart/form-data"), file)
             val body =
-                MultipartBody.Part.createFormData("image", file.getName(), requestFile)
-            albumsService.updateFace(token, family_id, albumCall, prefs.user_id!!.toInt(), body).enqueue(object:
+                MultipartBody.Part.createFormData("image", URLEncoder.encode(file.getName(), "utf-8"), requestFile)
+            albumsService.updateFace(token, family_id, prefs.user_id!!, albumCall, prefs.user_id!!.toInt(), body).enqueue(object:
                 Callback<Face> {
                 override fun onFailure(call: Call<Face>, t: Throwable) {
                     Log.e("LOGIN",t.message)
@@ -120,33 +134,61 @@ class CropperActivity : AppCompatActivity() {
             })
         }
     }
-    private fun ImagePicker() {
+    fun setViews() {
         val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-//        intent.action = Intent.ACTION_GET_CONTENT
+        intent.type = MediaStore.Images.Media.CONTENT_TYPE
         intent.putExtra("crop", "true")
-        startActivityForResult(Intent.createChooser(intent, "사진 선택"), PICK_IMAGE_REQUEST)
+        startActivityForResult(Intent.createChooser(intent, "사진 선택"), FLAG_REQ_STORAGE)
+//        startActivityForResult(intent, FLAG_REQ_STORAGE)
+    }
+    fun checkPermission(permissions: Array<out String>, flag: Int) : Boolean {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            for (permission in permissions) {
+                if (ContextCompat.checkSelfPermission(this, permission) != PackageManager.PERMISSION_GRANTED) {
+                    ActivityCompat.requestPermissions(this, permissions, flag)
+                    return false
+                }
+            }
+        }
+        return true
+    }
+
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<out String>,
+        grantResults: IntArray
+    ) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
+        when (requestCode) {
+            FLAG_PERM_STORAGE -> {
+                for (grant in grantResults) {
+                    if (grant != PackageManager.PERMISSION_GRANTED) {
+                        Toast.makeText(this, "저장소 권환을 승인해야지만 앱을 사용할 수 있습니다.", Toast.LENGTH_LONG).show()
+                        return
+                    }
+                }
+                setViews()
+            }
+        }
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == PICK_IMAGE_REQUEST && resultCode == Activity.RESULT_OK) {
-            if(data == null || data.data == null){
-                return
-            }
-            CropImage.activity(data.data!!).start(this);
-        }else if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
-            val result = CropImage.getActivityResult(data)
-            if (resultCode == RESULT_OK) {
-                Log.v("uri", result.getUri().toString())
-                uri = result.getUri().toString()
-                imagePreview?.setImageURI(result.getUri())
-            } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
-                val error = result.getError()
-                Toast.makeText(this@CropperActivity, error.message, Toast.LENGTH_SHORT).show()
+        if (resultCode == Activity.RESULT_OK) {
+            when (requestCode) {
+                FLAG_REQ_STORAGE -> {
+                    uri = data?.data
+                    imagePreview?.setImageURI(uri)
+                }
             }
         }
-
+    }
+    private fun getPath(uri: Uri): String {
+        val projection = arrayOf(MediaStore.Images.Media.DATA)
+        val cursor = managedQuery(uri, projection, null, null, null)
+        val column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
+        cursor.moveToFirst()
+        return cursor.getString(column_index)
     }
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.getItemId()) {
@@ -160,4 +202,5 @@ class CropperActivity : AppCompatActivity() {
     companion object {
         var cropper = CropperActivity()
     }
+
 }

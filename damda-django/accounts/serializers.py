@@ -11,10 +11,18 @@ class UserCreatSerializer(serializers.ModelSerializer):
         user = get_user_model().objects.create_user(**self.validated_data)
         return user
 
+    def update(self, instance, validated_data):
+        user = instance
+        data = validated_data
+        user.username = data.get('username', user.username)
+        user.save()
+        return user
+
+
 class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()
-        fields = ('id', 'username', 'state', 'family', 'first_name', 'birth', 'is_lunar')
+        fields = ('id', 'username', 'state', 'family', 'first_name', 'birth', 'is_lunar', 'gender')
 
 class JoinFamilySerializer(serializers.ModelSerializer):
     class Meta:

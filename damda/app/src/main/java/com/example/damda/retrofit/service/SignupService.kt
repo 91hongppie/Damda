@@ -12,12 +12,17 @@ interface SignupService{
     fun requestCheckEmail(
         @Query ("username") text1:String
     ) : Call<CheckEmail>
+
     @FormUrlEncoded
     @POST("/api/accounts/signup/")
     fun signUp(
         @FieldMap parameters:HashMap<String,Any>
     ): Call<SignUp>
 
-
+    @PUT("/api/accounts/user/")
+    fun ediUser(
+        @Header("Authorization") jwt:String,
+        @Body parameters:HashMap<String,Any>
+    ): Call<SignUp>
 
 }

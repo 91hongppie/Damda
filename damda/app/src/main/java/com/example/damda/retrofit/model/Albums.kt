@@ -14,7 +14,8 @@ data class Face(
     val title: String,
     val member: Int,
     val member_account: Account,
-    val message: String
+    val message: String,
+    val call: String
 )
 
 data class Faces(
