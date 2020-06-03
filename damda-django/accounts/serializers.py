@@ -1,6 +1,6 @@
 from rest_framework import serializers
 from django.contrib.auth import get_user_model
-from .models import WaitUser, Family, Score, Mission
+from .models import WaitUser, Family, Score, Mission, Quiz
 
 class UserCreatSerializer(serializers.ModelSerializer):
     class Meta:
@@ -47,3 +47,8 @@ class MissionSerializer(serializers.ModelSerializer):
     class Meta:
         model = Mission
         fields = ('id', 'user', 'title', 'status', 'point', 'prize', 'period')
+
+class QuizSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Quiz
+        fields = ('id', 'user', 'quiz', 'answer')

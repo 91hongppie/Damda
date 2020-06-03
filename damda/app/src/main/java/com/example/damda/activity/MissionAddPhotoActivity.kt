@@ -233,9 +233,6 @@ class MissionAddPhotoActivity : AppCompatActivity() {
             val user_id = GlobalApplication.prefs.user_id.toString()
             var missionService: MissionService = retrofit.create(
                 MissionService::class.java)
-            println("1111111111111111111111111111 ${mission_id}")
-            println("1111111111111111111111111111 ${mission_title}")
-            println("1111111111111111111111111111 ${period}")
             missionService.changeMission("JWT $jwt", user_id, period, mission_title!!, mission_id).enqueue(object:
                 retrofit2.Callback<Mission> {
                 override fun onFailure(call: Call<Mission>, t: Throwable) {
@@ -246,7 +243,6 @@ class MissionAddPhotoActivity : AppCompatActivity() {
                 }
                 override fun onResponse(call: Call<Mission>, response: retrofit2.Response<Mission>) {
                     val missions = response.body()
-                    println(missions)
                 }
             })
             setResult(1, intent)

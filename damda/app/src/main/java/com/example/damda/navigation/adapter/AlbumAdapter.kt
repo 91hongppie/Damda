@@ -50,7 +50,7 @@ class AlbumAdapter(val albumList: Array<Album>,val activity: MainActivity, val f
             name?.text = album.call
             if (album.image != "empty") {
                 Glide.with(itemView.context)
-                    .load(prefs.damdaServer + "/api/${album.image}")
+                    .load(prefs.damdaServer + "/${album.image}")
                     .error(R.drawable.album).apply(RequestOptions().override(600, 600))
                     .apply(RequestOptions.centerCropTransform()).into(image)
             }

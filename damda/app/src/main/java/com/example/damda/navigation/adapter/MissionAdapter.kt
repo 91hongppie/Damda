@@ -72,10 +72,6 @@ class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivit
                     mission_btn.visibility = View.VISIBLE
                     point.visibility = View.VISIBLE
                     mission_btn.setOnClickListener {
-                        check.visibility = View.VISIBLE
-                        prize.visibility = View.VISIBLE
-                        mission_btn.visibility = View.INVISIBLE
-                        point.visibility = View.INVISIBLE
                         var retrofit = Retrofit.Builder()
                             .baseUrl(GlobalApplication.prefs.damdaServer)
                             .addConverterFactory(GsonConverterFactory.create())
@@ -120,11 +116,11 @@ class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivit
             } else {
                 proceed.text = "0 / 1"
                 progressbar.progress = 0
-                cl_mission.visibility = View.INVISIBLE
+                cl_mission.visibility = View.VISIBLE
                 mission_check.visibility = View.VISIBLE
                 check.visibility = View.INVISIBLE
                 prize.visibility = View.INVISIBLE
-                mission_btn.visibility = View.VISIBLE
+                mission_btn.visibility = View.INVISIBLE
                 point.visibility = View.VISIBLE
             }
             mission_check.setOnClickListener {

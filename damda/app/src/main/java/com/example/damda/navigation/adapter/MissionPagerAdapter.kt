@@ -7,6 +7,7 @@ import androidx.fragment.app.FragmentStatePagerAdapter
 import androidx.viewpager.widget.PagerAdapter
 import com.example.damda.navigation.DailyMissionFragment
 import com.example.damda.navigation.MonthlyMissionFragment
+import com.example.damda.navigation.QuizFragment
 import com.example.damda.navigation.WeeklyMissionFragment
 import java.time.Month
 
@@ -21,8 +22,11 @@ class MissionPagerAdapter(private val myContext: Context, fm: FragmentManager, p
             1 -> {
                 return WeeklyMissionFragment()
             }
-            else -> {
+            2 -> {
                 return MonthlyMissionFragment()
+            }
+            else -> {
+                return QuizFragment()
             }
         }
     }
