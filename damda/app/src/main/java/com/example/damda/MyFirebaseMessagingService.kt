@@ -5,6 +5,7 @@ import android.content.ContentValues.TAG
 import android.content.Intent
 import android.os.Handler
 import android.os.IBinder
+import android.os.Looper
 import android.os.Message
 import android.util.Log
 import com.example.damda.GlobalApplication.Companion.prefs
@@ -17,8 +18,10 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     override fun onNewToken(token: String) {
         super.onNewToken(token)
+        Looper.prepare()
 
         var msgHandler : Handler? = null
+        
         msgHandler = Handler()
         msgHandler.handleMessage(Message())
 
@@ -76,4 +79,6 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
             Log.d(TAG, "Message Notification Body: " + p0.notification!!.body);
         }
     }
+
+
 }

@@ -1,8 +1,11 @@
 package com.example.damda.navigation
 
 import android.app.NotificationChannel
+import android.content.Context
 import android.content.Intent
+import android.content.pm.PackageManager
 import android.graphics.Color
+import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.util.Log
@@ -103,7 +106,14 @@ class UserFragment : Fragment() {
             startActivity(intent)
         }
         view.alarm.setOnClickListener {
-            val intent = Intent(context, AlarmSwitchActivity::class.java)
+            val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
+            Log.d("packageName", "${context!!.packageName}")
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                intent.putExtra(Settings.EXTRA_APP_PACKAGE, activity?.packageName)
+            } else {
+                intent.putExtra("app_package", activity?.packageName)
+                intent.putExtra("app_uid", activity?.applicationInfo?.uid)
+            }
             startActivity(intent)
         }
         view.editUser.setOnClickListener {

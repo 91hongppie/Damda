@@ -185,7 +185,7 @@
             android:textSize="15sp"
             android:gravity="center_vertical"
             android:textColor="@color/black"
-            android:height="30dp"/>
+            android:height="50dp"/>
 
     </LinearLayout>
     <LinearLayout
@@ -203,7 +203,7 @@
             android:textSize="15sp"
             android:gravity="center_vertical"
             android:textColor="@color/black"
-            android:height="30dp"/>
+            android:height="50dp"/>
         <LinearLayout
             android:orientation="vertical"
             android:layout_width="match_parent"
@@ -213,10 +213,8 @@
                 android:id="@+id/auto_upload_switch"
                 android:paddingStart="20dp"
                 android:paddingEnd="15dp"
-                android:layout_marginTop="10dp"
-                android:layout_marginBottom="15dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="45dp"
                 android:text="자동 업로드"
                 android:textSize="14sp"/>
 
@@ -224,9 +222,8 @@
                 android:id="@+id/use_data_switch"
                 android:paddingStart="20dp"
                 android:paddingEnd="15dp"
-                android:layout_marginBottom="10dp"
                 android:layout_width="match_parent"
-                android:layout_height="match_parent"
+                android:layout_height="45dp"
                 android:text="모바일 데이터 사용 설정"
                 android:textColor="@color/black"
                 android:textSize="14sp"/>
