@@ -20,7 +20,8 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.SelectAlbumActivity"></activity>
+        <activity android:name=".activity.FindPasswordActivity"></activity>
+        <activity android:name=".activity.SelectAlbumActivity" />
         <activity android:name=".activity.EditUserActivity" />
 
         <service
@@ -113,8 +114,9 @@
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
             android:theme="@style/Base.Theme.AppCompat" />
 
-        <service android:name=".ImageUpload"
-            android:permission="android.permission.BIND_JOB_SERVICE"/>
+        <service
+            android:name=".ImageUpload"
+            android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
 </manifest>

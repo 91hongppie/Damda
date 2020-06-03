@@ -52,7 +52,10 @@ class LoginActivity : AppCompatActivity() {
             sendRegistrationToServer(token)
             Log.d("Exist token", "Token: $token")
         }
-
+        find_pw.setOnClickListener{
+            val intent = Intent(this, FindPasswordActivity::class.java)
+            startActivity(intent)
+        }
         login_button.setOnClickListener{
             var text1 = email.text.toString()
             var text2 = password.text.toString()

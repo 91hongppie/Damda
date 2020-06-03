@@ -2,6 +2,21 @@ from rest_framework import serializers
 from django.contrib.auth import get_user_model
 from .models import WaitUser, Family, Score, Mission
 
+
+class UserChangeSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = get_user_model()
+        fields = ['id', 'username', 'password']
+    
+    def update(self, instance, validated_data):
+        user = instance
+        data = validated_data
+        user.username = data.get('username', user.username)
+        if data.get('password') != user.password:
+            user.set_password(data.get('password'))
+        user.save()
+        return user
+
 class UserCreatSerializer(serializers.ModelSerializer):
     class Meta:
         model = get_user_model()

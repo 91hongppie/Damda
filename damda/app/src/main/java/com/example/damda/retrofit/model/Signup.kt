@@ -9,3 +9,9 @@ data class SignUp(
 data class CheckEmail(
     val token: String
 )
+data class FindEmail(
+    val token: String
+)
+data class ChangePassword(
+    val token: String
+)

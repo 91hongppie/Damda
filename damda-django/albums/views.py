@@ -381,6 +381,8 @@ def detail_video(request,family_pk,video_pk):
         video.delete()
         return Response({'asdf':'asdf'})
 
+
+
 class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.ndarray):
