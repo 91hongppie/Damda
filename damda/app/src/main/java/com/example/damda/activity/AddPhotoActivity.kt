@@ -145,6 +145,7 @@ class AddPhotoActivity : AppCompatActivity() {
                 ImageUpload().enqueueWork(this, uploadIntent)
 
                 var intent = Intent(this, MainActivity::class.java)
+                intent.putExtra("before","AddPhoto")
                 startActivity(intent)
                 finishAffinity()
             }
