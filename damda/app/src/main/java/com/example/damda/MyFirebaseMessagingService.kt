@@ -46,6 +46,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
         client.newCall(request).enqueue(callback)
 
+        prefs.device_token = token
+
     }
 
     inner class Callback1: Callback {

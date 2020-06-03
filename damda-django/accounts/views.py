@@ -324,3 +324,16 @@ def score(request, user_pk):
         score.save()
         data = {"name": user.first_name, "score": score.score}
     return Response(data)
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@csrf_exempt
+def logout(request):
+    device_token = request.POST.get('device_token')
+    target = get_object_or_404(Device, device_token=device_token)
+    try:
+        target.delete()
+        return Response(status=status.HTTP_200_OK)
+    except:
+        return Response(status=status.HTTP_401_UNAUTHORIZED)

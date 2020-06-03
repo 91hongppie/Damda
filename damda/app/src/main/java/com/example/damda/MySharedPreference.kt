@@ -38,4 +38,8 @@ class MySharedPreferences(context: Context) {
         set(value) = prefs.edit().putString("autoId", value).apply()
 
     val damdaServer = "https://k02b2051.p.ssafy.io"
+
+    var device_token: String?
+        get() = prefs.getString("device_token", "")
+        set(value) = prefs.edit().putString("device_token", value).apply()
 }

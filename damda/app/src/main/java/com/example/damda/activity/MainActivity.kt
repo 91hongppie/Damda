@@ -103,6 +103,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         client.newCall(request).enqueue(callback)
 
+        prefs.device_token = token
         Log.d("SEND TOKEN", "MY PHONE: $token")
     }
 

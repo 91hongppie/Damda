@@ -19,12 +19,15 @@ import com.example.damda.retrofit.service.FamilyService
 import kotlinx.android.synthetic.main.fragment_user.*
 import kotlinx.android.synthetic.main.fragment_user.view.*
 import kotlinx.android.synthetic.main.list_item_request.view.*
+import okhttp3.MultipartBody
+import okhttp3.OkHttpClient
 import okhttp3.Request
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
+import java.io.IOException
 
 class UserFragment : Fragment() {
     override fun onCreateView(
@@ -58,6 +61,23 @@ class UserFragment : Fragment() {
             GlobalApplication.prefs.user_id = ""
             GlobalApplication.prefs.family_id = ""
             GlobalApplication.prefs.state = ""
+
+            val jwt = GlobalApplication.prefs.token
+            val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
+                .addFormDataPart("user_id", "${GlobalApplication.prefs.user_id}")
+                .addFormDataPart("device_token", "${GlobalApplication.prefs.device_token}")
+                .build()
+
+            val request = Request.Builder().addHeader("Authorization", "JWT $jwt")
+                .url(prefs.damdaServer + "/api/accounts/logout")
+                .post(requestBody)
+                .build()
+
+            val client = OkHttpClient()
+            val callback = Callback1()
+
+            client.newCall(request).enqueue(callback)
+
             var intent = Intent(activity, LoginActivity::class.java)
             startActivity(intent)
             activity?.finish()
@@ -79,5 +99,17 @@ class UserFragment : Fragment() {
             startActivity(intent)
         }
         return view
+    }
+
+    inner class Callback1 : okhttp3.Callback {
+        override fun onFailure(call: okhttp3.Call, e: IOException) {
+            Log.d("Sever response", "error: $e")
+
+        }
+
+        override fun onResponse(call: okhttp3.Call, response: okhttp3.Response) {
+            val status = response.code()
+            Log.d("server response", "$status - 디바이스 삭제 완료")
+        }
     }
 }
