@@ -36,6 +36,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.net.URLEncoder
+import java.text.SimpleDateFormat
 
 
 class CropperActivity : AppCompatActivity() {
@@ -67,11 +68,11 @@ class CropperActivity : AppCompatActivity() {
         var albumsService: AlbumsService = retrofit.create(
             AlbumsService::class.java)
         imagePreview = findViewById<ImageView>(R.id.preview) as ImageView
-//        imagePreview?.setImageURI(uri)
-//        ImagePicker()
-//        preview.setOnClickListener {
-//            ImagePicker()
-//        }
+        preview.setOnClickListener {
+            if (checkPermission(STORAGE_PERMISSION, FLAG_PERM_STORAGE)) {
+                setViews()
+            }
+        }
         val spinner: Spinner = findViewById(R.id.family_name)
         if (intent.getStringExtra("before")=="addFamily"){
             family_name.visibility = View.GONE
@@ -103,8 +104,10 @@ class CropperActivity : AppCompatActivity() {
             val file = File(getPath(uri!!))
             val requestFile: RequestBody =
                 RequestBody.create(MediaType.parse("multipart/form-data"), file)
+            val sdf = SimpleDateFormat("yyyyMMdd_HHmmss")
+            val filename = sdf.format(System.currentTimeMillis())
             val body =
-                MultipartBody.Part.createFormData("image", URLEncoder.encode(file.getName(), "utf-8"), requestFile)
+                MultipartBody.Part.createFormData("image", "$filename.jpg", requestFile)
             albumsService.updateFace(token, family_id, prefs.user_id!!, albumCall, prefs.user_id!!.toInt(), body).enqueue(object:
                 Callback<Face> {
                 override fun onFailure(call: Call<Face>, t: Throwable) {
