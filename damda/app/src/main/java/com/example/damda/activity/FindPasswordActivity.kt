@@ -89,18 +89,18 @@ class FindPasswordActivity : AppCompatActivity() {
 
                     override fun onResponse(call: Call<ChangePassword>, response: Response<ChangePassword>) {
                         changepassword = response.body()
-                        val intent = Intent(this@FindPasswordActivity, LoginActivity::class.java)
+                        Log.v("RESPONSE", changepassword.toString())
 
-                        if(changepassword?.token=="false"){
-                            toast(getString(R.string.error_change_pwd_confirm))
-                            isCheckID = false
-                        }
-                        else{
+                        if (response.code() == 200) {
                             toast(getString(R.string.can_use_email))
                             isCheckID = true
                             toast("비밀번호가 변경되었습니다.")
-                            startActivity(intent)
                             finish()
+
+                        }
+                        else{
+                            toast(getString(R.string.error_de_not_exist_id))
+                            isCheckID = false
                         }
                     }
                 })
@@ -126,10 +126,9 @@ class FindPasswordActivity : AppCompatActivity() {
 
                 override fun onResponse(call: Call<FindEmail>, response: Response<FindEmail>) {
                     findemail = response.body()
-                    Log.d("ChekID", "token : " + findemail?.token)
-
-                    if(findemail?.token=="false"){
-                        toast(getString(R.string.error_exist_email))
+                    Log.v("RESPONSE", findemail.toString())
+                    if (response.code() == 404) {
+                        toast(getString(R.string.error_de_not_exist_id))
                         isCheckID = false
                     }
                     else{

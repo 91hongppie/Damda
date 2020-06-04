@@ -162,3 +162,11 @@ ACCOUNT_LOGOUT_ON_GET = True
 # ACCOUNT_USERNAME_REQUIRED = False
 
 SITE_ID = 1
+
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = "smtp.gmail.com"
+EMAIL_HOST_USER = '012damda@gmail.com'
+EMAIL_HOST_PASSWORD = 'haha55^^'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True
+DEFAULT_FROM_EMAIL = EMAIL_HOST_USER

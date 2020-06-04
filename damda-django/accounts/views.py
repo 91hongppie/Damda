@@ -23,6 +23,7 @@ from korean_lunar_calendar import KoreanLunarCalendar
 import datetime
 from .helper import email_auth_num
 import random
+from django.core.mail import EmailMessage
 
 
 # Create your views here.
@@ -355,25 +356,28 @@ def FindPassword(request):
     if request.method == 'GET':
         username = request.GET.get('username')
         user = get_object_or_404(get_user_model(), username=username)
-        token = "true"
         auth_num = email_auth_num()
         serializer = UserChangeSerializer(data={'username': username, 'password': auth_num}, instance=user)
         serializer.is_valid()
         if serializer.is_valid(raise_exception=True):
+            email = EmailMessage(
+                'Hello',
+                auth_num,
+                to=[username],  
+            )
+            email.send()
             user = serializer.save()
-            print(user)
+            return Response(serializer.data)
         else:
-            token = "false"
-        context = {"token":token}
-        return JsonResponse(context)        
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'POST':
+        print('aaa')
         user = get_object_or_404(User, username=request.data.get("username"))
         serializer = UserChangeSerializer(data={'username': user.username, 'password': request.data.get("password")}, instance=user)
         print(serializer)
         serializer.is_valid()
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
-
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
