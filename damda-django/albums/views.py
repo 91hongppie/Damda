@@ -129,7 +129,7 @@ def face(request, family_pk, user_pk):
         ROOT_DIR = os.path.abspath("./")
         os.makedirs(os.path.join(ROOT_DIR, 'uploads/faces'), exist_ok=True)
         try:
-            with open(f'uploads/faces/family_{family_pk}.json') as family:
+            with open(f'uploads/faces/family_{family_pk}.json', 'r', encoding='utf-8') as family:
                 data = json.load(family)
             data[f'{family_pk}_{title}'] = [face_encoding[0].tolist()]
         except:
@@ -217,7 +217,6 @@ def all_photo(request, family_pk):
         albums = Album.objects.filter(family=family_pk)
         photos = Photo.objects.filter(albums__in=albums).order_by('-id')
         serializers = PhotoSerializer(photos, many=True)
-        print(serializers.data)
         return Response(serializers.data)
     elif request.method == 'POST':
         photos = request.data['photos']
@@ -456,8 +455,9 @@ def autoaddphoto(request):
                 break
             for album_name, data in data.items():
                 info = album_name.split('_')
-                owner = User.objects.filter(family=info[0], state=3)
-                familyname = FamilyName.objects.filter(uset=user, owner=owner)
+                print(info)
+                owner = User.objects.filter(family=info[0], state=3)[0]
+                familyname = FamilyName.objects.filter(user=user, owner=owner)[0]
                 if familyname.call != info[1]:
                     for dt in data:
                         dt = [np.asarray(dt)]

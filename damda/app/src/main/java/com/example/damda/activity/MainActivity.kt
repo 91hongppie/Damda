@@ -245,6 +245,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                                 DialogInterface.BUTTON_NEUTRAL -> {
                                     val uploadIntent = Intent(this@MainActivity, ImageUpload::class.java)
                                     uploadIntent.putExtra("paths", paths)
+                                    uploadIntent.putExtra("before", "main")
                                     startService(uploadIntent)
                                     ImageUpload().enqueueWork(this@MainActivity, uploadIntent)
                                 }

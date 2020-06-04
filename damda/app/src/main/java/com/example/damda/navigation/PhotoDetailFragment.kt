@@ -1,6 +1,7 @@
 package com.example.damda.navigation
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.app.AlertDialog
 import android.app.DownloadManager
 import android.content.Context
@@ -238,11 +239,13 @@ class PhotoDetailFragment: Fragment() {
     internal var viewPagerPageChangeListener: ViewPager.OnPageChangeListener =
         object : ViewPager.OnPageChangeListener {
 
+            @SuppressLint("SetTextI18n")
             override fun onPageSelected(position: Int) {
                 // set gallery title
                 selectedPosition = position
                 currentPosition = position
-                tvGalleryTitle.text = photoList.get(selectedPosition).title
+                var photo_title = photoList.get(selectedPosition).title?.split("_")!![2]
+                tvGalleryTitle.text = photo_title.slice(0 until 4) + "년 " + photo_title.slice(4 until 6) + "월 " + photo_title.slice(6 until 8) + "일"
             }
 
             override fun onPageScrolled(arg0: Int, arg1: Float, arg2: Int) {
