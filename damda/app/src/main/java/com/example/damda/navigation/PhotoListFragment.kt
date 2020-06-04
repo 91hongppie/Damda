@@ -22,32 +22,29 @@ import android.view.ViewGroup
 import android.widget.Button
 import android.widget.Toast
 import androidx.annotation.RequiresApi
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.core.app.SharedElementCallback
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.URLtoBitmapTask
-import com.example.damda.activity.AddPhotoActivity
 import com.example.damda.activity.MainActivity
 import com.example.damda.activity.MainActivity.Companion.currentPosition
 import com.example.damda.activity.MainActivity.Companion.navStatus
 import com.example.damda.activity.MainActivity.Companion.photoStatus
+import com.example.damda.navigation.adapter.MoveAlbumAdapter
 import com.example.damda.navigation.adapter.PhotoAdapter
 import com.example.damda.navigation.model.Album
 import com.example.damda.navigation.model.Photos
+import com.example.damda.retrofit.model.Albums
+import com.example.damda.retrofit.service.AlbumsService
 import com.google.gson.GsonBuilder
-import com.jakewharton.rxbinding2.widget.checked
-import kotlinx.android.synthetic.main.fragment_photo_list.*
 import kotlinx.android.synthetic.main.fragment_photo_list.view.*
-import kotlinx.android.synthetic.main.list_item_photo.*
-import kotlinx.android.synthetic.main.list_item_photo.view.*
 import okhttp3.*
-import retrofit2.http.Url
+import retrofit2.Retrofit
+import retrofit2.converter.gson.GsonConverterFactory
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.net.URL
@@ -93,8 +90,12 @@ class PhotoListFragment : Fragment() {
         if (album?.id != null) {
             url = URL(prefs.damdaServer+"/api/albums/photo/${family_id}/${album?.id}/")
             view.albumTitle?.text = album?.call
+
         }
-        val jwt = GlobalApplication.prefs.token
+        else{
+            view.btn_move.visibility = View.GONE
+        }
+        val jwt = prefs.token
         val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt")
             .build()
         val client = OkHttpClient()
@@ -215,26 +216,33 @@ class PhotoListFragment : Fragment() {
             context.replaceNavbar()
             startActivity(chooser)
         }
-        view.btn_cancel.setOnClickListener {
-            photoStatus = 0
-            navStatus = 0
-            image_checked = 0
-            view.cb_image.visibility = View.INVISIBLE
-            view.cl_navbar.visibility = View.GONE
-            view.btn_cancel.visibility = View.INVISIBLE
-            view.btn_correct.visibility = View.VISIBLE
-            context.replaceNavbar()
-            photoArray = ArrayList<Photos>()
-            deleteArray = ArrayList<Int>()
-            view.rv_photo.adapter?.notifyDataSetChanged()
-            view.cb_image.isChecked = false
-            view.cb_image.text = "전체 선택"
+        view.btn_move.setOnClickListener{
+            var nullalbumList = emptyArray<Album>()
+            var retrofit = Retrofit.Builder()
+                .baseUrl(prefs.damdaServer)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build()
+            val family_id = prefs.family_id.toString()
+            var albumsService: AlbumsService = retrofit.create(
+                AlbumsService::class.java)
+            albumsService.requestAlbums("JWT $jwt", family_id, prefs.user_id!!).enqueue(object:
+                retrofit2.Callback<Albums> {
+                override fun onFailure(call: retrofit2.Call<Albums>, t: Throwable) {
+                    var dialog = androidx.appcompat.app.AlertDialog.Builder(context)
+                    dialog.setTitle("에러")
+                    dialog.setMessage("호출실패했습니다.")
+                    dialog.show()
+                }
 
-        }
-            val dialog = AlertDialog.Builder(activity)
-            dialog.setMessage("삭제하시겠습니까?")
-                .setPositiveButton("확인",
-                    DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
+                override fun onResponse(call: retrofit2.Call<Albums>, response: retrofit2.Response<Albums>) {
+                    val albums = response.body()
+                    nullalbumList = albums!!.data
+                    var movealbumId = 0
+                    var dialogBuilder = AlertDialog.Builder(activity)
+                    dialogBuilder.setTitle("가족 설정")
+                    var fnl = MoveAlbumAdapter(nullalbumList)
+                    dialogBuilder.setSingleChoiceItems( fnl,-1, DialogInterface.OnClickListener { dialog, which ->
+                        movealbumId = fnl.getItem(which) as Int
                         photoStatus = 0
                         navStatus = 0
                         image_checked = 0
@@ -245,7 +253,7 @@ class PhotoListFragment : Fragment() {
                         view.btn_cancel.visibility = View.INVISIBLE
                         view.btn_correct.visibility = View.VISIBLE
                         context.replaceNavbar()
-                        val jwt = GlobalApplication.prefs.token
+                        val jwt = prefs.token
                         var payload: String = ""
                         for (photo in deleteArray) {
                             if (payload.length == 0) {
@@ -255,9 +263,12 @@ class PhotoListFragment : Fragment() {
                             }
                         }
                         val formBody = FormBody.Builder()
-                            .add("photos", payload.toString())
+                            .add("photos", payload)
+                            .add("albumId", album!!.id.toString())
+                            .add("moveAlbumId", movealbumId.toString())
                             .build()
-                        val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt").method("POST", formBody)
+                        val moveUrl =  URL(prefs.damdaServer+"/api/albums/move/")
+                        val request = Request.Builder().url(moveUrl).addHeader("Authorization", "JWT $jwt").method("POST", formBody)
                             .build()
                         val client = OkHttpClient()
                         client.newCall(request).enqueue(object: Callback {
@@ -278,17 +289,100 @@ class PhotoListFragment : Fragment() {
                                 fragmentManager!!.popBackStack()
                                 fragmentManager!!.popBackStack()
                                 context.replaceFragment(fragment)
+                                dialog.dismiss()
                             }
                         })
                         photoArray = ArrayList<Photos>()
                         deleteArray = ArrayList<Int>()
+
+
                     })
-                .setNegativeButton("취소",
-                DialogInterface.OnClickListener { dialog, id ->
+
+                    var dialogListener = object: DialogInterface.OnClickListener{
+                        override fun onClick(dialog: DialogInterface?, which: Int) {
+                        }
+                    }
+                    dialogBuilder.setPositiveButton("취소", dialogListener)
+                    dialogBuilder.show()
+
+                }
+            })
+
+        }
+        view.btn_cancel.setOnClickListener {
+            photoStatus = 0
+            navStatus = 0
+            image_checked = 0
+            view.cb_image.visibility = View.INVISIBLE
+            view.cl_navbar.visibility = View.GONE
+            view.btn_cancel.visibility = View.INVISIBLE
+            view.btn_correct.visibility = View.VISIBLE
+            context.replaceNavbar()
+            photoArray = ArrayList<Photos>()
+            deleteArray = ArrayList<Int>()
+            view.rv_photo.adapter?.notifyDataSetChanged()
+            view.cb_image.isChecked = false
+            view.cb_image.text = "전체 선택"
+
+        }
+        val dialog = AlertDialog.Builder(activity)
+        dialog.setMessage("삭제하시겠습니까?")
+            .setPositiveButton("확인",
+                DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
+                    photoStatus = 0
+                    navStatus = 0
                     image_checked = 0
-                    dialog.dismiss()
+                    view.cb_image.isChecked = false
+                    view.cb_image.text = "전체 선택"
+                    view.cb_image.visibility = View.INVISIBLE
+                    view.cl_navbar.visibility = View.GONE
+                    view.btn_cancel.visibility = View.INVISIBLE
+                    view.btn_correct.visibility = View.VISIBLE
+                    context.replaceNavbar()
+                    val jwt = GlobalApplication.prefs.token
+                    var payload: String = ""
+                    for (photo in deleteArray) {
+                        if (payload.length == 0) {
+                            payload += "$photo"
+                        } else {
+                            payload += ", $photo"
+                        }
+                    }
+                    val formBody = FormBody.Builder()
+                        .add("photos", payload.toString())
+                        .build()
+                    val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt").method("POST", formBody)
+                        .build()
+                    val client = OkHttpClient()
+                    client.newCall(request).enqueue(object: Callback {
+                        override fun onFailure(call: Call, e: IOException) {
+                            println("Failed to execute request!")
+                        }
+
+                        override fun onResponse(call: Call, response: Response) {
+                            val body = response.body()?.string()
+                            val gson = GsonBuilder().create()
+                            var list = emptyArray<Photos>()
+                            photoList= gson.fromJson(body, list::class.java)
+                            var bundle = Bundle()
+                            bundle.putParcelable("album", album)
+                            var fragment = PhotoListFragment()
+                            fragment.arguments = bundle
+                            fragmentManager!!.beginTransaction().remove(this@PhotoListFragment).commit()
+                            fragmentManager!!.popBackStack()
+                            fragmentManager!!.popBackStack()
+                            context.replaceFragment(fragment)
+                        }
+                    })
+                    photoArray = ArrayList<Photos>()
+                    deleteArray = ArrayList<Int>()
                 })
-            dialog.create()
+            .setNegativeButton("취소",
+            DialogInterface.OnClickListener { dialog, id ->
+                image_checked = 0
+                dialog.dismiss()
+            })
+        dialog.create()
         view.btn_photos_delete.setOnClickListener {
             dialog.show()
         }
