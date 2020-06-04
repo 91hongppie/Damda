@@ -15,7 +15,10 @@ import androidx.fragment.app.Fragment
 import com.example.damda.GlobalApplication
 import com.example.damda.R
 import com.example.damda.activity.MainActivity
+import com.example.damda.navigation.MissionFragment.Companion.mission_fragment
+import com.example.damda.navigation.MissionFragment.Companion.my_score
 import com.example.damda.navigation.adapter.MissionAdapter
+import com.example.damda.navigation.model.Mission
 import com.example.damda.navigation.model.Missions
 import com.example.damda.navigation.model.Quiz
 import com.example.damda.retrofit.service.MissionService
@@ -28,7 +31,7 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-class QuizFragment: Fragment() {
+class QuizFragment : Fragment() {
     private var quiz: Quiz? = null
     private var num = 0
     override fun onCreateView(
@@ -59,8 +62,9 @@ class QuizFragment: Fragment() {
         val jwt = GlobalApplication.prefs.token
         val user_id = GlobalApplication.prefs.user_id.toString()
         var quizService: QuizService = retrofit.create(
-            QuizService::class.java)
-        quizService.getQuiz("JWT $jwt", user_id).enqueue(object: Callback<Quiz> {
+            QuizService::class.java
+        )
+        quizService.getQuiz("JWT $jwt", user_id).enqueue(object : Callback<Quiz> {
             override fun onFailure(call: Call<Quiz>, t: Throwable) {
                 editText.visibility = View.INVISIBLE
                 question.visibility = View.INVISIBLE
@@ -70,32 +74,31 @@ class QuizFragment: Fragment() {
                 congrat.visibility = View.INVISIBLE
                 no_question.visibility = View.VISIBLE
             }
+
             override fun onResponse(call: Call<Quiz>, response: Response<Quiz>) {
                 quiz = response.body()
                 question.text = quiz!!.quiz
             }
         })
         button_quiz.setOnClickListener {
-            println("1111111111111111111111111111111")
-            println("${editText.text}")
-            println("${quiz!!.answer}")
-            println("1111111111111111111111111111111")
             if ("${editText.text}" != quiz!!.answer) {
                 Toast.makeText(context, "정답이 아닙니다.", Toast.LENGTH_SHORT).show()
             } else {
                 button_quiz.visibility = View.INVISIBLE
                 editText.visibility = View.INVISIBLE
                 check.visibility = View.VISIBLE
+                my_score += 5
                 congrat.visibility = View.VISIBLE
                 button_point.visibility = View.VISIBLE
                 val quiz_id = quiz!!.id.toString()
-                quizService.postQuiz("JWT $jwt", user_id, quiz_id).enqueue(object: Callback<Int> {
+                quizService.postQuiz("JWT $jwt", user_id, quiz_id).enqueue(object : Callback<Int> {
                     override fun onFailure(call: Call<Int>, t: Throwable) {
                         var dialog = AlertDialog.Builder(context)
                         dialog.setTitle("에러")
                         dialog.setMessage("호출실패했습니다.")
                         dialog.show()
                     }
+
                     override fun onResponse(call: Call<Int>, response: Response<Int>) {
                         num = response.body()!!
                         print("!111111111111111111111 ${num}")
@@ -104,7 +107,9 @@ class QuizFragment: Fragment() {
                 })
                 button_point.setOnClickListener {
                     if (num == 1) {
-                        this.fragmentManager?.beginTransaction()?.detach(this)?.attach(this)?.commit()
+                        MissionFragment().refreshMissionFragment(mission_fragment)
+                        this.fragmentManager?.beginTransaction()?.detach(this)?.attach(this)
+                            ?.commit()
                     }
                 }
 
@@ -113,6 +118,7 @@ class QuizFragment: Fragment() {
         }
         return view
     }
+
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == 1) {
