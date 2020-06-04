@@ -1,7 +1,8 @@
 from django.shortcuts import render, get_object_or_404
 from rest_framework.response import Response
-from rest_framework.decorators import api_view, permission_classes
+from rest_framework.decorators import api_view, permission_classes, authentication_classes
 from rest_framework.permissions import IsAuthenticated, AllowAny
+from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from django.views.decorators.csrf import csrf_exempt
 from django.contrib.auth import get_user_model
 from .models import Photo, Album, Video, FamilyName
@@ -25,7 +26,7 @@ import requests
 @api_view(['GET', 'POST'])
 def photo(request, family_pk, album_pk):
     if request.method == 'GET':
-        photos = Photo.objects.filter(album=album_pk)
+        photos = Photo.objects.filter(album=album_pk).order_by('-id')
         serializers = PhotoSerializer(photos, many=True)
         return Response(serializers.data)
     elif request.method == 'POST':
@@ -204,11 +205,13 @@ def makeFamilyName(family_pk, data, album, title):
 
 
 @api_view(['GET', 'POST', ])
+@permission_classes([IsAuthenticated])
+@authentication_classes((JSONWebTokenAuthentication,))
 def all_photo(request, family_pk):
     return_list = []
     if request.method == 'GET':
         albums = Album.objects.filter(family=family_pk)
-        photos = Photo.objects.filter(album__in=albums)
+        photos = Photo.objects.filter(album__in=albums).order_by('-id')
         serializers = PhotoSerializer(photos, many=True)
         return_list = serializers.data
         return Response(return_list)
