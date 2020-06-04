@@ -26,6 +26,7 @@ import com.jakewharton.rxbinding2.widget.color
 import kotlinx.android.synthetic.main.fragment_user.*
 import kotlinx.android.synthetic.main.fragment_user.view.*
 import kotlinx.android.synthetic.main.list_item_request.view.*
+import okhttp3.FormBody
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -70,13 +71,13 @@ class UserFragment : Fragment() {
             GlobalApplication.prefs.state = ""
 
             val jwt = GlobalApplication.prefs.token
-            val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("user_id", "${GlobalApplication.prefs.user_id}")
-                .addFormDataPart("device_token", "${GlobalApplication.prefs.device_token}")
+            val requestBody = FormBody.Builder()
+                .add("user_id", GlobalApplication.prefs.user_id!!)
+                .add("device_token", GlobalApplication.prefs.device_token!!)
                 .build()
 
-            val request = Request.Builder().addHeader("Authorization", "JWT $jwt")
-                .url(prefs.damdaServer + "/api/accounts/logout")
+            val request = Request.Builder().addHeader("Authorization", "JWT $jwt").addHeader("Content-Type", "application/json")
+                .url(prefs.damdaServer + "/api/accounts/logout/")
                 .post(requestBody)
                 .build()
 
@@ -107,7 +108,7 @@ class UserFragment : Fragment() {
         }
         view.alarm.setOnClickListener {
             val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-            Log.d("packageName", "${context!!.packageName}")
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 intent.putExtra(Settings.EXTRA_APP_PACKAGE, activity?.packageName)
             } else {

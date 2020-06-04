@@ -450,16 +450,19 @@ def score(request, user_pk):
 
 
 @api_view(['POST'])
-@permission_classes([AllowAny])
-@csrf_exempt
 def logout(request):
+    print('-----------------------------------------------------------')
+    print(request.data)
     device_token = request.POST.get('device_token')
+    print(device_token)
     target = get_object_or_404(Device, device_token=device_token)
+    print(target)
     try:
+        print(target)
         target.delete()
         return Response(status=status.HTTP_200_OK)
     except:
-        return Response(status=status.HTTP_401_UNAUTHORIZED)
+        return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
 
         
 @api_view(['GET', 'PUT'])

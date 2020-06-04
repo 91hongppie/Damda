@@ -5,7 +5,7 @@ from decouple import config
 SECRET_KEY = config('SECRET_KEY', 'uc*xu4vdpfu$sf)b1fd#9%1hd&9+jl-i=g1741n_bv#d#e(m-8')
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = False
+DEBUG = True
 
 ALLOWED_HOSTS = ['*']
 

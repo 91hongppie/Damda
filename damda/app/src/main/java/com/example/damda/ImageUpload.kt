@@ -1,11 +1,14 @@
 package com.example.damda
 
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.media.ExifInterface
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.JobIntentService
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.example.damda.activity.MainActivity
 import okhttp3.*
 import java.io.File
@@ -24,6 +27,12 @@ class ImageUpload : JobIntentService() {
 
     val jwt = GlobalApplication.prefs.token
 
+    val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+    var builder = NotificationCompat.Builder(this, "UPLOAD")
+        .setSmallIcon(R.drawable.push_icon)
+        .setContentTitle("담다")
+        .setContentText("업로드 진행중")
+
     fun enqueueWork(context: Context, work: Intent){
         enqueueWork(context, ImageUpload::class.java, JOB_ID, work)
     }
@@ -36,11 +45,22 @@ class ImageUpload : JobIntentService() {
     override fun onHandleWork(intent: Intent) {
         val url = URL(GlobalApplication.prefs.damdaServer+"/api/albums/addphoto/")
         val paths = intent.getStringArrayListExtra("paths")!!
+        var progress = 0
+
         for (i in 0 until paths.size) {
+            progress = i / paths.size * 100
+            builder.setProgress(100, progress, false)
+            notificationManager.notify(12100, builder.build())
             val image = File(paths[i])
             uploadImage(url, image, paths[i], i)
             Thread.sleep(500)
         }
+
+        builder.setContentText("이미지 업로드 완료")
+            .setProgress(0, 0, false)
+        notificationManager.notify(12100, builder.build())
+        Thread.sleep(500)
+        notificationManager.cancel(12100)
     }
 
     override fun onDestroy() {
