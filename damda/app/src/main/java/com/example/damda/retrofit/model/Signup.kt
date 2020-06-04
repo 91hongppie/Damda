@@ -10,8 +10,12 @@ data class CheckEmail(
     val token: String
 )
 data class FindEmail(
-    val token: String
+    val id: Int,
+    val username: String,
+    val password: String
 )
 data class ChangePassword(
-    val token: String
+    val id: Int,
+    val username: String,
+    val password: String
 )

@@ -25,6 +25,7 @@ interface SignupService{
         @Query("username") text1:String
     ): Call<FindEmail>
 
+    @FormUrlEncoded
     @POST("/api/accounts/findpassword/")
     fun findPassword(
         @FieldMap parameters:HashMap<String,Any>
