@@ -16,7 +16,6 @@ import com.example.damda.activity.MainActivity
 import com.example.damda.activity.MainActivity.Companion.navStatus
 import com.example.damda.activity.MainActivity.Companion.photoStatus
 import com.example.damda.navigation.PhotoListFragment
-import com.example.damda.navigation.PhotoListFragment.Companion.currentPosition
 import com.example.damda.navigation.PhotoListFragment.Companion.deleteArray
 import com.example.damda.navigation.PhotoListFragment.Companion.image_checked
 import com.example.damda.navigation.PhotoListFragment.Companion.photoArray
@@ -48,7 +47,7 @@ class PhotoAdapter (val photoList: Array<Photos>, val activity: MainActivity, va
         val image = view.findViewById<ImageView>(R.id.iv_image)
         var checkbox = view.findViewById<CheckBox>(R.id.cb_photo)
         fun bind(photo: Photos) {
-            Glide.with(view.context).load(url+"/${photo.pic_name}")
+            Glide.with(view.context).load(url + "/${photo.pic_name}")
                 .apply(RequestOptions().override(600, 600))
                 .apply(RequestOptions.centerCropTransform()).into(image)
             if (photoStatus == 1) {
@@ -66,14 +65,21 @@ class PhotoAdapter (val photoList: Array<Photos>, val activity: MainActivity, va
                 true
             }
             if (image_checked == 1) {
-                checkbox.isChecked = true
-                if (!photoArray.contains(photo)) {
-                    photoArray.add(photo)
+                if (fragment.cb_image.text.toString() == "전체 해제") {
+                    checkbox.isChecked = true
+                    if (!photoArray.contains(photo)) {
+                        photoArray.add(photo)
+                        deleteArray.add(photo.id)
+                    }
                 }
             } else {
-                checkbox.isChecked = false
-                if (photoArray.contains(photo)) {
-                    photoArray.remove(photo)
+                if (fragment.cb_image.text.toString() == "전체 선택") {
+                    checkbox.isChecked = false
+                    if (photoArray.contains(photo)) {
+                        photoArray.remove(photo)
+                        deleteArray.remove(photo.id)
+
+                    }
                 }
             }
             image.setOnClickListener {
