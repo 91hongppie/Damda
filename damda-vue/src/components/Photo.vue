@@ -66,7 +66,7 @@
     },
 
     mounted() {
-      this.baseURL = this.$store.state.server
+      this.baseURL = this.$store.state.server + 'api/'
       this.model = this.index
     },
     

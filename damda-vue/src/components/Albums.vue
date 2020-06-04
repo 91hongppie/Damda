@@ -54,7 +54,7 @@
     },
 
     mounted() {
-      this.baseURL = this.$store.state.server
+      this.baseURL = this.$store.state.server + 'api/'
       if (!this.family) {
         this.$router.replace('/login')
       }

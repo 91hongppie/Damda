@@ -16,8 +16,8 @@
         </v-col>
         </v-row>
         <infinite-loading @infinite="infiniteHandler" spinner="spiral">
-            <div slot="no-more">등록된 사진이 없습니다 :(</div>
-            <div slot="no-results">더 이상 사진이 없습니다 :)</div>
+            <div slot="no-more">더 이상 사진이 없습니다 :)</div>
+            <div slot="no-results">등록된 사진이 없습니다 :(</div>
             <div slot="error" slot-scope="{ trigger }">
                 에러가 발생했습니다 :( <a href="javascript:;" @click="trigger">다시 시도하기</a>
             </div>
@@ -71,7 +71,7 @@
     ]),
     },
     mounted() {
-        this.baseURL = this.$store.state.server
+        this.baseURL = this.$store.state.server + 'api/'
         if (!this.user) {
         this.$router.replace('/login')
         }
@@ -83,7 +83,7 @@
                 }
             http.get(`${this.requestURL}?page=${this.limit}`, this.options)
             .then(response => {
-                this.photo_list = response.data
+                this.photo_list = response.data.reverse()
             })
             .catch(error => {
                 console.log(error)
