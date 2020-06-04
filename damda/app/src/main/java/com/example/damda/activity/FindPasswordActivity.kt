@@ -176,7 +176,7 @@ class FindPasswordActivity : AppCompatActivity() {
 
         // ChangePassword
         val disposableNewPwd = RxTextView.textChanges(inputDataField[3])
-            .map { t -> t.isNotEmpty()}
+            .map { t -> t.isEmpty() || Pattern.matches(Constants.CODE_RULS, t)}
             .subscribe({
                 reactiveInputTextViewData(3, it)
             }){

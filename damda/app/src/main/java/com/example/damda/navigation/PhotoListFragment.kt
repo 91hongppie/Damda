@@ -90,7 +90,7 @@ class PhotoListFragment : Fragment() {
         view.albumTitle?.text = "전체 보기"
         if (album?.id != null) {
             url = URL(prefs.damdaServer+"/api/albums/photo/${family_id}/${album?.id}/")
-            view.albumTitle?.text = album?.title
+            view.albumTitle?.text = album?.call
         }
         val jwt = GlobalApplication.prefs.token
         val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt")

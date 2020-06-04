@@ -86,9 +86,9 @@ class CropperActivity : AppCompatActivity() {
             ArrayAdapter.createFromResource(
                 this,
                 nameArray,
-                android.R.layout.simple_spinner_item
+                R.layout.list_item_gender
             ).also { adapter ->
-                adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item)
+                adapter.setDropDownViewResource(R.layout.list_item_gender)
                 spinner.adapter = adapter
             }
 
@@ -104,7 +104,7 @@ class CropperActivity : AppCompatActivity() {
             val file = File(getPath(uri!!))
             val requestFile: RequestBody =
                 RequestBody.create(MediaType.parse("multipart/form-data"), file)
-            val sdf = SimpleDateFormat("yyyyMMdd_HHmmss")
+            val sdf = SimpleDateFormat("")
             val filename = sdf.format(System.currentTimeMillis())
             val body =
                 MultipartBody.Part.createFormData("image", "$filename.jpg", requestFile)
@@ -144,7 +144,7 @@ class CropperActivity : AppCompatActivity() {
     }
     fun setViews() {
         val intent = Intent(Intent.ACTION_PICK)
-        intent.type = MediaStore.Images.Media.CONTENT_TYPE
+        intent.type = "image/*"
         intent.putExtra("crop", "true")
         startActivityForResult(Intent.createChooser(intent, "사진 선택"), FLAG_REQ_STORAGE)
 //        startActivityForResult(intent, FLAG_REQ_STORAGE)

@@ -33,12 +33,12 @@ app.conf.update(
     CELERYBEAT_SCHEDULE = {
         'send_push_weekly': {
             'task': 'accounts.tasks.sendPushWeekly',
-            'schedule': crontab(minute='*/5'),
+            'schedule': crontab(minute=0, hour=13),
             'args': ()
         },
         'send_push_congratulations': {
             'task': 'accounts.tasks.sendPushCongrat',
-            'schedule': crontab(minute='*/10'),
+            'schedule': crontab(minute=0, hour=9),
             'args': ()
         },
     }

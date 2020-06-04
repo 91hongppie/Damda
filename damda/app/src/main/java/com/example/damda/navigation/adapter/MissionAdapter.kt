@@ -6,10 +6,7 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.ProgressBar
-import android.widget.TextView
+import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
@@ -51,27 +48,24 @@ class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivit
     inner class CustomViewHolder(val view: View, val url: String) : RecyclerView.ViewHolder(view) {
         val title = view.findViewById<TextView>(R.id.tv_title)
         val point = view.findViewById<TextView>(R.id.tv_point)
-        val proceed = view.findViewById<TextView>(R.id.tv_progress)
-        val progressbar = view.findViewById<ProgressBar>(R.id.pb_mission)
+        val point_layout = view.findViewById<LinearLayout>(R.id.point_layout)
         val mission_btn = view.findViewById<Button>(R.id.btn_mission)
         val check = view.findViewById<ImageView>(R.id.iv_check)
         val prize = view.findViewById<TextView>(R.id.tv_prize)
         val mission_check = view.findViewById<TextView>(R.id.btn_checkmission)
-        val cl_mission = view.findViewById<ConstraintLayout>(R.id.cl_mission)
+        val cl_mission = view.findViewById<LinearLayout>(R.id.cl_mission)
         @SuppressLint("SetTextI18n")
         fun bind(mission: Mission) {
             title.text = mission.title
-            point.text = mission.point.toString() + " Point"
+            point.text = mission.point.toString()
             if (mission.status == 1) {
                 if (mission.prize == 0) {
-                    proceed.text = "1 / 1"
-                    progressbar.progress = 100
-                    check.visibility = View.INVISIBLE
-                    prize.visibility = View.INVISIBLE
-                    mission_check.visibility = View.INVISIBLE
+                    check.visibility = View.GONE
+                    prize.visibility = View.GONE
+                    mission_check.visibility = View.GONE
                     cl_mission.visibility = View.VISIBLE
                     mission_btn.visibility = View.VISIBLE
-                    point.visibility = View.VISIBLE
+                    point_layout.visibility = View.VISIBLE
                     mission_btn.setOnClickListener {
                         var retrofit = Retrofit.Builder()
                             .baseUrl(GlobalApplication.prefs.damdaServer)
@@ -82,7 +76,6 @@ class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivit
                         var scoreService: ScoreService = retrofit.create(
                             ScoreService::class.java)
                         my_score += mission.point
-                        MissionFragment().refreshMissionFragment(mission_fragment)
 
                         scoreService.changeScore("JWT $jwt", user_id, my_score, mission.id).enqueue(object:
                             Callback<Score> {
@@ -94,15 +87,14 @@ class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivit
                             }
                             override fun onResponse(call: Call<Score>, response: Response<Score>) {
                                 var score: Score = response.body()!!
-                                println(score)
                                 my_score = score.score
                                 cl_mission.visibility = View.VISIBLE
                                 check.visibility = View.VISIBLE
                                 prize.visibility = View.VISIBLE
-                                mission_check.visibility = View.INVISIBLE
-                                mission_btn.visibility = View.INVISIBLE
-                                point.visibility = View.INVISIBLE
-
+                                mission_check.visibility = View.GONE
+                                mission_btn.visibility = View.GONE
+                                point_layout.visibility = View.GONE
+                                MissionFragment().refreshMissionFragment(mission_fragment)
                             }
                         })
                     }
@@ -110,21 +102,17 @@ class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivit
                     cl_mission.visibility = View.VISIBLE
                     check.visibility = View.VISIBLE
                     prize.visibility = View.VISIBLE
-                    mission_check.visibility = View.INVISIBLE
-                    mission_btn.visibility = View.INVISIBLE
-                    point.visibility = View.INVISIBLE
-                    proceed.text = "1 / 1"
-                    progressbar.progress = 100
+                    mission_check.visibility = View.GONE
+                    mission_btn.visibility = View.GONE
+                    point_layout.visibility = View.GONE
                 }
             } else {
-                proceed.text = "0 / 1"
-                progressbar.progress = 0
                 cl_mission.visibility = View.VISIBLE
                 mission_check.visibility = View.VISIBLE
-                check.visibility = View.INVISIBLE
-                prize.visibility = View.INVISIBLE
-                mission_btn.visibility = View.INVISIBLE
-                point.visibility = View.VISIBLE
+                check.visibility = View.GONE
+                prize.visibility = View.GONE
+                mission_btn.visibility = View.GONE
+                point_layout.visibility = View.VISIBLE
             }
             mission_check.setOnClickListener {
                 var intent = Intent(activity, MissionAddPhotoActivity::class.java)

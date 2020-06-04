@@ -99,18 +99,26 @@ class MissionFragment: Fragment() {
                     var score: Score = response.body()!!
                     view.tv_score.text = score.score.toString()
                     my_score = score.score
+                    view.progress.progress = my_score
                     if (my_score < 50) {
                         view.tv_thename.text = "병아리 효자"
+                        view.progress.max = 50
                     } else if (my_score in 50..199) {
                         view.tv_thename.text = "효자"
+                        view.progress.max = 200
                     } else if (my_score in 200..599) {
                         view.tv_thename.text = "프로 효자"
+                        view.progress.max = 600
                     } else if (my_score in 600..999) {
                         view.tv_thename.text = "대장 효자"
+                        view.progress.max = 1000
                     } else if (my_score in 1000..9999999) {
                         view.tv_thename.text = "전설의 효자"
+                        view.progress.max = 10000000
                     } else {
                         view.tv_thename.text = "집에서 놀고먹어도 인정하는 효자"
+                        view.progress.max = 100
+                        view.progress.progress = 100
                     }
                     view.tv_name.text = score.name
                 }

@@ -7,18 +7,21 @@
     tools:context=".activity.LoginActivity">
     <ImageView
         android:paddingTop="4dp"
-        android:layout_above="@+id/signin_layout"
+        android:layout_above="@+id/scroll"
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:src="@drawable/logo_title"/>
-
+    <ScrollView
+        android:id="@+id/scroll"
+        android:layout_alignParentBottom="true"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
     <LinearLayout
-        android:id="@+id/signin_layout"
+        android:id="@+id/signup_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_marginBottom="-9dp"
+        android:layout_marginTop="20dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:orientation="vertical">
@@ -143,4 +146,5 @@
             android:layout_marginBottom="30dp"
             android:text="@string/join_done"/>
     </LinearLayout>
+    </ScrollView>
 </RelativeLayout>
