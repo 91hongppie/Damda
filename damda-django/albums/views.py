@@ -217,6 +217,7 @@ def all_photo(request, family_pk):
         albums = Album.objects.filter(family=family_pk)
         photos = Photo.objects.filter(albums__in=albums).order_by('-id')
         serializers = PhotoSerializer(photos, many=True)
+        print(serializers.data)
         return Response(serializers.data)
     elif request.method == 'POST':
         photos = request.data['photos']
@@ -405,3 +406,65 @@ def parentphotos(request, family_pk, user_pk):
     albums = Album.objects.filter(family=family_pk)
     photos = Photo.objects.filter(album__in=albums)
     return Response(len(photos))
+
+
+@api_view(['POST'])
+@permission_classes([AllowAny])
+@csrf_exempt
+def autoaddphoto(request):
+    User = get_user_model()
+    item = request.FILES.get('uploadImages')
+
+    # 유저가 있는지 확인 
+    try:
+        user_id = int(request.POST.get('user_id'))
+        user = get_object_or_404(User, id=user_id)
+    except:
+        return Response(data='Who are you?', status=status.HTTP_404_NOT_FOUND)
+    
+    albums = Album.objects.filter(family_id=user.family_id)
+    album = albums[0]
+
+    ROOT_DIR = os.path.abspath("./")
+    os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/{}'.format(user.family_id)), exist_ok=True)
+    
+    image = fr.load_image_file(item)
+
+    image_path = 'uploads/albums/{}/{}'.format(user.family_id, item.name + '.jpg')
+    if len(Photo.objects.filter(pic_name=image_path)):
+        print('이미 있는 사진입니다')
+        return Response(status=status.HTTP_200_OK)
+    skimage.io.imsave(image_path, image)
+    make_image = Photo.objects.create(pic_name=image_path, title=item.name)
+    faces = fr.face_locations(image)
+    if len(faces) != 0:
+        count = 0
+        for face in faces:
+            top, right, bottom, left = face
+            image_face = image[top:bottom, left:right]
+            unknown_face = fr.face_encodings(image_face)
+            if len(unknown_face) == 0:
+                if not Photo.objects.filter(pic_name=image_path):
+                    make_image.albums.add(album)
+                break
+            try:
+                with open(f'uploads/faces/family_{album.family.id}.json', 'r', encoding='utf-8') as family:
+                    data = json.load(family)
+            except:
+                if not Photo.objects.filter(pic_name=image_path):
+                    make_image.albums.add(album)
+                break
+            for album_name, data in data.items():
+                info = album_name.split('_')
+                owner = User.objects.filter(family=info[0], state=3)
+                familyname = FamilyName.objects.filter(uset=user, owner=owner)
+                if familyname.call != info[1]:
+                    for dt in data:
+                        dt = [np.asarray(dt)]
+                        distance = fr.face_distance(dt, unknown_face[0])
+                        if distance < 0.44:
+                            user_album = Album.objects.filter(family=info[0], title=info[1])[0]
+                            make_image.albums.add(user_album)
+                            count += 1
+                            break
+    return Response(status=status.HTTP_200_OK)

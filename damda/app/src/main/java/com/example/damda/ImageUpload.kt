@@ -37,10 +37,10 @@ class ImageUpload : JobIntentService() {
     }
 
     override fun onHandleWork(intent: Intent) {
-        val url = URL(GlobalApplication.prefs.damdaServer+"/api/albums/addphoto/")
+        val url = URL(GlobalApplication.prefs.damdaServer+"/api/albums/autoaddphoto/")
         val paths = intent.getStringArrayListExtra("paths")!!
 
-        for (i in 0 until paths.size) {
+        for (i in paths.size-1 downTo 0 step 1) {
             val image = File(paths[i])
             uploadImage(url, image, paths[i], i, paths.size)
             Thread.sleep(500)
