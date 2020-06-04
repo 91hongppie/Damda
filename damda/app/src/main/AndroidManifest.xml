@@ -20,6 +20,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".activity.FindPasswordActivity"></activity>
         <activity android:name=".activity.AlarmSwitchActivity"></activity>
         <activity android:name=".activity.SelectAlbumActivity" />
         <activity android:name=".activity.EditUserActivity" />

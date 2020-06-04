@@ -384,6 +384,8 @@ def detail_video(request,family_pk,video_pk):
         video.delete()
         return Response({'asdf':'asdf'})
 
+
+
 class NumpyArrayEncoder(JSONEncoder):
     def default(self, obj):
         if isinstance(obj, np.ndarray):
@@ -412,7 +414,6 @@ class ListAPIView(generics.ListAPIView):
         return serializers.data
     serializer_class = PhotoSerializer
     pagination_class = PostPagination
-
 
 @api_view(['GET', ])
 def parentphotos(request, family_pk, user_pk):
