@@ -17,7 +17,7 @@ class Album(models.Model):
 class Photo(models.Model):
     pic_name = models.CharField(max_length=500)
     title = models.TextField()
-    album = models.ForeignKey(Album, on_delete=models.CASCADE, related_name="album_photo")
+    albums = models.ManyToManyField(Album, related_name="photos", blank=True)
     uploaded_at = models.DateTimeField(auto_now_add=True)
     
 def get_file_name(instance, filename):
