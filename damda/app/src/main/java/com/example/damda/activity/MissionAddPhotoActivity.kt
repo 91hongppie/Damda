@@ -21,7 +21,6 @@ import androidx.core.app.ActivityCompat
 import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
-import com.example.damda.navigation.adapter.MissionAdapter
 import com.example.damda.navigation.model.Mission
 import com.example.damda.retrofit.service.MissionService
 import kotlinx.android.synthetic.main.activity_add_photo.*
@@ -117,9 +116,7 @@ class MissionAddPhotoActivity : AppCompatActivity() {
             upload_photo_button.background = getDrawable(R.color.enableButton)
 
             setImageView(imageUris)
-            select_photo_button.text = "선택됨"
-            select_photo_button.isClickable = false
-            select_photo_button.background = getDrawable(R.color.disableButton)
+            select_photo_button.text = "다시 선택"
 
             upload_photo_button.setOnClickListener {
                 if (ActivityCompat.checkSelfPermission(
@@ -134,7 +131,7 @@ class MissionAddPhotoActivity : AppCompatActivity() {
                     )
                 }
 
-                val url = URL(prefs.damdaServer+"/api/albums/addphoto/")
+                val url = URL(prefs.damdaServer + "/api/albums/addphoto/")
 
                 uploadImage(url, images, paths)
 
@@ -143,7 +140,7 @@ class MissionAddPhotoActivity : AppCompatActivity() {
     }
 
     fun getFilePath(imageUri: Uri): String? {
-        var result : String?
+        var result: String?
         val cursor: Cursor? = contentResolver.query(imageUri, null, null, null, null)
 
         if (cursor == null) {
@@ -162,7 +159,7 @@ class MissionAddPhotoActivity : AppCompatActivity() {
         addphoto_image.setImageURI(imageUris[0])
     }
 
-    fun uploadImage(url : URL, images: ArrayList<File>, paths: ArrayList<String>) {
+    fun uploadImage(url: URL, images: ArrayList<File>, paths: ArrayList<String>) {
         try {
             val MEDIA_TYPE_IMAGE = MediaType.parse("image/*")
 
@@ -171,7 +168,7 @@ class MissionAddPhotoActivity : AppCompatActivity() {
 
             for (i in 0 until images.size) {
                 val exif = ExifInterface(paths[i])
-                var fileDatetime : String
+                var fileDatetime: String
 
                 fileDatetime = if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
                     val datetime = exif.getAttribute(ExifInterface.TAG_DATETIME)
@@ -187,7 +184,11 @@ class MissionAddPhotoActivity : AppCompatActivity() {
 
                 Log.d("TIME", "$fileDatetime")
                 Log.d("USER", "id: ${prefs.user_id}")
-                requestBody.addFormDataPart("uploadImages", "damda_${prefs.user_id}_${fileDatetime}", RequestBody.create(MEDIA_TYPE_IMAGE, images[i]))
+                requestBody.addFormDataPart(
+                    "uploadImages",
+                    "damda_${prefs.user_id}_${fileDatetime}",
+                    RequestBody.create(MEDIA_TYPE_IMAGE, images[i])
+                )
 
             }
 
@@ -232,19 +233,25 @@ class MissionAddPhotoActivity : AppCompatActivity() {
             val jwt = GlobalApplication.prefs.token
             val user_id = GlobalApplication.prefs.user_id.toString()
             var missionService: MissionService = retrofit.create(
-                MissionService::class.java)
-            missionService.changeMission("JWT $jwt", user_id, period, mission_title!!, mission_id).enqueue(object:
-                retrofit2.Callback<Mission> {
-                override fun onFailure(call: Call<Mission>, t: Throwable) {
-                    var dialog = AlertDialog.Builder(this@MissionAddPhotoActivity)
-                    dialog.setTitle("에러")
-                    dialog.setMessage("호출실패했습니다.")
-                    dialog.show()
-                }
-                override fun onResponse(call: Call<Mission>, response: retrofit2.Response<Mission>) {
-                    val missions = response.body()
-                }
-            })
+                MissionService::class.java
+            )
+            missionService.changeMission("JWT $jwt", user_id, period, mission_title!!, mission_id)
+                .enqueue(object :
+                    retrofit2.Callback<Mission> {
+                    override fun onFailure(call: Call<Mission>, t: Throwable) {
+                        var dialog = AlertDialog.Builder(this@MissionAddPhotoActivity)
+                        dialog.setTitle("에러")
+                        dialog.setMessage("호출실패했습니다.")
+                        dialog.show()
+                    }
+
+                    override fun onResponse(
+                        call: Call<Mission>,
+                        response: retrofit2.Response<Mission>
+                    ) {
+                        val missions = response.body()
+                    }
+                })
             setResult(1, intent)
             finish()
         }

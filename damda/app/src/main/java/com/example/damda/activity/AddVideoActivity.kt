@@ -3,9 +3,7 @@ package com.example.damda.activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.database.Cursor
-import android.media.session.MediaController
 import android.net.Uri
-import android.os.Build
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
@@ -13,12 +11,9 @@ import android.util.Log
 import android.widget.Toast
 import com.example.damda.GlobalApplication
 import com.example.damda.R
-import com.example.damda.retrofit.model.Face
 import com.example.damda.retrofit.model.Message
-import com.example.damda.retrofit.service.AlbumsService
 import com.example.damda.retrofit.service.VideoService
 import kotlinx.android.synthetic.main.activity_add_video.*
-import kotlinx.android.synthetic.main.activity_cropper.*
 import okhttp3.MediaType
 import okhttp3.MultipartBody
 import okhttp3.RequestBody

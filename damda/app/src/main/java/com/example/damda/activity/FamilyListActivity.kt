@@ -1,10 +1,8 @@
 package com.example.damda.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -12,16 +10,9 @@ import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.adapter.FamilyListAdapter
-import com.example.damda.adapter.MemberAdapter
 import com.example.damda.retrofit.model.DetailFamily
-import com.example.damda.retrofit.model.Face
-import com.example.damda.retrofit.model.Faces
-import com.example.damda.retrofit.model.User
-import com.example.damda.retrofit.service.AlbumsService
 import com.example.damda.retrofit.service.FamilyService
-import kotlinx.android.synthetic.main.activity_add_member.*
 import kotlinx.android.synthetic.main.activity_family_list.*
-import kotlinx.android.synthetic.main.fragment_user.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -37,8 +28,8 @@ class FamilyListActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
-        val token = "JWT " + GlobalApplication.prefs.token
-        val id =  GlobalApplication.prefs.family_id.toString()
+        val token = "JWT " + prefs.token
+        val id =  prefs.family_id.toString()
         var familyList : DetailFamily? = null
         var retrofit = Retrofit.Builder()
             .baseUrl(prefs.damdaServer)

@@ -30,8 +30,6 @@ class RequestListActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
-//        rv_main_list.adapter = RequestAdapter()
-//        rv_main_list.layoutManager = LinearLayoutManager(this)
         rv_main_list.layoutManager = LinearLayoutManager(this)
         var waitUsers: WaitUsers? = null
         var waitList = emptyArray<WaitUser>()
@@ -39,12 +37,13 @@ class RequestListActivity : AppCompatActivity() {
             .baseUrl(prefs.damdaServer)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
-        val jwt = GlobalApplication.prefs.token
-        val user_id = GlobalApplication.prefs.user_id.toString()
+        val jwt = prefs.token
+        val user_id = prefs.user_id.toString()
         var requestService: RequestService = retrofit.create(
-            RequestService::class.java)
+            RequestService::class.java
+        )
 
-        requestService.requestWaitUser("JWT $jwt", user_id).enqueue(object: Callback<WaitUsers> {
+        requestService.requestWaitUser("JWT $jwt", user_id).enqueue(object : Callback<WaitUsers> {
             override fun onFailure(call: Call<WaitUsers>, t: Throwable) {
                 Log.v("face", t.toString())
                 var dialog = AlertDialog.Builder(this@RequestListActivity)
@@ -58,12 +57,18 @@ class RequestListActivity : AppCompatActivity() {
                 waitList = waitUsers!!.data
                 if (waitList.size > 0) {
                     rv_main_list.adapter = RequestAdapter(waitList, this@RequestListActivity)
-                    rv_main_list.addItemDecoration(DividerItemDecoration(this@RequestListActivity, LinearLayoutManager.VERTICAL))
+                    rv_main_list.addItemDecoration(
+                        DividerItemDecoration(
+                            this@RequestListActivity,
+                            LinearLayoutManager.VERTICAL
+                        )
+                    )
                 }
             }
         })
 
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.getItemId()) {
             android.R.id.home -> {

@@ -1,11 +1,12 @@
 package com.example.damda.navigation
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -21,10 +22,7 @@ import com.example.damda.navigation.adapter.MissionAdapter
 import com.example.damda.navigation.model.Mission
 import com.example.damda.navigation.model.Missions
 import com.example.damda.navigation.model.Quiz
-import com.example.damda.retrofit.service.MissionService
 import com.example.damda.retrofit.service.QuizService
-import kotlinx.android.synthetic.main.fragment_mission_list.view.*
-import kotlinx.android.synthetic.main.list_item_quiz.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -45,16 +43,14 @@ class QuizFragment : Fragment() {
         val question = view.findViewById<TextView>(R.id.tv_quiz)
         val button_quiz = view.findViewById<Button>(R.id.btn_quiz)
         var button_point = view.findViewById<Button>(R.id.btn_point)
-        var check = view.findViewById<TextView>(R.id.tv_check)
         var congrat = view.findViewById<TextView>(R.id.tv_congrat)
         var no_question = view.findViewById<TextView>(R.id.tv_empty)
         editText.visibility = View.VISIBLE
         question.visibility = View.VISIBLE
         button_quiz.visibility = View.VISIBLE
-        button_point.visibility = View.INVISIBLE
-        check.visibility = View.INVISIBLE
-        congrat.visibility = View.INVISIBLE
-        no_question.visibility = View.INVISIBLE
+        button_point.visibility = View.GONE
+        congrat.visibility = View.GONE
+        no_question.visibility = View.GONE
         var retrofit = Retrofit.Builder()
             .baseUrl(GlobalApplication.prefs.damdaServer)
             .addConverterFactory(GsonConverterFactory.create())
@@ -66,12 +62,11 @@ class QuizFragment : Fragment() {
         )
         quizService.getQuiz("JWT $jwt", user_id).enqueue(object : Callback<Quiz> {
             override fun onFailure(call: Call<Quiz>, t: Throwable) {
-                editText.visibility = View.INVISIBLE
-                question.visibility = View.INVISIBLE
-                button_quiz.visibility = View.INVISIBLE
-                button_point.visibility = View.INVISIBLE
-                check.visibility = View.INVISIBLE
-                congrat.visibility = View.INVISIBLE
+                editText.visibility = View.GONE
+                question.visibility = View.GONE
+                button_quiz.visibility = View.GONE
+                button_point.visibility = View.GONE
+                congrat.visibility = View.GONE
                 no_question.visibility = View.VISIBLE
             }
 
@@ -81,11 +76,18 @@ class QuizFragment : Fragment() {
             }
         })
         button_quiz.setOnClickListener {
+            val mInputMethodManager =
+                getContext()!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            mInputMethodManager.hideSoftInputFromWindow(
+                editText.getWindowToken(),
+                0
+            )
+
             if ("${editText.text}" != quiz!!.answer) {
                 Toast.makeText(context, "정답이 아닙니다.", Toast.LENGTH_SHORT).show()
             } else {
-                button_quiz.visibility = View.INVISIBLE
-                editText.visibility = View.INVISIBLE
+                button_quiz.visibility = View.GONE
+                editText.visibility = View.GONE
                 check.visibility = View.VISIBLE
                 my_score += 5
                 congrat.visibility = View.VISIBLE
@@ -107,9 +109,14 @@ class QuizFragment : Fragment() {
                 })
                 button_point.setOnClickListener {
                     if (num == 1) {
+<<<<<<< HEAD
                         MissionFragment().refreshMissionFragment(mission_fragment)
                         this.fragmentManager?.beginTransaction()?.detach(this)?.attach(this)
                             ?.commit()
+=======
+                        editText.text = null
+                        this.fragmentManager?.beginTransaction()?.detach(this)?.attach(this)?.commit()
+>>>>>>> origin/feature/layout
                     }
                 }
 

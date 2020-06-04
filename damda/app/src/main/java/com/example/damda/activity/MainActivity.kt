@@ -39,8 +39,9 @@ import java.io.File
 import java.io.FileNotFoundException
 import java.io.IOException
 import java.net.URL
+
 class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemSelectedListener {
-    var mBackWait:Long = 0
+    var mBackWait: Long = 0
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -48,14 +49,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
 
         bottom_navigation.setOnNavigationItemSelectedListener(this)
 
-        if (!prefs.my_album){
+        if (!prefs.my_album) {
             checkMyAlbum()
         }
 
         val cm = getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         val activeNetwork: NetworkInfo? = cm.activeNetworkInfo
-        if(prefs.autoStatus && intent.getStringExtra("before") != "AddPhoto"){
-            if((activeNetwork?.type == ConnectivityManager.TYPE_MOBILE && prefs.mobileAutoUpload)||(activeNetwork?.type == ConnectivityManager.TYPE_WIFI )){
+        if (prefs.autoStatus && intent.getStringExtra("before") != "AddPhoto") {
+            if ((activeNetwork?.type == ConnectivityManager.TYPE_MOBILE && prefs.mobileAutoUpload) || (activeNetwork?.type == ConnectivityManager.TYPE_WIFI)) {
                 checkMidea()
             }
         }
@@ -84,10 +85,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 val msg = getString(R.string.msg_token_fmt, token)
                 Log.d(TAG, msg)
             })
-        if (intent.getBooleanExtra("사진업로드", false)){
+        if (intent.getBooleanExtra("사진업로드", false)) {
             bottom_navigation.selectedItemId = R.id.action_photo_list
-        }
-        else {
+        } else {
             bottom_navigation.selectedItemId = R.id.action_album_list
         }
     }
@@ -96,13 +96,14 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         prefs.device_token = token
         Log.d("SharedPreference", "${prefs.device_token}")
 
-        val url = URL(prefs.damdaServer+"/api/accounts/device/")
+        val url = URL(prefs.damdaServer + "/api/accounts/device/")
         val jwt = GlobalApplication.prefs.token
         val formBody = FormBody.Builder()
             .add("token", token)
             .add("user_id", "${prefs.user_id}")
             .build()
-        val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt").method("POST", formBody)
+        val request = Request.Builder().url(url).addHeader("Authorization", "JWT $jwt")
+            .method("POST", formBody)
             .build()
         val client = OkHttpClient()
 
@@ -113,22 +114,26 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         Log.d("SEND TOKEN", "MY PHONE: $token")
     }
 
-    fun replaceFragment(fragment: Fragment){
-        supportFragmentManager.beginTransaction().replace(R.id.main_content,fragment).addToBackStack(null).commit()
+    fun replaceFragment(fragment: Fragment) {
+        supportFragmentManager.beginTransaction().replace(R.id.main_content, fragment)
+            .addToBackStack(null).commit()
     }
-    fun replaceNavbar(){
+
+    fun replaceNavbar() {
         if (navStatus == 1) {
             bottom_navigation.layoutParams.height = 0
         } else {
             bottom_navigation.layoutParams.height = WRAP_CONTENT
         }
     }
+
     override fun onNavigationItemSelected(p0: MenuItem): Boolean {
         when (p0.itemId) {
             R.id.action_album_list -> {
                 var albumListFragment = AlbumListFragment()
                 supportFragmentManager.popBackStack(null, POP_BACK_STACK_INCLUSIVE)
-                supportFragmentManager.beginTransaction().replace(R.id.main_content, albumListFragment)
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.main_content, albumListFragment)
                     .commit()
                 photoStatus = 0
                 return true
@@ -136,7 +141,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             R.id.action_photo_list -> {
                 var photoListFragment = PhotoListFragment()
                 supportFragmentManager.popBackStack(null, POP_BACK_STACK_INCLUSIVE)
-                supportFragmentManager.beginTransaction().replace(R.id.main_content, photoListFragment)
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.main_content, photoListFragment)
                     .commit()
                 photoStatus = 0
                 return true
@@ -155,7 +161,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             R.id.action_favorite_alarm -> {
                 var missionFragment = MissionFragment()
                 supportFragmentManager.popBackStack(null, POP_BACK_STACK_INCLUSIVE)
-                supportFragmentManager.beginTransaction().replace(R.id.main_content, missionFragment)
+                supportFragmentManager.beginTransaction()
+                    .replace(R.id.main_content, missionFragment)
                     .commit()
                 return true
             }
@@ -169,7 +176,11 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         }
         return false
     }
-    interface RetrofitNetwork { @GET("/network") fun listUser() : Call<Array<String>> }
+
+    interface RetrofitNetwork {
+        @GET("/network")
+        fun listUser(): Call<Array<String>>
+    }
 
     val retrofit = Retrofit.Builder()
         .baseUrl(prefs.damdaServer)
@@ -177,29 +188,35 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         .build()
 
     val service = retrofit.create(RetrofitNetwork::class.java)
+
     companion object {
         var navStatus = 0
         var photoStatus = 0
         var currentPosition = 0
         private const val TAG = "MainActivity"
     }
+
     override fun onBackPressed() {
         // 뒤로가기 버튼 클릭
-        if(supportFragmentManager.backStackEntryCount==0) {
+        if (supportFragmentManager.backStackEntryCount == 0) {
             if (System.currentTimeMillis() - mBackWait >= 2000) {
                 mBackWait = System.currentTimeMillis()
                 Toast.makeText(this, "뒤로가기 버튼을 한번 더 누르면 종료됩니다.", Toast.LENGTH_SHORT).show()
             } else {
                 super.onBackPressed()
             }
-        }else {
+        } else {
             super.onBackPressed()
         }
     }
+
     @SuppressLint("Recycle")
     fun checkMidea() {
-        if (ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED )
-        {
+        if (ContextCompat.checkSelfPermission(
+                this,
+                Manifest.permission.READ_EXTERNAL_STORAGE
+            ) == PackageManager.PERMISSION_GRANTED
+        ) {
             val imageProjection =
                 arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA)
             val lastId = prefs.autoId
@@ -207,9 +224,16 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             val selectionArgs = arrayOf(
                 "%damda%"
             )
-            val imageCursor = contentResolver.query(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, imageProjection, selection, selectionArgs, MediaStore.Images.Media._ID +  " desc ")
-            var images = arrayListOf<File>()
-            var paths = arrayListOf<String>()
+            val imageCursor = contentResolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                imageProjection,
+                selection,
+                selectionArgs,
+                MediaStore.Images.Media._ID + " desc "
+            )
+            val images = arrayListOf<File>()
+            val paths = arrayListOf<String>()
+            val ids = arrayListOf<String>()
             val imageIdIndex = imageCursor?.getColumnIndex(MediaStore.Images.Media._ID)
             val imageDataIndex = imageCursor?.getColumnIndex(MediaStore.Images.Media.DATA)
             if (imageCursor != null && imageCursor.count > 0) {
@@ -223,6 +247,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                         break
                     }
                     paths.add(imageData)
+                    ids.add(imageId)
+
                     val image = File(imageData)
                     try {
                         images.add(image)
@@ -234,18 +260,20 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                         break
                     }
                 }
-                val url = URL(prefs.damdaServer+"/api/albums/addphoto/")
+
                 if (images.size > 0) {
                     var dialogBuilder = android.app.AlertDialog.Builder(this)
                     dialogBuilder.setTitle("사진 업로드")
                     dialogBuilder.setMessage("새로운 사진이 있습니다.\n업로드 하시겠습니까?")
-                    var dialogListener = object: DialogInterface.OnClickListener{
+                    var dialogListener = object : DialogInterface.OnClickListener {
                         override fun onClick(dialog: DialogInterface?, which: Int) {
-                            when(which){
+                            when (which) {
                                 DialogInterface.BUTTON_NEUTRAL -> {
-                                    val uploadIntent = Intent(this@MainActivity, ImageUpload::class.java)
+                                    val uploadIntent =
+                                        Intent(this@MainActivity, ImageUpload::class.java)
                                     uploadIntent.putExtra("paths", paths)
                                     uploadIntent.putExtra("before", "main")
+                                    uploadIntent.putExtra("ids", ids)
                                     startService(uploadIntent)
                                     ImageUpload().enqueueWork(this@MainActivity, uploadIntent)
                                 }
@@ -278,20 +306,22 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
             Log.d("Sever response", "result: $result")
         }
     }
+
     private fun isValidDate(lastId: String?, Id: String): Boolean {
         if (lastId != null) {
             return lastId.compareTo(Id) < 0
         }
         return true
     }
+
     fun checkMyAlbum() {
         var dialog = AlertDialog.Builder(this)
         dialog.setTitle("내 앨범 만들기")
         dialog.setMessage("내 앨범을 만들어 주세요.")
-        var dialogListener = object: DialogInterface.OnClickListener{
+        var dialogListener = object : DialogInterface.OnClickListener {
             override fun onClick(dialog: DialogInterface?, which: Int) {
-                when(which){
-                    DialogInterface.BUTTON_POSITIVE-> {
+                when (which) {
+                    DialogInterface.BUTTON_POSITIVE -> {
                         moveActivity()
                     }
                 }
@@ -301,6 +331,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
         dialog.setCancelable(false)
         dialog.show()
     }
+
     fun moveActivity() {
         var intent = Intent(this, CropperActivity::class.java)
         intent.putExtra("before", "addFamily")

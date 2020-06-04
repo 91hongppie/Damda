@@ -48,24 +48,25 @@ class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivit
     inner class CustomViewHolder(val view: View, val url: String) : RecyclerView.ViewHolder(view) {
         val title = view.findViewById<TextView>(R.id.tv_title)
         val point = view.findViewById<TextView>(R.id.tv_point)
+        val point2 = view.findViewById<TextView>(R.id.tv_point2)
         val point_layout = view.findViewById<LinearLayout>(R.id.point_layout)
-        val mission_btn = view.findViewById<Button>(R.id.btn_mission)
+        val mission_btn = view.findViewById<LinearLayout>(R.id.btn_mission)
         val check = view.findViewById<ImageView>(R.id.iv_check)
-        val prize = view.findViewById<TextView>(R.id.tv_prize)
+        val prize = view.findViewById<LinearLayout>(R.id.tv_prize)
         val mission_check = view.findViewById<TextView>(R.id.btn_checkmission)
         val cl_mission = view.findViewById<LinearLayout>(R.id.cl_mission)
         @SuppressLint("SetTextI18n")
         fun bind(mission: Mission) {
             title.text = mission.title
             point.text = mission.point.toString()
+            point2.text = mission.point.toString()
             if (mission.status == 1) {
                 if (mission.prize == 0) {
                     check.visibility = View.GONE
                     prize.visibility = View.GONE
                     mission_check.visibility = View.GONE
-                    cl_mission.visibility = View.VISIBLE
+                    cl_mission.visibility = View.GONE
                     mission_btn.visibility = View.VISIBLE
-                    point_layout.visibility = View.VISIBLE
                     mission_btn.setOnClickListener {
                         var retrofit = Retrofit.Builder()
                             .baseUrl(GlobalApplication.prefs.damdaServer)
@@ -88,7 +89,7 @@ class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivit
                             override fun onResponse(call: Call<Score>, response: Response<Score>) {
                                 var score: Score = response.body()!!
                                 my_score = score.score
-                                cl_mission.visibility = View.VISIBLE
+                                cl_mission.visibility = View.GONE
                                 check.visibility = View.VISIBLE
                                 prize.visibility = View.VISIBLE
                                 mission_check.visibility = View.GONE
@@ -99,7 +100,7 @@ class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivit
                         })
                     }
                 } else {
-                    cl_mission.visibility = View.VISIBLE
+                    cl_mission.visibility = View.GONE
                     check.visibility = View.VISIBLE
                     prize.visibility = View.VISIBLE
                     mission_check.visibility = View.GONE
@@ -114,7 +115,7 @@ class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivit
                 mission_btn.visibility = View.GONE
                 point_layout.visibility = View.VISIBLE
             }
-            mission_check.setOnClickListener {
+            cl_mission.setOnClickListener {
                 var intent = Intent(activity, MissionAddPhotoActivity::class.java)
                 intent.putExtra("mission_id", mission.id)
                 intent.putExtra("mission_title", mission.title)

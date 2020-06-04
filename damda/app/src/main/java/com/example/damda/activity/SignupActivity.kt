@@ -1,9 +1,6 @@
 package com.example.damda.activity
 
 
-
-
-import android.app.DatePickerDialog
 import android.content.Context
 import android.content.Intent
 import android.os.Bundle
@@ -29,12 +26,11 @@ import retrofit2.Response
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.util.regex.Pattern
-import javax.xml.datatype.DatatypeConstants.MONTHS
 
 
 class SignupActivity : AppCompatActivity() {
     var checkemail: CheckEmail? = null
-    var gender= ""
+    var gender = ""
     val items = listOf("성별", "남자", "여자")
 
     internal val viewDisposables = CompositeDisposable()
@@ -44,7 +40,7 @@ class SignupActivity : AppCompatActivity() {
     private lateinit var inputInfoMessage: Array<String>
     private var isInputCorrectData: Array<Boolean> = arrayOf(false, false, false)
     private var isCheckID = false
-        set(value){
+        set(value) {
             when (value) {
                 true -> {
                     btnCheckExistID.setBackgroundColor(resources.getColor(R.color.disableButton))
@@ -64,16 +60,19 @@ class SignupActivity : AppCompatActivity() {
         typingListener()
         setListener()
     }
+
     private fun init() {
         inputDataField = arrayOf(editEmail, editPWD, editPWDConfirm)
         textInputLayoutArray = arrayOf(editEmailLayout, editPWDLayout, editPWDConfirmLayout)
-        inputInfoMessage = arrayOf(getString(R.string.error_discorrent_email), getString(
-            R.string.txtInputInfoPWD
-        ), getString(R.string.txtInputInfoRePWD))
+        inputInfoMessage = arrayOf(
+            getString(R.string.error_discorrent_email), getString(
+                R.string.txtInputInfoPWD
+            ), getString(R.string.txtInputInfoRePWD)
+        )
         typingListener()
         val adapter = ArrayAdapter(this, R.layout.list_item_gender, items)
         spinner.adapter = adapter
-        spinner.onItemSelectedListener = object: AdapterView.OnItemSelectedListener {
+        spinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
             override fun onNothingSelected(parent: AdapterView<*>?) {
             }
 
@@ -89,23 +88,24 @@ class SignupActivity : AppCompatActivity() {
         signup_layout.setOnClickListener {
             var view = this.currentFocus
 
-            if(view != null)
-            {
-                val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            if (view != null) {
+                val inputMethodManager =
+                    getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
                 inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
             }
         }
     }
 
     private fun setListener() {
-        dataPicker.updateDate(1990, 0,1)
+        dataPicker.updateDate(1990, 0, 1)
         isCheckID = false
         var retrofit = Retrofit.Builder()
             .baseUrl(prefs.damdaServer)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         var signupService: SignupService = retrofit.create(
-            SignupService::class.java)
+            SignupService::class.java
+        )
         btnDone.setOnClickListener {
 
             var params: HashMap<String, Any> = HashMap<String, Any>()
@@ -125,22 +125,23 @@ class SignupActivity : AppCompatActivity() {
                 if (gender == "0") {
                     toast("성별을 선택해주세요.")
                 } else {
-                signupService.signUp(params).enqueue(object : Callback<SignUp> {
-                    override fun onFailure(call: Call<SignUp>, t: Throwable) {
-                        Log.e("LOGIN", t.message)
-                        var dialog = AlertDialog.Builder(this@SignupActivity)
-                        dialog.setTitle("에러")
-                        dialog.setMessage("호출실패했습니다.")
-                        dialog.show()
-                    }
+                    signupService.signUp(params).enqueue(object : Callback<SignUp> {
+                        override fun onFailure(call: Call<SignUp>, t: Throwable) {
+                            Log.e("LOGIN", t.message)
+                            var dialog = AlertDialog.Builder(this@SignupActivity)
+                            dialog.setTitle("에러")
+                            dialog.setMessage("호출실패했습니다.")
+                            dialog.show()
+                        }
 
-                    override fun onResponse(call: Call<SignUp>, response: Response<SignUp>) {
-                        toast("회원 가입 되었습니다.")
-                        val intent = Intent(this@SignupActivity, LoginActivity::class.java)
-                        startActivity(intent)
-                        finish()
-                    }
-                })}
+                        override fun onResponse(call: Call<SignUp>, response: Response<SignUp>) {
+                            toast("회원 가입 되었습니다.")
+                            val intent = Intent(this@SignupActivity, LoginActivity::class.java)
+                            startActivity(intent)
+                            finish()
+                        }
+                    })
+                }
             } else {
                 toast(getString(R.string.error_do_not_check_id))
             }
@@ -166,11 +167,10 @@ class SignupActivity : AppCompatActivity() {
                     checkemail = response.body()
                     Log.d("ChekID", "token : " + checkemail?.token)
 
-                    if(checkemail?.token=="false"){
+                    if (checkemail?.token == "false") {
                         toast(getString(R.string.error_exist_email))
                         isCheckID = false
-                    }
-                    else{
+                    } else {
                         toast(getString(R.string.can_use_email))
                         isCheckID = true
                     }
@@ -178,6 +178,7 @@ class SignupActivity : AppCompatActivity() {
             })
         }
     }
+
     /**
      * 각 필드별 회원가입 조건이 맞는지 비동기 체크
      */
@@ -188,7 +189,7 @@ class SignupActivity : AppCompatActivity() {
             .subscribe({ it ->
                 isCheckID = false
                 reactiveInputTextViewData(0, !it)
-            }){
+            }) {
                 //Error Block
                 settingEmptyInputUI(0)
             }
@@ -199,7 +200,7 @@ class SignupActivity : AppCompatActivity() {
             .subscribe({ it ->
                 inputDataField[2].setText("")
                 reactiveInputTextViewData(1, it)
-            }){
+            }) {
                 //Error Block
             }
 
@@ -208,7 +209,7 @@ class SignupActivity : AppCompatActivity() {
             .map { t -> t.isEmpty() || inputDataField[1].text.toString() == inputDataField[2].text.toString() }
             .subscribe({ it ->
                 reactiveInputTextViewData(2, it)
-            }){
+            }) {
                 //Error Block
             }
 
@@ -217,6 +218,7 @@ class SignupActivity : AppCompatActivity() {
     }
 
     var isSuccess = false
+
     /**
      * 올바른 회원정보를 입력 받았는지 체크
      */
@@ -233,16 +235,16 @@ class SignupActivity : AppCompatActivity() {
         btnDone.setBackgroundColor(resources.getColor(R.color.disableButton))
         btnDone.setTextColor(resources.getColor(R.color.white))
         btnDone.isEnabled = true
-        isSuccess =true
+        isSuccess = true
     }
 
     /**
      * ReActive 로 입력 들어오는 데이터에 대한 결과를 UI 로 표시합니다
      */
     private fun reactiveInputTextViewData(indexPath: Int, it: Boolean) {
-        if(!inputDataField[indexPath].text.toString().isEmpty()){
+        if (!inputDataField[indexPath].text.toString().isEmpty()) {
             isInputCorrectData[indexPath] = it
-        }else{
+        } else {
             isInputCorrectData[indexPath] = false
         }
 
@@ -251,7 +253,8 @@ class SignupActivity : AppCompatActivity() {
 
         reactiveCheckCorrectData()
     }
-    private fun settingEmptyInputUI(indexPath: Int){
+
+    private fun settingEmptyInputUI(indexPath: Int) {
         isInputCorrectData[indexPath] = false
         textInputLayoutArray[indexPath].isErrorEnabled = false
     }

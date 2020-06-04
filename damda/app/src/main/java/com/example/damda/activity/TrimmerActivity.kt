@@ -37,7 +37,11 @@ class TrimmerActivity : AppCompatActivity(), OnTrimVideoListener, OnK4LVideoList
             mVideoTrimmer!!.setMaxDuration(45)
             mVideoTrimmer!!.setOnTrimVideoListener(this)
             mVideoTrimmer!!.setOnK4LVideoListener(this)
-            mVideoTrimmer!!.setDestinationPath(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS).absolutePath+"/")
+            mVideoTrimmer!!.setDestinationPath(
+                Environment.getExternalStoragePublicDirectory(
+                    Environment.DIRECTORY_DOWNLOADS
+                ).absolutePath + "/"
+            )
             mVideoTrimmer!!.setVideoURI(Uri.parse(path))
             mVideoTrimmer!!.setVideoInformationVisibility(true)
         }
@@ -63,7 +67,7 @@ class TrimmerActivity : AppCompatActivity(), OnTrimVideoListener, OnK4LVideoList
         finish()
     }
 
-    override fun onError(message:String) {
+    override fun onError(message: String) {
         mProgressDialog?.cancel()
         runOnUiThread {
             run {

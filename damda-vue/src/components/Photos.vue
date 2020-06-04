@@ -27,7 +27,7 @@
                     hide-overlay
                     transition="dialog-bottom-transition"
                     scrollable>
-            <Photo :style="{'background-color': 'rgba(0,0,0,0.5)'}" :photo_list="photo_list" :index="index" @dialog="dialog = false"/>
+            <Photo :style="{'background-color': 'rgba(0,0,0,0.5)'}" :photo_list="photo_list" :index="index" @dialog="DialogEmit"/>
         </v-dialog>
     </v-container>
 </template>
@@ -125,6 +125,10 @@
             this.index = i
             this.dialog = true
         },
+        DialogEmit() {
+            this.dialog = false
+            this.index = -1
+        }
     }
   }
 </script>

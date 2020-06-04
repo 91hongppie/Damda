@@ -173,10 +173,9 @@
     <LinearLayout
         android:id="@+id/alarm"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
+        android:layout_height="60dp"
         android:padding="5dp"
         android:background="?attr/selectableItemBackground"
-        android:orientation="vertical"
         >
         <TextView
             android:layout_width="wrap_content"
@@ -186,6 +185,15 @@
             android:gravity="center_vertical"
             android:textColor="@color/black"
             android:height="50dp"/>
+        <Space
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"/>
+        <ImageView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:src="@drawable/ic_next"/>
 
     </LinearLayout>
     <LinearLayout
