@@ -76,7 +76,6 @@ class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivit
                         var scoreService: ScoreService = retrofit.create(
                             ScoreService::class.java)
                         my_score += mission.point
-                        MissionFragment().refreshMissionFragment(mission_fragment)
 
                         scoreService.changeScore("JWT $jwt", user_id, my_score, mission.id).enqueue(object:
                             Callback<Score> {
@@ -88,7 +87,6 @@ class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivit
                             }
                             override fun onResponse(call: Call<Score>, response: Response<Score>) {
                                 var score: Score = response.body()!!
-                                println(score)
                                 my_score = score.score
                                 cl_mission.visibility = View.VISIBLE
                                 check.visibility = View.VISIBLE
@@ -96,7 +94,7 @@ class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivit
                                 mission_check.visibility = View.GONE
                                 mission_btn.visibility = View.GONE
                                 point_layout.visibility = View.GONE
-
+                                MissionFragment().refreshMissionFragment(mission_fragment)
                             }
                         })
                     }

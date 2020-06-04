@@ -37,7 +37,7 @@ class ImageUpload : JobIntentService() {
     }
 
     override fun onHandleWork(intent: Intent) {
-        val url = URL(GlobalApplication.prefs.damdaServer+"/albums/addphoto/")
+        val url = URL(GlobalApplication.prefs.damdaServer+"/api/albums/addphoto/")
         val paths = intent.getStringArrayListExtra("paths")!!
 
         for (i in 0 until paths.size) {
@@ -49,7 +49,7 @@ class ImageUpload : JobIntentService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        val url = URL(GlobalApplication.prefs.damdaServer+"/albums/uploadend/")
+        val url = URL(GlobalApplication.prefs.damdaServer+"/api/albums/uploadend/")
 
         val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
             .addFormDataPart("user_id", "${GlobalApplication.prefs.user_id}").build()

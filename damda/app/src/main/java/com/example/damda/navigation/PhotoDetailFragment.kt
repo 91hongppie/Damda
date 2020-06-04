@@ -166,7 +166,7 @@ class PhotoDetailFragment: Fragment() {
                         val jwt = GlobalApplication.prefs.token
                         val photo = photoList[selectedPosition].pic_name!!
                         var albumsService: AlbumsService = retrofit.create(AlbumsService::class.java)
-                        albumsService.changeAlbumImage("JWT $jwt", album!!.id, album!!.id, photo).enqueue(object: retrofit2.Callback<PutAlbum>{
+                        albumsService.changeAlbumImage("JWT $jwt", album!!.id, photo).enqueue(object: retrofit2.Callback<PutAlbum>{
                             override fun onFailure(call: retrofit2.Call<PutAlbum>, t: Throwable) {
                                 Toast.makeText(context, "대표 이미지가 변경에 실패했습니다.", Toast.LENGTH_SHORT).show()
                             }
