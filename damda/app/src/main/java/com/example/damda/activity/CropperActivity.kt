@@ -21,6 +21,7 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
+import com.example.damda.LoadingDialog
 import com.example.damda.R
 import com.example.damda.retrofit.model.Face
 import com.example.damda.retrofit.service.AlbumsService
@@ -96,6 +97,8 @@ class CropperActivity : AppCompatActivity() {
 
 
         save_member.setOnClickListener {
+            var loadingDialog = LoadingDialog(this)
+            loadingDialog.show()
             var albumCall = "나"
             if (intent.getStringExtra("before") !="addFamily"){
                 albumCall = spinner.selectedItem.toString()
@@ -112,32 +115,36 @@ class CropperActivity : AppCompatActivity() {
                 Callback<Face> {
                 override fun onFailure(call: Call<Face>, t: Throwable) {
                     Log.e("LOGIN",t.message)
+                    loadingDialog.dismiss()
                     var dialog = AlertDialog.Builder(this@CropperActivity)
                     dialog.setTitle("에러")
                     dialog.setMessage("호출실패했습니다.")
                     dialog.show()
                 }
                 override fun onResponse(call: Call<Face>, response: Response<Face>) {
+                    loadingDialog.dismiss()
                     if (response.code() == 202) {
                         Toast.makeText(this@CropperActivity, response.body()?.message, Toast.LENGTH_LONG).show()
                         save_member.clickable().accept(true)
-                    } else {
-                    val builder = AlertDialog.Builder(this@CropperActivity)
-                    builder.setTitle("앨범").setMessage("앨범 생성이 완료되었습니다.")
-                    builder.setPositiveButton(
-                        "확인"
-                    ) { dialog, id ->
-                        if (intent.getStringExtra("before") =="addFamily"){
-                            prefs.my_album = true
-                        }
-                        var intent = Intent(this@CropperActivity, MainActivity::class.java)
-                        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
-                        startActivity(intent)
-                        finish()
                     }
+                    else {
+                        val builder = AlertDialog.Builder(this@CropperActivity)
+                        builder.setTitle("앨범").setMessage("앨범 생성이 완료되었습니다.")
+                        builder.setPositiveButton(
+                            "확인"
+                        ) { dialog, id ->
+                            if (intent.getStringExtra("before") =="addFamily"){
+                                prefs.my_album = true
+                            }
+                            var intent = Intent(this@CropperActivity, MainActivity::class.java)
+                            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP)
+                            startActivity(intent)
+                            finish()
+                        }
 
-                    val alertDialog = builder.create()
-                    alertDialog.show()}
+                        val alertDialog = builder.create()
+                        alertDialog.show()
+                    }
                 }
             })
         }
