@@ -83,6 +83,17 @@
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
+
+        <TextView
+            android:id="@+id/find_pw"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="50dp"
+            android:text="비밀번호가 기억나지않으세요?"
+            android:textAlignment="center"
+            android:textColor="@color/bluebell"></TextView>
+
+
     </LinearLayout>
 </RelativeLayout>
 

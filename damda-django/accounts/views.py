@@ -14,13 +14,14 @@ from rest_framework.response import Response
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 from albums.models import Album, FamilyName
 from albums.serializers import EditFaceSerializer, AlbumSerializer, FamilyNameSerializer, FamilyNameupdateSerializer
-from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, WaitUserSerializer, DetailFamilySerializer, MissionSerializer, ScoreSerializer, QuizSerializer
+from .serializers import JoinFamilySerializer, FamilySerializer, UserSerializer, UserCreatSerializer, WaitUserSerializer, DetailFamilySerializer, MissionSerializer, ScoreSerializer, QuizSerializer, UserChangeSerializer
 import requests, json
 import jwt
 from decouple import config
 from .forms import DeviceForm
 from korean_lunar_calendar import KoreanLunarCalendar
 import datetime
+from .helper import email_auth_num
 import random
 
 
@@ -323,10 +324,11 @@ def UserInfo(request):
 
 
 
-@api_view(['GET', 'POST'])
+@api_view(['GET', 'POST','PUT'])
 @permission_classes([AllowAny])
 @csrf_exempt
 def signup(request):
+    print('aaa')
     if request.method == 'GET':
         data = request.GET.get('username')
         user = User.objects.filter(username=data)        
@@ -335,7 +337,7 @@ def signup(request):
         else:
             token = "false"
         context = {"token":token}
-        return JsonResponse(context)        
+        return JsonResponse(context)
     elif request.method == 'POST':
         serializer = UserCreatSerializer(data=request.data)
         serializer.is_valid()
@@ -345,6 +347,37 @@ def signup(request):
             return Response(serializer.data)
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+@api_view(['GET', 'POST'])
+@permission_classes([AllowAny])
+@csrf_exempt
+def FindPassword(request):
+    if request.method == 'GET':
+        username = request.GET.get('username')
+        user = get_object_or_404(get_user_model(), username=username)
+        token = "true"
+        auth_num = email_auth_num()
+        serializer = UserChangeSerializer(data={'username': username, 'password': auth_num}, instance=user)
+        serializer.is_valid()
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.save()
+            print(user)
+        else:
+            token = "false"
+        context = {"token":token}
+        return JsonResponse(context)        
+    elif request.method == 'POST':
+        user = get_object_or_404(User, username=request.data.get("username"))
+        serializer = UserChangeSerializer(data={'username': user.username, 'password': request.data.get("password")}, instance=user)
+        print(serializer)
+        serializer.is_valid()
+        if serializer.is_valid(raise_exception=True):
+            user = serializer.save()
+
+            return Response(serializer.data)
+        else:
+            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
 
 @method_decorator(csrf_exempt, name='dispatch')
 class KakaoLogin(SocialLoginView):
@@ -450,19 +483,17 @@ def score(request, user_pk):
 
 
 @api_view(['POST'])
+@permission_classes([IsAuthenticated])
+@authentication_classes((JSONWebTokenAuthentication,))
+@csrf_exempt
 def logout(request):
     print('-----------------------------------------------------------')
     print(request.data)
     device_token = request.POST.get('device_token')
     print(device_token)
     target = get_object_or_404(Device, device_token=device_token)
-    print(target)
-    try:
-        print(target)
-        target.delete()
-        return Response(status=status.HTTP_200_OK)
-    except:
-        return Response(status=status.HTTP_203_NON_AUTHORITATIVE_INFORMATION)
+    target.delete()
+    return Response(status=status.HTTP_200_OK)
 
         
 @api_view(['GET', 'PUT'])
