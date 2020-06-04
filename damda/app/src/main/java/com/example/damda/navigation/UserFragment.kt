@@ -64,19 +64,14 @@ class UserFragment : Fragment() {
             }
         })
         view.logout.setOnClickListener {
-            GlobalApplication.prefs.token = ""
-            GlobalApplication.prefs.user_id = ""
-            GlobalApplication.prefs.family_id = ""
-            GlobalApplication.prefs.state = ""
-
             val jwt = GlobalApplication.prefs.token
             val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("user_id", "${GlobalApplication.prefs.user_id}")
-                .addFormDataPart("device_token", "${GlobalApplication.prefs.device_token}")
+                .addFormDataPart("user_id", "${prefs.user_id}")
+                .addFormDataPart("device_token", "${prefs.device_token}")
                 .build()
 
             val request = Request.Builder().addHeader("Authorization", "JWT $jwt")
-                .url(prefs.damdaServer + "/api/accounts/logout")
+                .url(prefs.damdaServer + "/api/accounts/logout/")
                 .post(requestBody)
                 .build()
 
@@ -84,6 +79,13 @@ class UserFragment : Fragment() {
             val callback = Callback1()
 
             client.newCall(request).enqueue(callback)
+
+            prefs.token = ""
+            prefs.user_id = ""
+            prefs.family_id = ""
+            prefs.state = ""
+            prefs.my_album = false
+            prefs.gender = 0
 
             var intent = Intent(activity, LoginActivity::class.java)
             startActivity(intent)
