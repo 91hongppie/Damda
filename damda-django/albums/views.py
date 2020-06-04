@@ -34,13 +34,15 @@ def photo(request, family_pk, album_pk):
         photos = request.data['photos']
         photo_ids = list(map(int, photos.split(', ')))
         photos = Photo.objects.filter(id__in=photo_ids)
-        album_id = photos[0].album
+        album = get_object_or_404(Album, pk=album_pk)
         for photo in photos:
-            file_path = settings.MEDIA_ROOT + '/' + str(photo.pic_name[8:])
-            if os.path.isfile(file_path):
-                os.remove(file_path)
-        photos.delete()
-        photo_list = Photo.objects.filter(album=album_id)
+            photo.albums.remove(album)
+            if len(photo.albums.all()) < 1:
+                file_path = settings.MEDIA_ROOT + '/' + str(photo.pic_name[8:])
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+                photo.delete()
+        photo_list = Photo.objects.filter(albums=album)
         serializers = PhotoSerializer(photo_list, many=True)
         return Response(serializers.data)
 
@@ -71,13 +73,14 @@ def album(request, album_pk):
         return Response(status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'DELETE':
         album = get_object_or_404(Album, pk=album_pk)
-        photos = Photo.objects.filter(album=album_pk)
-        file_path = settings.MEDIA_ROOT + '/albums/' + str(album.family.id) + '/' + str(album_pk)
-        if os.path.isdir(file_path):
-            shutil.rmtree(file_path)
-        ROOT_DIR = os.path.abspath("./")
-        os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/' + str(album.family.id) + '/' + str(album_pk)), exist_ok=True)
-        photos.delete()
+        photos = album.photos.all()
+        for photo in photos:
+            photo.albums.remove(album)
+            if len(photo.albums.all()) < 1:
+                file_path = settings.MEDIA_ROOT + '/' + str(photo.pic_name[8:])
+                if os.path.isfile(file_path):
+                    os.remove(file_path)
+                photo.delete()
         serializers = AlbumPutSerializer(data={'id': album_pk, 'image': 'empty'}, instance=album)
         if serializers.is_valid():
             serializers.save()
@@ -210,13 +213,11 @@ def makeFamilyName(family_pk, data, album, title):
 @permission_classes([IsAuthenticated])
 @authentication_classes((JSONWebTokenAuthentication,))
 def all_photo(request, family_pk):
-    return_list = []
     if request.method == 'GET':
         albums = Album.objects.filter(family=family_pk)
         photos = Photo.objects.filter(albums__in=albums).order_by('-id')
         serializers = PhotoSerializer(photos, many=True)
-        return_list = serializers.data
-        return Response(return_list)
+        return Response(serializers.data)
     elif request.method == 'POST':
         photos = request.data['photos']
         photo_ids = list(map(int, photos.split(', ')))
@@ -227,11 +228,9 @@ def all_photo(request, family_pk):
                 os.remove(file_path)
         photos.delete()
         albums = Album.objects.filter(family=family_pk)
-        for album in albums:
-            photos = Photo.objects.filter(albums=album)
-            serializers = PhotoSerializer(photos, many=True)
-            return_list += serializers.data
-        return Response(return_list)
+        photos = Photo.objects.filter(albums__in=albums).order_by('-id')
+        serializers = PhotoSerializer(photos, many=True)
+        return Response(serializers.data)
 
 
 @api_view(['POST'])
