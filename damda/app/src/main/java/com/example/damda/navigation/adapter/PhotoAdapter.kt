@@ -18,11 +18,13 @@ import com.example.damda.activity.MainActivity.Companion.photoStatus
 import com.example.damda.navigation.PhotoListFragment
 import com.example.damda.navigation.PhotoListFragment.Companion.currentPosition
 import com.example.damda.navigation.PhotoListFragment.Companion.deleteArray
+import com.example.damda.navigation.PhotoListFragment.Companion.image_checked
 import com.example.damda.navigation.PhotoListFragment.Companion.photoArray
 import com.example.damda.navigation.model.Photos
 import com.google.android.material.bottomnavigation.BottomNavigationView
 import com.jakewharton.rxbinding2.widget.checked
 import com.jakewharton.rxbinding2.widget.checkedChanges
+import kotlinx.android.synthetic.main.fragment_photo_list.*
 import java.net.URL
 
 
@@ -63,20 +65,39 @@ class PhotoAdapter (val photoList: Array<Photos>, val activity: MainActivity, va
                 notifyDataSetChanged()
                 true
             }
+            if (image_checked == 1) {
+                checkbox.isChecked = true
+                if (!photoArray.contains(photo)) {
+                    photoArray.add(photo)
+                }
+            } else {
+                checkbox.isChecked = false
+                if (photoArray.contains(photo)) {
+                    photoArray.remove(photo)
+                }
+            }
             image.setOnClickListener {
                 if (photoStatus == 0) {
                     itemClick(photo)
                 } else {
                     if (photoArray.contains(photo)) {
                         checkbox.isChecked = false
+                        fragment.cb_image.isChecked = false
+                        fragment.cb_image.text = "전체 선택"
                         photoArray.remove(photo)
                         deleteArray.remove(photo.id)
                     } else {
                         checkbox.isChecked = true
                         photoArray.add(photo)
                         deleteArray.add(photo.id)
+                        if (photoArray.size == photoList.size) {
+                            fragment.cb_image.isChecked = true
+                            fragment.cb_image.text = "전체 해제"
+
+                        }
                     }
                 }
+                println(photoArray.size)
             }
             checkbox.setOnClickListener {
                 if (photoArray.contains(photo)) {
@@ -87,7 +108,12 @@ class PhotoAdapter (val photoList: Array<Photos>, val activity: MainActivity, va
                     checkbox.isChecked = true
                     photoArray.add(photo)
                     deleteArray.add(photo.id)
+                    if (photoArray.size == photoList.size) {
+                        fragment.cb_image.isChecked = true
+                        fragment.cb_image.text = "전체 해제"
+                    }
                 }
+                println(photoArray.size)
             }
         }
     }

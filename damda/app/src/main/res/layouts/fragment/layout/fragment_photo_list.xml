@@ -55,6 +55,15 @@
             app:layout_constraintEnd_toEndOf="@+id/btn_cancel"
             app:layout_constraintTop_toTopOf="parent" />
 
+        <CheckBox
+            android:id="@+id/cb_image"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="전체 선택"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <androidx.recyclerview.widget.RecyclerView

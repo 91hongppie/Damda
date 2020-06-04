@@ -16,6 +16,7 @@ import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.damda.GlobalApplication
 import com.example.damda.R
+import com.example.damda.activity.AddPhotoActivity
 import com.example.damda.activity.MainActivity
 import com.example.damda.activity.MissionAddPhotoActivity
 import com.example.damda.navigation.MissionFragment
@@ -81,6 +82,8 @@ class MissionAdapter (val missionList: Array<Mission>, val activity: MainActivit
                         var scoreService: ScoreService = retrofit.create(
                             ScoreService::class.java)
                         my_score += mission.point
+                        MissionFragment().refreshMissionFragment(mission_fragment)
+
                         scoreService.changeScore("JWT $jwt", user_id, my_score, mission.id).enqueue(object:
                             Callback<Score> {
                             override fun onFailure(call: Call<Score>, t: Throwable) {
