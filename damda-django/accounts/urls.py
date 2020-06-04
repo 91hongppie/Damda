@@ -8,6 +8,7 @@ app_name = "accounts"
 urlpatterns = [
     path('device/', views.checkDevice),
     path('signup/', views.signup),
+    path('findpassword/', views.FindPassword),
     path('rest-auth/kakao/', views.KakaoLogin.as_view()),
     path('user/', views.UserInfo),
     path('user/<int:user_pk>/', views.JoinFamily),

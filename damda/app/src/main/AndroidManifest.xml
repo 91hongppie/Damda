@@ -21,6 +21,7 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
+        <activity android:name=".activity.FindPasswordActivity"></activity>
         <activity android:name=".activity.AlarmSwitchActivity"></activity>
         <activity android:name=".activity.SelectAlbumActivity" />
         <activity android:name=".activity.EditUserActivity" />
@@ -75,9 +76,11 @@
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
         </service>
+
         <meta-data
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
+
         <activity android:name=".activity.AddFamilyActivity" /> <!-- 배포시 삭제  userCleartextTraffic -->
         <meta-data
             android:name="com.kakao.sdk.AppKey"

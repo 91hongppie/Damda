@@ -9,3 +9,13 @@ data class SignUp(
 data class CheckEmail(
     val token: String
 )
+data class FindEmail(
+    val id: Int,
+    val username: String,
+    val password: String
+)
+data class ChangePassword(
+    val id: Int,
+    val username: String,
+    val password: String
+)
