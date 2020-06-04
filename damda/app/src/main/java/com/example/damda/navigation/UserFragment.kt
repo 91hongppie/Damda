@@ -64,19 +64,14 @@ class UserFragment : Fragment() {
             }
         })
         view.logout.setOnClickListener {
-            GlobalApplication.prefs.token = ""
-            GlobalApplication.prefs.user_id = ""
-            GlobalApplication.prefs.family_id = ""
-            GlobalApplication.prefs.state = ""
-
             val jwt = GlobalApplication.prefs.token
             val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
-                .addFormDataPart("user_id", "${GlobalApplication.prefs.user_id}")
-                .addFormDataPart("device_token", "${GlobalApplication.prefs.device_token}")
+                .addFormDataPart("user_id", "${prefs.user_id}")
+                .addFormDataPart("device_token", "${prefs.device_token}")
                 .build()
 
             val request = Request.Builder().addHeader("Authorization", "JWT $jwt")
-                .url(prefs.damdaServer + "/api/accounts/logout")
+                .url(prefs.damdaServer + "/api/accounts/logout/")
                 .post(requestBody)
                 .build()
 
@@ -84,6 +79,13 @@ class UserFragment : Fragment() {
             val callback = Callback1()
 
             client.newCall(request).enqueue(callback)
+
+            prefs.token = ""
+            prefs.user_id = ""
+            prefs.family_id = ""
+            prefs.state = ""
+            prefs.my_album = false
+            prefs.gender = 0
 
             var intent = Intent(activity, LoginActivity::class.java)
             startActivity(intent)
@@ -121,26 +123,28 @@ class UserFragment : Fragment() {
             intent.putExtra("isKakao", 0)
             startActivity(intent)
         }
+
         view.auto_upload_switch.setOnCheckedChangeListener{ buttonView, isChecked ->
             prefs.autoStatus = isChecked
             if (isChecked) {
-                use_data_switch.isClickable = true
-                use_data_switch.setTextColor(Color.BLACK)
+                view.use_data_switch.isClickable = true
+                view.use_data_switch.setTextColor(Color.BLACK)
             } else {
-                prefs.mobileAutoUpload = false
-                use_data_switch.isChecked = false
-                use_data_switch.isClickable = false
-                use_data_switch.setTextColor(Color.GRAY)
+                view.use_data_switch.isClickable = false
+                view.use_data_switch.setTextColor(Color.GRAY)
             }
         }
         if (prefs.autoStatus) {
             view.use_data_switch.setTextColor(Color.BLACK)
         } else {
+            view.use_data_switch.isClickable = false
             view.use_data_switch.setTextColor(Color.GRAY)
         }
         view.use_data_switch.setOnCheckedChangeListener { buttonView, isChecked ->
             prefs.mobileAutoUpload = isChecked
         }
+        view.auto_upload_switch.isChecked = prefs.autoStatus
+        view.use_data_switch.isChecked = prefs.mobileAutoUpload
 
         return view
     }
