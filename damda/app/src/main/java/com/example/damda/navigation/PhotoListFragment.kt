@@ -40,6 +40,7 @@ import com.example.damda.navigation.adapter.PhotoAdapter
 import com.example.damda.navigation.model.Album
 import com.example.damda.navigation.model.Photos
 import com.google.gson.GsonBuilder
+import com.jakewharton.rxbinding2.widget.checked
 import kotlinx.android.synthetic.main.fragment_photo_list.*
 import kotlinx.android.synthetic.main.fragment_photo_list.view.*
 import kotlinx.android.synthetic.main.list_item_photo.*
@@ -65,10 +66,23 @@ class PhotoListFragment : Fragment() {
             view.cl_navbar.visibility = View.GONE
             view.btn_cancel.visibility = View.INVISIBLE
             view.btn_correct.visibility = View.VISIBLE
+            view.cb_image.visibility = View.INVISIBLE
         } else {
+            view.cb_image.visibility = View.VISIBLE
             view.cl_navbar.visibility = View.VISIBLE
             view.btn_cancel.visibility = View.VISIBLE
             view.btn_correct.visibility = View.INVISIBLE
+        }
+        view.cb_image.setOnClickListener {
+        if (view.cb_image.isChecked) {
+            image_checked = 1
+            view.cb_image.text = "전체 해제"
+            view.rv_photo.adapter?.notifyDataSetChanged()
+        } else {
+            image_checked = 0
+            view.rv_photo.adapter?.notifyDataSetChanged()
+            view.cb_image.text = "전체 선택"
+        }
         }
         album = arguments?.getParcelable<Album>("album")
         val family_id = GlobalApplication.prefs.family_id?.toInt()
@@ -125,6 +139,7 @@ class PhotoListFragment : Fragment() {
                     navStatus = 1
                     photoStatus = 1
                     context.replaceNavbar()
+                    view.cb_image.visibility = View.VISIBLE
                     view.cl_navbar.visibility = View.VISIBLE
                     view.btn_cancel.visibility = View.VISIBLE
                     view.btn_correct.visibility = View.INVISIBLE
@@ -191,6 +206,8 @@ class PhotoListFragment : Fragment() {
         view.btn_cancel.setOnClickListener {
             photoStatus = 0
             navStatus = 0
+            image_checked = 0
+            view.cb_image.visibility = View.INVISIBLE
             view.cl_navbar.visibility = View.GONE
             view.btn_cancel.visibility = View.INVISIBLE
             view.btn_correct.visibility = View.VISIBLE
@@ -198,6 +215,8 @@ class PhotoListFragment : Fragment() {
             photoArray = ArrayList<Photos>()
             deleteArray = ArrayList<Int>()
             view.rv_photo.adapter?.notifyDataSetChanged()
+            view.cb_image.isChecked = false
+            view.cb_image.text = "전체 선택"
 
         }
             val dialog = AlertDialog.Builder(activity)
@@ -337,6 +356,7 @@ class PhotoListFragment : Fragment() {
         private const val KEY_CURRENT_POSITION = "com.google.samples.gridtopager.key.currentPosition"
         var photoArray = ArrayList<Photos>()
         var deleteArray = ArrayList<Int>()
+        var image_checked = 0
     }
 
  }

@@ -60,7 +60,6 @@ class MonthlyMissionFragment: Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == 1) {
-            println("여기 호출은 되는건가???")
             this.fragmentManager?.beginTransaction()?.detach(this)?.attach(this)?.commit()
         }
     }
