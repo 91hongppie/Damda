@@ -4,10 +4,12 @@ package com.example.damda.activity
 
 
 import android.app.DatePickerDialog
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.View
+import android.view.inputmethod.InputMethodManager
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
 import androidx.appcompat.app.AppCompatActivity
@@ -82,6 +84,15 @@ class SignupActivity : AppCompatActivity() {
                 id: Long
             ) {
                 gender = position.toString()
+            }
+        }
+        signup_layout.setOnClickListener {
+            var view = this.currentFocus
+
+            if(view != null)
+            {
+                val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                inputMethodManager.hideSoftInputFromWindow(view.windowToken, 0)
             }
         }
     }

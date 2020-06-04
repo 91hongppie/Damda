@@ -15,6 +15,7 @@ class Constants {
         val PASSWORD_RULS = "^(?=.*[a-zA-Z])(?=.*\\d)(?=.*\\W).{8,20}\$"
         //이메일 정규식
         val EMAIL_RULS = "^[a-z0-9_+.-]+@([a-z0-9-]+\\.)+[a-z0-9]{2,4}\$"
+        val CODE_RULS = "^[a-z0-9A-Z]{4,10}\$"
 
     }
 }
