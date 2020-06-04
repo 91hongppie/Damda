@@ -130,10 +130,12 @@
     <string name="channel_name2">새로운 사진 알림</string>
     <string name="channel_name3">생일 알림</string>
     <string name="channel_name4">미션 알림</string>
+    <string name="channel_name5">이미지 업로드 상태</string>
     <string name="channel_description1">일정 기간 활동하지 않으면 알림이 울립니다.</string>
     <string name="channel_description2">새로운 사진이 업로드되면 알림이 울립니다.</string>
     <string name="channel_description3">생일 축하메세지를 보여줍니다.</string>
     <string name="channel_description4">부모님이 새로운 미션을 등록하면 알림이 울립니다.</string>
+    <string name="channel_description5">이미지가 업로드되고 있는 상태를 보여줍니다.</string>
 
     <!--  가족 관계 선택  -->
     <string-array name="familyNameF">

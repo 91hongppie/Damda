@@ -26,6 +26,7 @@ import com.jakewharton.rxbinding2.widget.color
 import kotlinx.android.synthetic.main.fragment_user.*
 import kotlinx.android.synthetic.main.fragment_user.view.*
 import kotlinx.android.synthetic.main.list_item_request.view.*
+import okhttp3.FormBody
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request
@@ -109,7 +110,7 @@ class UserFragment : Fragment() {
         }
         view.alarm.setOnClickListener {
             val intent = Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS)
-            Log.d("packageName", "${context!!.packageName}")
+
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
                 intent.putExtra(Settings.EXTRA_APP_PACKAGE, activity?.packageName)
             } else {

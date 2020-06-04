@@ -1,11 +1,14 @@
 package com.example.damda
 
+import android.app.NotificationManager
 import android.content.Context
 import android.content.Intent
 import android.media.ExifInterface
 import android.util.Log
 import androidx.core.app.ActivityCompat
 import androidx.core.app.JobIntentService
+import androidx.core.app.NotificationCompat
+import androidx.core.app.NotificationManagerCompat
 import com.example.damda.activity.MainActivity
 import okhttp3.*
 import java.io.File
@@ -36,9 +39,10 @@ class ImageUpload : JobIntentService() {
     override fun onHandleWork(intent: Intent) {
         val url = URL(GlobalApplication.prefs.damdaServer+"/api/albums/addphoto/")
         val paths = intent.getStringArrayListExtra("paths")!!
+
         for (i in 0 until paths.size) {
             val image = File(paths[i])
-            uploadImage(url, image, paths[i], i)
+            uploadImage(url, image, paths[i], i, paths.size)
             Thread.sleep(500)
         }
     }
@@ -60,9 +64,18 @@ class ImageUpload : JobIntentService() {
 
         client.newCall(request).enqueue(callback)
 
+        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        var builder = NotificationCompat.Builder(this, "UPLOAD")
+            .setSmallIcon(R.drawable.push_icon)
+            .setContentTitle("담다")
+            .setContentText("업로드 완료")
+            .setProgress(0, 0, false)
+
+        notificationManager.notify(12100, builder.build())
+
         Log.d(TAG,"끝끝끝")
     }
-    fun uploadImage(url : URL, image: File, path: String, i: Int) {
+    fun uploadImage(url : URL, image: File, path: String, i: Int, size: Int) {
         val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
             .addFormDataPart("user_id", "${GlobalApplication.prefs.user_id}")
 
@@ -99,6 +112,19 @@ class ImageUpload : JobIntentService() {
         } catch (e: Exception) {
             Log.d("Exception", "$e")
         }
+
+        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        var builder = NotificationCompat.Builder(this, "UPLOAD")
+            .setSmallIcon(R.drawable.push_icon)
+            .setContentTitle("담다")
+            .setContentText("업로드 진행중")
+
+        var present = i.toFloat()
+        var max_size = size.toFloat()
+        var progress =  present.div(max_size).times(100).toInt()
+        Log.d("PROGRESS", "i: $i, progress: $progress == ${present / max_size * 100}, size: $size")
+        builder.setProgress(100, progress, false)
+        notificationManager.notify(12100, builder.build())
     }
 
     inner class Callback1 : Callback {

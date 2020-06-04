@@ -491,7 +491,10 @@ def score(request, user_pk):
 @authentication_classes((JSONWebTokenAuthentication,))
 @csrf_exempt
 def logout(request):
+    print('-----------------------------------------------------------')
+    print(request.data)
     device_token = request.POST.get('device_token')
+    print(device_token)
     target = get_object_or_404(Device, device_token=device_token)
     target.delete()
     return Response(status=status.HTTP_200_OK)
