@@ -45,6 +45,7 @@ import com.jakewharton.rxbinding2.widget.checked
 import kotlinx.android.synthetic.main.fragment_photo_list.*
 import kotlinx.android.synthetic.main.fragment_photo_list.view.*
 import kotlinx.android.synthetic.main.list_item_photo.*
+import kotlinx.android.synthetic.main.list_item_photo.view.*
 import okhttp3.*
 import retrofit2.http.Url
 import java.io.ByteArrayOutputStream
@@ -140,6 +141,8 @@ class PhotoListFragment : Fragment() {
                     navStatus = 1
                     photoStatus = 1
                     context.replaceNavbar()
+                    view.cb_image.isChecked = false
+                    view.cb_image.text = "전체 선택"
                     view.cb_image.visibility = View.VISIBLE
                     view.cl_navbar.visibility = View.VISIBLE
                     view.btn_cancel.visibility = View.VISIBLE
@@ -164,6 +167,10 @@ class PhotoListFragment : Fragment() {
             }
             photoStatus = 0
             navStatus = 0
+            image_checked = 0
+            view.cb_image.isChecked = false
+            view.cb_image.text = "전체 선택"
+            view.cb_image.visibility = View.INVISIBLE
             view.cl_navbar.visibility = View.GONE
             view.btn_cancel.visibility = View.INVISIBLE
             view.btn_correct.visibility = View.VISIBLE
@@ -177,6 +184,7 @@ class PhotoListFragment : Fragment() {
             photoList = photoArray.toTypedArray()
             photoStatus = 0
             navStatus = 0
+            image_checked = 0
             photoArray = ArrayList<Photos>()
             deleteArray = ArrayList<Int>()
             view.rv_photo.adapter?.notifyDataSetChanged()
@@ -198,6 +206,9 @@ class PhotoListFragment : Fragment() {
                     type = "image/*"
                 }
             val chooser = Intent.createChooser(share_intent, "친구에게 공유하기")
+            view.cb_image.visibility = View.INVISIBLE
+            view.cb_image.isChecked = false
+            view.cb_image.text = "전체 선택"
             view.cl_navbar.visibility = View.GONE
             view.btn_cancel.visibility = View.INVISIBLE
             view.btn_correct.visibility = View.VISIBLE
@@ -226,6 +237,10 @@ class PhotoListFragment : Fragment() {
                     DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
                         photoStatus = 0
                         navStatus = 0
+                        image_checked = 0
+                        view.cb_image.isChecked = false
+                        view.cb_image.text = "전체 선택"
+                        view.cb_image.visibility = View.INVISIBLE
                         view.cl_navbar.visibility = View.GONE
                         view.btn_cancel.visibility = View.INVISIBLE
                         view.btn_correct.visibility = View.VISIBLE
@@ -270,6 +285,7 @@ class PhotoListFragment : Fragment() {
                     })
                 .setNegativeButton("취소",
                 DialogInterface.OnClickListener { dialog, id ->
+                    image_checked = 0
                     dialog.dismiss()
                 })
             dialog.create()
