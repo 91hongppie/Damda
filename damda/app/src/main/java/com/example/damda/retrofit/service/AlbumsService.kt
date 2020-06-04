@@ -39,7 +39,6 @@ interface AlbumsService {
     fun changeAlbumImage(
         @Header("Authorization") jwt:String,
         @Path("album_id") album_id: Int,
-        @Part("id") id: Int,
         @Part("image") image: String
     ): Call<PutAlbum>
 

@@ -10,14 +10,15 @@
         android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:paddingBottom="5dp"
+        android:paddingTop="20dp"
         android:src="@drawable/logo_title"/>
-
     <LinearLayout
         android:id="@+id/signin_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
         android:layout_alignParentBottom="true"
-        android:layout_marginBottom="-9dp"
         android:layout_marginLeft="20dp"
         android:layout_marginRight="20dp"
         android:orientation="vertical">
@@ -58,9 +59,10 @@
         <Button
             android:id="@+id/login_button"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
+            android:layout_height="42dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="13dp"
+            android:textSize="18sp"
             android:text="로그인"
             android:textColor="@color/white"
             android:background="@color/bluebell" />
@@ -68,31 +70,30 @@
         <Button
             android:id="@+id/signup_button"
             android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginBottom="35dp"
+            android:layout_height="42dp"
+            android:layout_marginBottom="10dp"
+            android:textSize="18sp"
             android:text="회원가입"
             android:background="@drawable/round_green"
             android:textColor="@color/bluebell" />
+        <TextView
+            android:id="@+id/find_pw"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginBottom="35dp"
+            android:layout_gravity="center"
+            android:text="비밀번호가 기억나지않으세요?"
+            android:textAlignment="center"/>
 
 
         <com.kakao.usermgmt.LoginButton
             android:id="@+id/kakao_login"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp"
+            android:layout_marginBottom="45dp"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent" />
-
-        <TextView
-            android:id="@+id/find_pw"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginBottom="50dp"
-            android:text="비밀번호가 기억나지않으세요?"
-            android:textAlignment="center"
-            android:textColor="@color/bluebell"></TextView>
-
 
     </LinearLayout>
 </RelativeLayout>

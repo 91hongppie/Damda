@@ -120,7 +120,7 @@ class EditUserActivity : AppCompatActivity() {
 
                 override fun onResponse(call: Call<SignUp>, response: Response<SignUp>) {
                     toast("수정 되었습니다.")
-                    prefs.gender = gender.toInt()
+                    GlobalApplication.prefs.gender = gender.toInt()
                     if (isKakao == 1) {
                         if (GlobalApplication.prefs.state!!.toInt() < 2) {
                             var intent = Intent(this@EditUserActivity, AddFamilyActivity::class.java)

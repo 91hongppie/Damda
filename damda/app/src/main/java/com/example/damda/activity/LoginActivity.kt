@@ -143,6 +143,7 @@ class LoginActivity : AppCompatActivity() {
                                     prefs.family_id = userInfo?.family.toString()
                                     prefs.state = userInfo?.state.toString()
                                     prefs.my_album = userInfo?.my_album!!
+                                    Log.v("asdf", userInfo.toString())
                                     val birth = userInfo?.birth
                                     val gender = userInfo?.gender
                                     if (gender == null || birth == null) {
