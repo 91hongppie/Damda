@@ -141,6 +141,9 @@ class PhotoDetailFragment: Fragment() {
             val wrapper = ContextThemeWrapper(this.context, R.style.BasePopupMenu)
             val pop = PopupMenu(wrapper, it)
             pop.inflate(R.menu.menu_photo)
+            if (album?.id == null){
+                pop.menu.removeItem(R.id.image_change)
+            }
             pop.setOnMenuItemClickListener { item ->
                 when(item.itemId){
                     R.id.save -> {
