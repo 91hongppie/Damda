@@ -104,7 +104,7 @@ class CropperActivity : AppCompatActivity() {
             val file = File(getPath(uri!!))
             val requestFile: RequestBody =
                 RequestBody.create(MediaType.parse("multipart/form-data"), file)
-            val sdf = SimpleDateFormat("")
+            val sdf = SimpleDateFormat("yyyyMMdd_HHmmss")
             val filename = sdf.format(System.currentTimeMillis())
             val body =
                 MultipartBody.Part.createFormData("image", "$filename.jpg", requestFile)
