@@ -41,7 +41,9 @@ import com.example.damda.navigation.model.Photos
 import com.example.damda.retrofit.model.Albums
 import com.example.damda.retrofit.service.AlbumsService
 import com.google.gson.GsonBuilder
+import kotlinx.android.synthetic.main.fragment_photo_list.*
 import kotlinx.android.synthetic.main.fragment_photo_list.view.*
+import kotlinx.android.synthetic.main.fragment_photo_list.view.cb_image
 import okhttp3.*
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
@@ -151,164 +153,6 @@ class PhotoListFragment : Fragment() {
                     view.rv_photo.adapter?.notifyDataSetChanged()
                 }
             }
-        view.btn_download.setOnClickListener {
-            photoList = photoArray.toTypedArray()
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M){
-                if (ContextCompat.checkSelfPermission(this.context!!, Manifest.permission.WRITE_EXTERNAL_STORAGE) ==
-                    PackageManager.PERMISSION_DENIED){
-                    requestPermissions(arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE), STORAGE_PERMISSION_CODE)
-                }
-                else{
-                    startDownloading()
-                }
-
-            }
-            else{
-                startDownloading()
-            }
-            photoStatus = 0
-            navStatus = 0
-            image_checked = 0
-            view.cb_image.isChecked = false
-            view.cb_image.text = "전체 선택"
-            view.cb_image.visibility = View.INVISIBLE
-            view.cl_navbar.visibility = View.GONE
-            view.btn_cancel.visibility = View.INVISIBLE
-            view.btn_correct.visibility = View.VISIBLE
-            context.replaceNavbar()
-            photoArray = ArrayList<Photos>()
-            deleteArray = ArrayList<Int>()
-            view.rv_photo.adapter?.notifyDataSetChanged()
-
-        }
-        view.btn_share.setOnClickListener {
-            photoList = photoArray.toTypedArray()
-            photoStatus = 0
-            navStatus = 0
-            image_checked = 0
-            photoArray = ArrayList<Photos>()
-            deleteArray = ArrayList<Int>()
-            view.rv_photo.adapter?.notifyDataSetChanged()
-            var imageUris = ArrayList<Uri?>()
-            for (photo in photoList) {
-                var url = prefs.damdaServer+"/${photo.pic_name}"
-                var image_task: URLtoBitmapTask = URLtoBitmapTask()
-                image_task = URLtoBitmapTask().apply {
-                    imgurl = URL(url)
-                }
-                var bitmap: Bitmap = image_task.execute().get()
-                var uri: Uri? = getImageUri(context, bitmap, photo.title)
-                imageUris.add(uri)
-            }
-
-            val share_intent = Intent().apply {
-                    action = Intent.ACTION_SEND_MULTIPLE
-                    putExtra(Intent.EXTRA_STREAM, imageUris)
-                    type = "image/*"
-                }
-            val chooser = Intent.createChooser(share_intent, "친구에게 공유하기")
-            view.cb_image.visibility = View.INVISIBLE
-            view.cb_image.isChecked = false
-            view.cb_image.text = "전체 선택"
-            view.cl_navbar.visibility = View.GONE
-            view.btn_cancel.visibility = View.INVISIBLE
-            view.btn_correct.visibility = View.VISIBLE
-            context.replaceNavbar()
-            startActivity(chooser)
-        }
-        view.btn_move.setOnClickListener{
-            var nullalbumList = emptyArray<Album>()
-            var retrofit = Retrofit.Builder()
-                .baseUrl(prefs.damdaServer)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-            val family_id = prefs.family_id.toString()
-            var albumsService: AlbumsService = retrofit.create(
-                AlbumsService::class.java)
-            albumsService.requestAlbums("JWT $jwt", family_id, prefs.user_id!!).enqueue(object:
-                retrofit2.Callback<Albums> {
-                override fun onFailure(call: retrofit2.Call<Albums>, t: Throwable) {
-                    var dialog = androidx.appcompat.app.AlertDialog.Builder(context)
-                    dialog.setTitle("에러")
-                    dialog.setMessage("호출실패했습니다.")
-                    dialog.show()
-                }
-
-                override fun onResponse(call: retrofit2.Call<Albums>, response: retrofit2.Response<Albums>) {
-                    val albums = response.body()
-                    nullalbumList = albums!!.data
-                    var movealbumId = 0
-                    var dialogBuilder = AlertDialog.Builder(activity)
-                    dialogBuilder.setTitle("가족 설정")
-                    var fnl = MoveAlbumAdapter(nullalbumList)
-                    dialogBuilder.setSingleChoiceItems( fnl,-1, DialogInterface.OnClickListener { dialog, which ->
-                        movealbumId = fnl.getItem(which) as Int
-                        photoStatus = 0
-                        navStatus = 0
-                        image_checked = 0
-                        view.cb_image.isChecked = false
-                        view.cb_image.text = "전체 선택"
-                        view.cb_image.visibility = View.INVISIBLE
-                        view.cl_navbar.visibility = View.GONE
-                        view.btn_cancel.visibility = View.INVISIBLE
-                        view.btn_correct.visibility = View.VISIBLE
-                        context.replaceNavbar()
-                        val jwt = prefs.token
-                        var payload: String = ""
-                        for (photo in deleteArray) {
-                            if (payload.length == 0) {
-                                payload += "$photo"
-                            } else {
-                                payload += ", $photo"
-                            }
-                        }
-                        val formBody = FormBody.Builder()
-                            .add("photos", payload)
-                            .add("albumId", album!!.id.toString())
-                            .add("moveAlbumId", movealbumId.toString())
-                            .build()
-                        val moveUrl =  URL(prefs.damdaServer+"/api/albums/move/")
-                        val request = Request.Builder().url(moveUrl).addHeader("Authorization", "JWT $jwt").method("POST", formBody)
-                            .build()
-                        val client = OkHttpClient()
-                        client.newCall(request).enqueue(object: Callback {
-                            override fun onFailure(call: Call, e: IOException) {
-                                println("Failed to execute request!")
-                            }
-
-                            override fun onResponse(call: Call, response: Response) {
-                                val body = response.body()?.string()
-                                val gson = GsonBuilder().create()
-                                var list = emptyArray<Photos>()
-                                photoList= gson.fromJson(body, list::class.java)
-                                var bundle = Bundle()
-                                bundle.putParcelable("album", album)
-                                var fragment = PhotoListFragment()
-                                fragment.arguments = bundle
-                                fragmentManager!!.beginTransaction().remove(this@PhotoListFragment).commit()
-                                fragmentManager!!.popBackStack()
-                                fragmentManager!!.popBackStack()
-                                context.replaceFragment(fragment)
-                                dialog.dismiss()
-                            }
-                        })
-                        photoArray = ArrayList<Photos>()
-                        deleteArray = ArrayList<Int>()
-
-
-                    })
-
-                    var dialogListener = object: DialogInterface.OnClickListener{
-                        override fun onClick(dialog: DialogInterface?, which: Int) {
-                        }
-                    }
-                    dialogBuilder.setPositiveButton("취소", dialogListener)
-                    dialogBuilder.show()
-
-                }
-            })
-
-        }
         view.btn_cancel.setOnClickListener {
             photoStatus = 0
             navStatus = 0
@@ -329,6 +173,11 @@ class PhotoListFragment : Fragment() {
         dialog.setMessage("삭제하시겠습니까?")
             .setPositiveButton("확인",
                 DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
+                    if (cb_image.text != "전체 선택") {
+                        for (i in 0 until photoList.size) {
+                            deleteArray.add(photoList[i].id)
+                        }
+                    }
                     photoStatus = 0
                     navStatus = 0
                     image_checked = 0
@@ -378,13 +227,201 @@ class PhotoListFragment : Fragment() {
                     deleteArray = ArrayList<Int>()
                 })
             .setNegativeButton("취소",
-            DialogInterface.OnClickListener { dialog, id ->
-                image_checked = 0
-                dialog.dismiss()
-            })
+                DialogInterface.OnClickListener { dialog, id ->
+                    image_checked = 0
+                    dialog.dismiss()
+                })
         dialog.create()
+        view.btn_download.setOnClickListener {
+            if (photoArray.size > 0) {
+                if (cb_image.text == "전체 선택") {
+                    photoList = photoArray.toTypedArray()
+                }
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                    if (ContextCompat.checkSelfPermission(
+                            this.context!!,
+                            Manifest.permission.WRITE_EXTERNAL_STORAGE
+                        ) ==
+                        PackageManager.PERMISSION_DENIED
+                    ) {
+                        requestPermissions(
+                            arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE),
+                            STORAGE_PERMISSION_CODE
+                        )
+                    } else {
+                        startDownloading()
+                    }
+
+                } else {
+                    startDownloading()
+                }
+                photoStatus = 0
+                navStatus = 0
+                image_checked = 0
+                view.cb_image.isChecked = false
+                view.cb_image.text = "전체 선택"
+                view.cb_image.visibility = View.INVISIBLE
+                view.cl_navbar.visibility = View.GONE
+                view.btn_cancel.visibility = View.INVISIBLE
+                view.btn_correct.visibility = View.VISIBLE
+                context.replaceNavbar()
+                photoArray = ArrayList<Photos>()
+                deleteArray = ArrayList<Int>()
+                view.rv_photo.adapter?.notifyDataSetChanged()
+            }
+        }
+        view.btn_share.setOnClickListener {
+            if (cb_image.text == "전체 선택") {
+                photoList = photoArray.toTypedArray()
+                if (photoArray.size > 0) {
+                    photoList = photoArray.toTypedArray()
+                    photoStatus = 0
+                    navStatus = 0
+                    image_checked = 0
+                    photoArray = ArrayList<Photos>()
+                    deleteArray = ArrayList<Int>()
+                    view.rv_photo.adapter?.notifyDataSetChanged()
+                    var imageUris = ArrayList<Uri?>()
+                    for (photo in photoList) {
+                        var url = prefs.damdaServer + "/${photo.pic_name}"
+                        var image_task: URLtoBitmapTask = URLtoBitmapTask()
+                        image_task = URLtoBitmapTask().apply {
+                            imgurl = URL(url)
+                        }
+                        var bitmap: Bitmap = image_task.execute().get()
+                        var uri: Uri? = getImageUri(context, bitmap, photo.title)
+                        imageUris.add(uri)
+                    }
+
+                    val share_intent = Intent().apply {
+                        action = Intent.ACTION_SEND_MULTIPLE
+                        putExtra(Intent.EXTRA_STREAM, imageUris)
+                        type = "image/*"
+                    }
+                    val chooser = Intent.createChooser(share_intent, "친구에게 공유하기")
+                    view.cb_image.visibility = View.INVISIBLE
+                    view.cb_image.isChecked = false
+                    view.cb_image.text = "전체 선택"
+                    view.cl_navbar.visibility = View.GONE
+                    view.btn_cancel.visibility = View.INVISIBLE
+                    view.btn_correct.visibility = View.VISIBLE
+                    context.replaceNavbar()
+                    startActivity(chooser)
+                }
+            }
+        }
+        view.btn_move.setOnClickListener{
+            if (photoArray.size > 0) {
+                if (cb_image.text != "전체 선택") {
+                    for (i in 0 until photoList.size) {
+                        deleteArray.add(photoList[i].id)
+                    }
+                }
+                var nullalbumList = emptyArray<Album>()
+                var retrofit = Retrofit.Builder()
+                    .baseUrl(prefs.damdaServer)
+                    .addConverterFactory(GsonConverterFactory.create())
+                    .build()
+                val family_id = prefs.family_id.toString()
+                var albumsService: AlbumsService = retrofit.create(
+                    AlbumsService::class.java
+                )
+                albumsService.requestAlbums("JWT $jwt", family_id, prefs.user_id!!).enqueue(object :
+                    retrofit2.Callback<Albums> {
+                    override fun onFailure(call: retrofit2.Call<Albums>, t: Throwable) {
+                        var dialog = androidx.appcompat.app.AlertDialog.Builder(context)
+                        dialog.setTitle("에러")
+                        dialog.setMessage("호출실패했습니다.")
+                        dialog.show()
+                    }
+
+                    override fun onResponse(
+                        call: retrofit2.Call<Albums>,
+                        response: retrofit2.Response<Albums>
+                    ) {
+                        val albums = response.body()
+                        nullalbumList = albums!!.data
+                        var movealbumId = 0
+                        var dialogBuilder = AlertDialog.Builder(activity)
+                        dialogBuilder.setTitle("가족 설정")
+                        var fnl = MoveAlbumAdapter(nullalbumList)
+                        dialogBuilder.setSingleChoiceItems(
+                            fnl,
+                            -1,
+                            DialogInterface.OnClickListener { dialog, which ->
+                                movealbumId = fnl.getItem(which) as Int
+                                photoStatus = 0
+                                navStatus = 0
+                                image_checked = 0
+                                view.cb_image.isChecked = false
+                                view.cb_image.text = "전체 선택"
+                                view.cb_image.visibility = View.INVISIBLE
+                                view.cl_navbar.visibility = View.GONE
+                                view.btn_cancel.visibility = View.INVISIBLE
+                                view.btn_correct.visibility = View.VISIBLE
+                                context.replaceNavbar()
+                                val jwt = prefs.token
+                                var payload: String = ""
+                                for (photo in deleteArray) {
+                                    if (payload.length == 0) {
+                                        payload += "$photo"
+                                    } else {
+                                        payload += ", $photo"
+                                    }
+                                }
+                                val formBody = FormBody.Builder()
+                                    .add("photos", payload)
+                                    .add("albumId", album!!.id.toString())
+                                    .add("moveAlbumId", movealbumId.toString())
+                                    .build()
+                                val moveUrl = URL(prefs.damdaServer + "/api/albums/move/")
+                                val request = Request.Builder().url(moveUrl)
+                                    .addHeader("Authorization", "JWT $jwt").method("POST", formBody)
+                                    .build()
+                                val client = OkHttpClient()
+                                client.newCall(request).enqueue(object : Callback {
+                                    override fun onFailure(call: Call, e: IOException) {
+                                        println("Failed to execute request!")
+                                    }
+
+                                    override fun onResponse(call: Call, response: Response) {
+                                        val body = response.body()?.string()
+                                        val gson = GsonBuilder().create()
+                                        var list = emptyArray<Photos>()
+                                        photoList = gson.fromJson(body, list::class.java)
+                                        var bundle = Bundle()
+                                        bundle.putParcelable("album", album)
+                                        var fragment = PhotoListFragment()
+                                        fragment.arguments = bundle
+                                        fragmentManager!!.beginTransaction()
+                                            .remove(this@PhotoListFragment).commit()
+                                        fragmentManager!!.popBackStack()
+                                        fragmentManager!!.popBackStack()
+                                        context.replaceFragment(fragment)
+                                        dialog.dismiss()
+                                    }
+                                })
+                                photoArray = ArrayList<Photos>()
+                                deleteArray = ArrayList<Int>()
+
+
+                            })
+
+                        var dialogListener = object : DialogInterface.OnClickListener {
+                            override fun onClick(dialog: DialogInterface?, which: Int) {
+                            }
+                        }
+                        dialogBuilder.setPositiveButton("취소", dialogListener)
+                        dialogBuilder.show()
+
+                    }
+                })
+            }
+        }
         view.btn_photos_delete.setOnClickListener {
-            dialog.show()
+            if (photoArray.size > 0) {
+                dialog.show()
+            }
         }
         prepareTransitions()
         postponeEnterTransition()
