@@ -26,7 +26,8 @@ import requests
 @api_view(['GET', 'POST'])
 def photo(request, family_pk, album_pk):
     if request.method == 'GET':
-        photos = Photo.objects.filter(album=album_pk).order_by('-id')
+        album = get_object_or_404(Album, pk=album_pk)
+        photos = Photo.objects.filter(albums=album).order_by('-id')
         serializers = PhotoSerializer(photos, many=True)
         return Response(serializers.data)
     elif request.method == 'POST':
@@ -123,23 +124,22 @@ def face(request, family_pk, user_pk):
         if len(face_encoding) == 0:
             return Response(status=202, data={'message': '얼굴을 찾을 수 없습니다.'})
         ROOT_DIR = os.path.abspath("./")
-        os.makedirs(os.path.join(ROOT_DIR, 'uploads/faces/{}'.format(family_pk)), exist_ok=True)
+        os.makedirs(os.path.join(ROOT_DIR, 'uploads/faces'), exist_ok=True)
         try:
-            with open(f'uploads/faces/{family_pk}/family_{family_pk}.json') as family:
+            with open(f'uploads/faces/family_{family_pk}.json') as family:
                 data = json.load(family)
             data[f'{family_pk}_{title}'] = [face_encoding[0].tolist()]
         except:
             data = {}
             data[f'{family_pk}_{title}'] = [face_encoding[0].tolist()]
-        with open(f'uploads/faces/{family_pk}/family_{family_pk}.json', 'w', encoding='utf-8') as family:
+        with open(f'uploads/faces/family_{family_pk}.json', 'w', encoding='utf-8') as family:
             json.dump(data, family, cls=NumpyArrayEncoder, ensure_ascii=-False, indent=2)
         
         albumSerializer = AlbumSerializer(data={'family':family_pk, 'title':title, 'image': "empty"})
         if albumSerializer.is_valid():
             albumSerializer.save()
-            os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/{}/{}'.format(family_pk, albumSerializer.data['id'])), exist_ok=True)
-            print(request.FILES)
-            image_path = 'uploads/albums/{}/{}/{}'.format(family_pk, albumSerializer.data['id'], request.FILES['image'])
+            os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/{}'.format(family_pk)), exist_ok=True)
+            image_path = 'uploads/albums/{}/{}'.format(family_pk, request.FILES['image'])
             album = get_object_or_404(Album, pk=albumSerializer.data['id'])
             albumSerializer2 = AlbumSerializer(
                 data={'family':family_pk, 'title':title, 'image': image_path}, instance=album)
@@ -150,6 +150,8 @@ def face(request, family_pk, user_pk):
                 if makeFamilyName(family_pk, request.data, albumSerializer.data['id'], title):
                     album.delete()
                     return Response(status=status.HTTP_400_BAD_REQUEST)
+                make_image = Photo.objects.create(pic_name=image_path, title=request.FILES['image'])
+                make_image.albums.add(album)
                 response_data = albumSerializer2.data
                 response_data['call'] = title
                 return Response(response_data)
@@ -211,7 +213,7 @@ def all_photo(request, family_pk):
     return_list = []
     if request.method == 'GET':
         albums = Album.objects.filter(family=family_pk)
-        photos = Photo.objects.filter(album__in=albums).order_by('-id')
+        photos = Photo.objects.filter(albums__in=albums).order_by('-id')
         serializers = PhotoSerializer(photos, many=True)
         return_list = serializers.data
         return Response(return_list)
@@ -226,7 +228,7 @@ def all_photo(request, family_pk):
         photos.delete()
         albums = Album.objects.filter(family=family_pk)
         for album in albums:
-            photos = Photo.objects.filter(album=album.id)
+            photos = Photo.objects.filter(albums=album)
             serializers = PhotoSerializer(photos, many=True)
             return_list += serializers.data
         return Response(return_list)
@@ -246,29 +248,20 @@ def addphoto(request):
     except:
         return Response(data='Who are you?', status=status.HTTP_404_NOT_FOUND)
     
-    # 가족 앨범 확인
-    if len(Album.objects.filter(family_id=user.family_id)):
-        albums = Album.objects.filter(family_id=user.family_id)
-        album = albums[0]
-    else:
-        # 앨범이 없으면 기본 앨범 만들기 시도 
-        try:
-            album = Album.objects.create(family_id=user.family_id, title='기본 앨범', image="")
-        # 못만들면 404 
-        except:
-            print('Family is NOT FOUND')
-            return Response(data="Family is NOT FOUND", status=status.HTTP_404_NOT_FOUND) 
+    albums = Album.objects.filter(family_id=user.family_id)
+    album = albums[0]
 
     ROOT_DIR = os.path.abspath("./")
-    os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/{}/{}'.format(user.family_id, album.id)), exist_ok=True)
+    os.makedirs(os.path.join(ROOT_DIR, 'uploads/albums/{}'.format(user.family_id)), exist_ok=True)
     
     image = fr.load_image_file(item)
 
-    image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
-    if len(Photo.objects.filter(pic_name=image_path, album=album)):
+    image_path = 'uploads/albums/{}/{}'.format(user.family_id, item.name + '.jpg')
+    if len(Photo.objects.filter(pic_name=image_path)):
         print('이미 있는 사진입니다')
         return Response(status=status.HTTP_200_OK)
-    save_path2 = os.path.join(ROOT_DIR, image_path)
+    skimage.io.imsave(image_path, image)
+    make_image = Photo.objects.create(pic_name=image_path, title=item.name)
     faces = fr.face_locations(image)
     if len(faces) != 0:
         count = 0
@@ -278,16 +271,14 @@ def addphoto(request):
             unknown_face = fr.face_encodings(image_face)
             if len(unknown_face) == 0:
                 if not Photo.objects.filter(pic_name=image_path):
-                    image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
-                    make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=album)
+                    make_image.albums.add(album)
                 break
             try:
-                with open(f'uploads/faces/{album.family.id}/family_{album.family.id}.json', 'r', encoding='utf-8') as family:
+                with open(f'uploads/faces/family_{album.family.id}.json', 'r', encoding='utf-8') as family:
                     data = json.load(family)
             except:
                 if not Photo.objects.filter(pic_name=image_path):
-                    image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
-                    make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=album)
+                    make_image.albums.add(album)
                 break
             for album_name, data in data.items():
                 for dt in data:
@@ -296,22 +287,14 @@ def addphoto(request):
                     if distance < 0.44:
                         info = album_name.split('_')
                         user_album = Album.objects.filter(family=info[0], title=info[1])[0]
-                        image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, user_album.id, item.name + '.jpg')
-                        make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=user_album)
-                        skimage.io.imsave(image_path, image)
+                        make_image.albums.add(user_album)
                         count += 1
                         break
         if count == 0:
             if not Photo.objects.filter(pic_name=image_path):
-                image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
-                make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=album)
+                make_image.albums.add(album)
     else:
-        if not Photo.objects.filter(pic_name=image_path):
-            image_path = 'uploads/albums/{}/{}/{}'.format(user.family_id, album.id, item.name + '.jpg')
-            make_image = Photo.objects.create(pic_name=image_path, title=item.name, album=album)
-    skimage.io.imsave(image_path, image)
-    album.updated_at = make_image.uploaded_at
-    
+        make_image.albums.add(album)
     return Response(status=status.HTTP_200_OK)
 
 @api_view(['POST'])

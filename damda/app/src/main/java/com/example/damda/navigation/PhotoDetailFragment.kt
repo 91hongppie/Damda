@@ -166,7 +166,7 @@ class PhotoDetailFragment: Fragment() {
                         val jwt = GlobalApplication.prefs.token
                         val photo = photoList[selectedPosition].pic_name!!
                         var albumsService: AlbumsService = retrofit.create(AlbumsService::class.java)
-                        albumsService.changeAlbumImage("JWT $jwt", album!!.id, album!!.id, photo).enqueue(object: retrofit2.Callback<PutAlbum>{
+                        albumsService.changeAlbumImage("JWT $jwt", album!!.id, photo).enqueue(object: retrofit2.Callback<PutAlbum>{
                             override fun onFailure(call: retrofit2.Call<PutAlbum>, t: Throwable) {
                                 Toast.makeText(context, "대표 이미지가 변경에 실패했습니다.", Toast.LENGTH_SHORT).show()
                             }
@@ -178,7 +178,7 @@ class PhotoDetailFragment: Fragment() {
                     }
                     R.id.share -> {
                         val share_intent = Intent().apply {
-                            var url = prefs.damdaServer+"/api/${photoList[selectedPosition].pic_name}"
+                            var url = prefs.damdaServer+"/${photoList[selectedPosition].pic_name}"
                             var image_task: URLtoBitmapTask = URLtoBitmapTask()
                             image_task = URLtoBitmapTask().apply {
                                 imgurl = URL(url)
@@ -214,7 +214,7 @@ class PhotoDetailFragment: Fragment() {
 
     private  fun startDownloading() {
         val photo = photoList[selectedPosition]
-        val imgurl = prefs.damdaServer+"/api/${photo.pic_name}"
+        val imgurl = prefs.damdaServer+"/${photo.pic_name}"
         val request = DownloadManager.Request(Uri.parse(imgurl))
         val jwt = GlobalApplication.prefs.token
         request.addRequestHeader("Authorization", "JWT $jwt")
@@ -257,7 +257,7 @@ class PhotoDetailFragment: Fragment() {
             val photo = photoList.get(position)
             // load image
             Glide.with(context!!)
-                .load(prefs.damdaServer+"/api/${photo.pic_name}")
+                .load(prefs.damdaServer+"/${photo.pic_name}")
                 .into(view.ivFullscreenImage)
 
             container.addView(view)
