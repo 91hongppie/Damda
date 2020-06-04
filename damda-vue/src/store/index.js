@@ -6,7 +6,7 @@ Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    server: 'http://127.0.0.1:8000/',
+    server: 'https://k02b2051.p.ssafy.io/',
   },
   mutations: {
   },
