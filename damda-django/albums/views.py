@@ -468,3 +468,21 @@ def autoaddphoto(request):
                             count += 1
                             break
     return Response(status=status.HTTP_200_OK)
+
+@api_view(['POST', ])
+@permission_classes([IsAuthenticated])
+@authentication_classes((JSONWebTokenAuthentication,))
+def move(request):
+    if request.method == 'POST':
+        photos = request.data['photos']
+        photo_ids = list(map(int, photos.split(', ')))
+        photos = Photo.objects.filter(id__in=photo_ids)
+        album = get_object_or_404(Album, pk=request.data['albumId'].replace('"',""))
+        moveAlbum = get_object_or_404(Album, pk=request.data['moveAlbumId'].replace('"',""))
+        for photo in photos:
+            photo.albums.remove(album)
+            photo.albums.add(moveAlbum)
+    
+        photo_list = Photo.objects.filter(albums=album)
+        serializers = PhotoSerializer(photo_list, many=True)
+        return Response(serializers.data)
