@@ -68,6 +68,7 @@ class AddFamilyActivity : AppCompatActivity() {
                 gender = userInfo?.gender
                 username = userInfo?.username
                 name = userInfo?.first_name
+                prefs.my_album = userInfo?.my_album!!
                 if (gender == null || birth == null) {
                     var intent = Intent(this@AddFamilyActivity, EditUserActivity::class.java)
                     intent.putExtra("isKakao", 1)

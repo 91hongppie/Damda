@@ -17,6 +17,7 @@ import android.view.View.OnClickListener
 import android.widget.Button
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
+import com.example.damda.GlobalApplication
 import com.example.damda.ImageUpload
 import com.example.damda.R
 import kotlinx.android.synthetic.main.activity_add_photo.*
@@ -63,37 +64,43 @@ class AddPhotoActivity : AppCompatActivity() {
 
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
 
-            var imageUris = arrayListOf<Uri>()
-            var images = arrayListOf<File>()
-            var paths = arrayListOf<String>()
+            val imageUris = arrayListOf<Uri>()
+            val images = arrayListOf<File>()
+            val paths = arrayListOf<String>()
+            val ids = arrayListOf<String>()
             val clipdata: ClipData? = data?.clipData
 
             if (clipdata != null) {
                 for (i in 0 until clipdata.itemCount) {
-                    var imageUri: Uri = clipdata.getItemAt(i).uri
-                    var path = getFilePath(imageUri)
-                    imageUris.add(imageUri)
-                    paths.add(path!!)
-                    val image = File(path)
-                    Log.d("File path", "result : $path")
-                    try {
-                        images.add(image)
-                    } catch (e: FileNotFoundException) {
-                        e.printStackTrace()
+                    val imageUri: Uri = clipdata.getItemAt(i).uri
+                    val idPath = getFilePath(imageUri)
+                    if (idPath != null) {
+                        imageUris.add(imageUri)
+                        ids.add(idPath[0])
+                        paths.add(idPath!![1])
+                        val image = File(idPath[1])
+                        Log.d("File path", "result : ${idPath[1]}")
+                        try {
+                            images.add(image)
+                        } catch (e: FileNotFoundException) {
+                            e.printStackTrace()
+                        }
                     }
                 }
                 Log.d("Image arraylist", "size: ${images.size}")
             } else {
-                var imageUri: Uri? = data?.data
-                var path = getFilePath(imageUri!!)
-                imageUris.add(imageUri)
-                paths.add(path!!)
-                val image = File(path)
-                try {
-                    images.add(image)
+                val imageUri: Uri? = data?.data
+                val idPath = getFilePath(imageUri!!)
+                if (idPath != null) {
+                    imageUris.add(imageUri)
+                    paths.add(idPath!![1])
+                    val image = File(idPath[1])
+                    try {
+                        images.add(image)
 
-                } catch (e: FileNotFoundException) {
-                    e.printStackTrace()
+                    } catch (e: FileNotFoundException) {
+                        e.printStackTrace()
+                    }
                 }
             }
 
@@ -118,6 +125,7 @@ class AddPhotoActivity : AppCompatActivity() {
 
                 val uploadIntent = Intent(this, ImageUpload::class.java)
                 uploadIntent.putExtra("paths", paths)
+                uploadIntent.putExtra("ids", ids)
 //                startService(uploadIntent)
                 ImageUpload().enqueueWork(this, uploadIntent)
 
@@ -130,16 +138,24 @@ class AddPhotoActivity : AppCompatActivity() {
     }
 
 
-    fun getFilePath(imageUri: Uri): String? {
-        var result: String?
-        val cursor: Cursor? = contentResolver.query(imageUri, null, null, null, null)
+    fun getFilePath(imageUri: Uri): ArrayList<String>? {
+        var result = arrayListOf<String>()
+        val imageProjection =
+            arrayOf(MediaStore.Images.Media._ID, MediaStore.Images.Media.DATA)
+        val selection = "${MediaStore.Images.Media.DATA} NOT LIKE ?"
+        val selectionArgs = arrayOf(
+            "%damda%"
+        )
+        val cursor: Cursor? = contentResolver.query(imageUri, imageProjection, selection, selectionArgs, null)
 
         if (cursor == null) {
-            result = imageUri.path
+            return null
         } else {
             cursor.moveToFirst()
-            val idx = cursor.getColumnIndex(MediaStore.Images.ImageColumns.DATA)
-            result = cursor.getString(idx)
+            val imageIdIndex = cursor.getColumnIndex(MediaStore.Images.Media._ID)
+            val imageDataIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+            result.add(cursor.getString(imageIdIndex))
+            result.add(cursor.getString(imageDataIndex))
             cursor.close()
         }
 

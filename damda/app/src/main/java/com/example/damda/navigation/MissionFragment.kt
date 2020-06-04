@@ -5,6 +5,7 @@ import android.content.Context
 import android.os.Bundle
 import android.provider.Settings
 import android.view.*
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -67,7 +68,6 @@ class MissionFragment: Fragment() {
                 override fun onResponse(call: Call<Quizs>, response: Response<Quizs>) {
                     quizs = response.body()!!.data
                     var user_name = response.body()!!.name
-                    name.text = response.body()!!.name
                     viewPager.adapter = quizPagerAdapter
                 }
             })
@@ -166,15 +166,21 @@ class MissionFragment: Fragment() {
             var quiz_answer: String? = null
             question.text = quiz.quiz
             if (quiz.answer!!.contains("no answer").not()) {
-                button.visibility = View.INVISIBLE
-                answer.visibility = View.INVISIBLE
+                button.visibility = View.GONE
+                answer.visibility = View.GONE
                 answercheck.visibility = View.VISIBLE
             } else {
                 button.visibility = View.VISIBLE
                 answer.visibility = View.VISIBLE
-                answercheck.visibility = View.INVISIBLE
+                answercheck.visibility = View.GONE
             }
             button.setOnClickListener {
+                val mInputMethodManager =
+                    getContext()!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+                mInputMethodManager.hideSoftInputFromWindow(
+                    answer.getWindowToken(),
+                    0
+                )
                 quiz_answer = answer.text.toString()
                 if (quiz_answer?.length == 0) {
                     Toast.makeText(context, "답변을 적어주세요", Toast.LENGTH_SHORT).show()
@@ -195,8 +201,8 @@ class MissionFragment: Fragment() {
                         override fun onResponse(call: Call<Int>, response: Response<Int>) {
                             val data = response.body()!!
                             if (data==1) {
-                                button.visibility = View.INVISIBLE
-                                answer.visibility = View.INVISIBLE
+                                button.visibility = View.GONE
+                                answer.visibility = View.GONE
                                 answercheck.visibility = View.VISIBLE
                             }
                         }

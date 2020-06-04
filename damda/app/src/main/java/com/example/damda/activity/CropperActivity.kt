@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
@@ -19,6 +20,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.retrofit.model.Face
@@ -35,6 +37,7 @@ import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 import java.io.File
 import java.text.SimpleDateFormat
+import java.util.*
 
 
 class CropperActivity : AppCompatActivity() {
@@ -103,10 +106,22 @@ class CropperActivity : AppCompatActivity() {
             val file = File(getPath(uri!!))
             val requestFile: RequestBody =
                 RequestBody.create(MediaType.parse("multipart/form-data"), file)
-            val sdf = SimpleDateFormat("")
-            val filename = sdf.format(System.currentTimeMillis())
+            val exif = ExifInterface(getPath(uri!!))
+            var fileDatetime : String = if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
+                val datetime = exif.getAttribute(ExifInterface.TAG_DATETIME)
+                val datetime_split = datetime.split(" ")
+                var date = datetime_split[0].split(":").joinToString("")
+                var time = datetime_split[1].split(":").joinToString("")
+                "${date}_${time}_0"
+            } else {
+                val datetime = Calendar.getInstance(TimeZone.getDefault(), Locale.KOREA).time
+                val today = SimpleDateFormat("yyyyMMdd_HHmmss").format(datetime)
+                today + "_0"
+            }
+
+            var filename = "damda_${fileDatetime}_${GlobalApplication.prefs.user_id}.jpg"
             val body =
-                MultipartBody.Part.createFormData("image", "$filename.jpg", requestFile)
+                MultipartBody.Part.createFormData("image", filename, requestFile)
             albumsService.updateFace(
                 token,
                 family_id,

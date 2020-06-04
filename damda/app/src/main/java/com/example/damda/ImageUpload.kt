@@ -39,11 +39,12 @@ class ImageUpload : JobIntentService() {
     override fun onHandleWork(intent: Intent) {
         val url = URL(GlobalApplication.prefs.damdaServer+"/api/albums/addphoto/")
         val paths = intent.getStringArrayListExtra("paths")!!
+        val ids = intent.getStringArrayListExtra("ids")!!
 
         for (i in 0 until paths.size) {
             val image = File(paths[i])
-            uploadImage(url, image, paths[i], i, paths.size)
-            Thread.sleep(500)
+            uploadImage(url, image, paths[i], ids[i], i, paths.size)
+            Thread.sleep(2000)
         }
     }
 
@@ -75,7 +76,7 @@ class ImageUpload : JobIntentService() {
 
         Log.d(TAG,"끝끝끝")
     }
-    fun uploadImage(url : URL, image: File, path: String, i: Int, size: Int) {
+    fun uploadImage(url : URL, image: File, path: String, id: String, i: Int, size: Int) {
         val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
             .addFormDataPart("user_id", "${GlobalApplication.prefs.user_id}")
 
@@ -86,15 +87,17 @@ class ImageUpload : JobIntentService() {
                 val datetime_split = datetime.split(" ")
                 var date = datetime_split[0].split(":").joinToString("")
                 var time = datetime_split[1].split(":").joinToString("")
-                "${date}_${time}"
+                "${date}_${time}_${id}"
             } else {
                 val datetime = Calendar.getInstance(TimeZone.getDefault(), Locale.KOREA).time
                 val today = SimpleDateFormat("yyyyMMdd_HHmmss").format(datetime)
-                today + "_$i"
+                today + "_$id"
             }
-            requestBody.addFormDataPart("uploadImages", "damda_${GlobalApplication.prefs.user_id}_${fileDatetime}", RequestBody.create(MEDIA_TYPE_IMAGE, image))
+            requestBody.addFormDataPart("uploadImages", "damda_${fileDatetime}_${GlobalApplication.prefs.user_id}", RequestBody.create(MEDIA_TYPE_IMAGE, image))
 
             Log.d("사진 순서", ": $i")
+            Log.d("사진 ID", ": $id")
+            Log.d("사진 이름", "damda_${fileDatetime}_${GlobalApplication.prefs.user_id}")
 
             val body = requestBody.build()
             val request = Request.Builder().addHeader("Authorization", "JWT $jwt")
@@ -135,7 +138,7 @@ class ImageUpload : JobIntentService() {
 
         override fun onResponse(call: okhttp3.Call, response: Response) {
             val status = response.code()
-            Log.d("server response", "$status")
+            Log.d("사진 response", "$status")
         }
     }
 
@@ -147,8 +150,8 @@ class ImageUpload : JobIntentService() {
 
         override fun onResponse(call: okhttp3.Call, response: Response) {
             val status = response.code()
-            Log.d("server response", "푸시는 $response")
-            Log.d("server response", "푸시도 보냈어요! = $status")
+            Log.d("사진 response", "푸시는 $response")
+            Log.d("사진 response", "푸시도 보냈어요! = $status")
         }
     }
 

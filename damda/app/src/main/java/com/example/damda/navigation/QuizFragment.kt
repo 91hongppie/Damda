@@ -1,11 +1,12 @@
 package com.example.damda.navigation
 
+import android.content.Context
 import android.content.Intent
 import android.os.Bundle
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
@@ -15,13 +16,8 @@ import androidx.fragment.app.Fragment
 import com.example.damda.GlobalApplication
 import com.example.damda.R
 import com.example.damda.activity.MainActivity
-import com.example.damda.navigation.adapter.MissionAdapter
-import com.example.damda.navigation.model.Missions
 import com.example.damda.navigation.model.Quiz
-import com.example.damda.retrofit.service.MissionService
 import com.example.damda.retrofit.service.QuizService
-import kotlinx.android.synthetic.main.fragment_mission_list.view.*
-import kotlinx.android.synthetic.main.list_item_quiz.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -42,16 +38,14 @@ class QuizFragment: Fragment() {
         val question = view.findViewById<TextView>(R.id.tv_quiz)
         val button_quiz = view.findViewById<Button>(R.id.btn_quiz)
         var button_point = view.findViewById<Button>(R.id.btn_point)
-        var check = view.findViewById<TextView>(R.id.tv_check)
         var congrat = view.findViewById<TextView>(R.id.tv_congrat)
         var no_question = view.findViewById<TextView>(R.id.tv_empty)
         editText.visibility = View.VISIBLE
         question.visibility = View.VISIBLE
         button_quiz.visibility = View.VISIBLE
-        button_point.visibility = View.INVISIBLE
-        check.visibility = View.INVISIBLE
-        congrat.visibility = View.INVISIBLE
-        no_question.visibility = View.INVISIBLE
+        button_point.visibility = View.GONE
+        congrat.visibility = View.GONE
+        no_question.visibility = View.GONE
         var retrofit = Retrofit.Builder()
             .baseUrl(GlobalApplication.prefs.damdaServer)
             .addConverterFactory(GsonConverterFactory.create())
@@ -62,12 +56,11 @@ class QuizFragment: Fragment() {
             QuizService::class.java)
         quizService.getQuiz("JWT $jwt", user_id).enqueue(object: Callback<Quiz> {
             override fun onFailure(call: Call<Quiz>, t: Throwable) {
-                editText.visibility = View.INVISIBLE
-                question.visibility = View.INVISIBLE
-                button_quiz.visibility = View.INVISIBLE
-                button_point.visibility = View.INVISIBLE
-                check.visibility = View.INVISIBLE
-                congrat.visibility = View.INVISIBLE
+                editText.visibility = View.GONE
+                question.visibility = View.GONE
+                button_quiz.visibility = View.GONE
+                button_point.visibility = View.GONE
+                congrat.visibility = View.GONE
                 no_question.visibility = View.VISIBLE
             }
             override fun onResponse(call: Call<Quiz>, response: Response<Quiz>) {
@@ -80,12 +73,18 @@ class QuizFragment: Fragment() {
             println("${editText.text}")
             println("${quiz!!.answer}")
             println("1111111111111111111111111111111")
+            val mInputMethodManager =
+                getContext()!!.getSystemService(Context.INPUT_METHOD_SERVICE) as InputMethodManager
+            mInputMethodManager.hideSoftInputFromWindow(
+                editText.getWindowToken(),
+                0
+            )
+
             if ("${editText.text}" != quiz!!.answer) {
                 Toast.makeText(context, "정답이 아닙니다.", Toast.LENGTH_SHORT).show()
             } else {
-                button_quiz.visibility = View.INVISIBLE
-                editText.visibility = View.INVISIBLE
-                check.visibility = View.VISIBLE
+                button_quiz.visibility = View.GONE
+                editText.visibility = View.GONE
                 congrat.visibility = View.VISIBLE
                 button_point.visibility = View.VISIBLE
                 val quiz_id = quiz!!.id.toString()
@@ -104,6 +103,7 @@ class QuizFragment: Fragment() {
                 })
                 button_point.setOnClickListener {
                     if (num == 1) {
+                        editText.text = null
                         this.fragmentManager?.beginTransaction()?.detach(this)?.attach(this)?.commit()
                     }
                 }

@@ -230,8 +230,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                 selectionArgs,
                 MediaStore.Images.Media._ID + " desc "
             )
-            var images = arrayListOf<File>()
-            var paths = arrayListOf<String>()
+            val images = arrayListOf<File>()
+            val paths = arrayListOf<String>()
+            val ids = arrayListOf<String>()
             val imageIdIndex = imageCursor?.getColumnIndex(MediaStore.Images.Media._ID)
             val imageDataIndex = imageCursor?.getColumnIndex(MediaStore.Images.Media.DATA)
             if (imageCursor != null && imageCursor.count > 0) {
@@ -245,6 +246,8 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                         break
                     }
                     paths.add(imageData)
+                    ids.add(imageId)
+
                     val image = File(imageData)
                     try {
                         images.add(image)
@@ -256,7 +259,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                         break
                     }
                 }
-                val url = URL(prefs.damdaServer + "/api/albums/addphoto/")
+
                 if (images.size > 0) {
                     var dialogBuilder = android.app.AlertDialog.Builder(this)
                     dialogBuilder.setTitle("사진 업로드")
@@ -268,6 +271,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                                     val uploadIntent =
                                         Intent(this@MainActivity, ImageUpload::class.java)
                                     uploadIntent.putExtra("paths", paths)
+                                    uploadIntent.putExtra("ids", ids)
                                     startService(uploadIntent)
                                     ImageUpload().enqueueWork(this@MainActivity, uploadIntent)
                                 }
