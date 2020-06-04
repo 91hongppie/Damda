@@ -1,27 +1,20 @@
 package com.example.damda.activity
 
-import android.content.DialogInterface
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
-import android.view.View
 import androidx.appcompat.app.AlertDialog
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.LinearLayoutManager
 import com.example.damda.GlobalApplication
 import com.example.damda.R
-import com.example.damda.adapter.MemberAdapter
-import com.example.damda.navigation.adapter.NullAlbumAdapter
 import com.example.damda.navigation.model.Album
 import com.example.damda.retrofit.model.Albums
 import com.example.damda.retrofit.model.Face
 import com.example.damda.retrofit.model.Faces
-import com.example.damda.retrofit.model.User
 import com.example.damda.retrofit.service.AlbumsService
-import kotlinx.android.synthetic.main.activity_add_member.*
 import kotlinx.android.synthetic.main.activity_select_album.*
-import kotlinx.android.synthetic.main.list_item_request.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -38,35 +31,38 @@ class SelectAlbumActivity : AppCompatActivity() {
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
         album_list.layoutManager = LinearLayoutManager(this)
-        var faces: Faces? = null
-        var facesList = emptyArray<Face>()
         var retrofit = Retrofit.Builder()
             .baseUrl(GlobalApplication.prefs.damdaServer)
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         val jwt = GlobalApplication.prefs.token
         val family_id = GlobalApplication.prefs.family_id.toString()
-        var nullalbumList = emptyArray<Album>()
         var albumsService: AlbumsService = retrofit.create(
-            AlbumsService::class.java)
-        albumsService.nullAlbums("JWT $jwt", family_id, GlobalApplication.prefs.user_id!!).enqueue(object: Callback<Albums>{
-            override fun onFailure(call: Call<Albums>, t: Throwable) {
-                Log.v("face", t.toString())
-                var dialog = AlertDialog.Builder(this@SelectAlbumActivity)
-                dialog.setTitle("에러")
-                dialog.setMessage("호출실패했습니다.")
-                dialog.show()
-            }
+            AlbumsService::class.java
+        )
+        albumsService.nullAlbums("JWT $jwt", family_id, GlobalApplication.prefs.user_id!!)
+            .enqueue(object : Callback<Albums> {
+                override fun onFailure(call: Call<Albums>, t: Throwable) {
+                    Log.v("face", t.toString())
+                    var dialog = AlertDialog.Builder(this@SelectAlbumActivity)
+                    dialog.setTitle("에러")
+                    dialog.setMessage("호출실패했습니다.")
+                    dialog.show()
+                }
 
-            override fun onResponse(call: Call<Albums>, response: Response<Albums>) {
-                val albums = response.body()
-                nullalbumList = albums!!.data
-//                album_list.adapter = NullAlbumAdapter(nullalbumList)
-                album_list.addItemDecoration(DividerItemDecoration(this@SelectAlbumActivity, LinearLayoutManager.VERTICAL))
+                override fun onResponse(call: Call<Albums>, response: Response<Albums>) {
+                    val albums = response.body()
+                    album_list.addItemDecoration(
+                        DividerItemDecoration(
+                            this@SelectAlbumActivity,
+                            LinearLayoutManager.VERTICAL
+                        )
+                    )
 
-            }
-        })
+                }
+            })
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.getItemId()) {
             android.R.id.home -> {
@@ -76,5 +72,5 @@ class SelectAlbumActivity : AppCompatActivity() {
         }
         return super.onOptionsItemSelected(item)
     }
-    }
+}
 

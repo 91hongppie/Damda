@@ -62,10 +62,10 @@
             android:layout_height="42dp"
             android:layout_marginTop="10dp"
             android:layout_marginBottom="13dp"
-            android:textSize="18sp"
+            android:background="@color/bluebell"
             android:text="로그인"
             android:textColor="@color/white"
-            android:background="@color/bluebell" />
+            android:textSize="18sp" />
 
         <Button
             android:id="@+id/signup_button"

@@ -1,20 +1,11 @@
 package com.example.damda.activity
 
 import android.annotation.SuppressLint
-import android.app.Notification
-import android.app.NotificationChannel
-import android.app.NotificationManager
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.util.Log
 import android.view.View
-import android.widget.CompoundButton
-import androidx.core.app.NotificationManagerCompat
-import androidx.core.view.isVisible
 import com.example.damda.GlobalApplication
 import com.example.damda.R
-import com.jakewharton.rxbinding2.widget.checked
-import com.jakewharton.rxbinding2.widget.checkedChanges
 import kotlinx.android.synthetic.main.activity_alarm_switch.*
 
 class AlarmSwitchActivity : AppCompatActivity() {
@@ -28,7 +19,7 @@ class AlarmSwitchActivity : AppCompatActivity() {
             switch_each.visibility = View.INVISIBLE
         }
         switch_all.isChecked = GlobalApplication.prefs.push_all
-        
+
         rehi_alarm.isChecked = GlobalApplication.prefs.push_rehi
         new_alarm.isChecked = GlobalApplication.prefs.push_new
         congratulations_alarm.isChecked = GlobalApplication.prefs.push_congrat

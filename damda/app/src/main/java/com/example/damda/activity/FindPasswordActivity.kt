@@ -1,10 +1,8 @@
 package com.example.damda.activity
 
-import android.content.Intent
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.util.Log
-
 import android.widget.EditText
 import androidx.appcompat.app.AlertDialog
 import com.example.damda.Constants
@@ -35,7 +33,7 @@ class FindPasswordActivity : AppCompatActivity() {
     private lateinit var inputInfoMessage: Array<String>
     private var isInputCorrectData: Array<Boolean> = arrayOf(false, false, false, false)
     private var isCheckID = false
-        set(value){
+        set(value) {
             when (value) {
                 true -> {
                     btnCheckExistID.setBackgroundColor(resources.getColor(R.color.disableButton))
@@ -55,12 +53,16 @@ class FindPasswordActivity : AppCompatActivity() {
         typingListener()
         setListener()
     }
+
     private fun init() {
         inputDataField = arrayOf(editEmail, editPWD, editPWDConfirm, changePWD)
-        textInputLayoutArray = arrayOf(editEmailLayout, editPWDLayout, editPWDConfirmLayout, changePWDLayout)
-        inputInfoMessage = arrayOf(getString(R.string.error_discorrent_email),  getString(
-            R.string.txtInputInfoPWD
-        ), getString(R.string.txtInputInfoRePWD), getString(R.string.error_change_pwd))
+        textInputLayoutArray =
+            arrayOf(editEmailLayout, editPWDLayout, editPWDConfirmLayout, changePWDLayout)
+        inputInfoMessage = arrayOf(
+            getString(R.string.error_discorrent_email), getString(
+                R.string.txtInputInfoPWD
+            ), getString(R.string.txtInputInfoRePWD), getString(R.string.error_change_pwd)
+        )
     }
 
     private fun setListener() {
@@ -70,15 +72,16 @@ class FindPasswordActivity : AppCompatActivity() {
             .addConverterFactory(GsonConverterFactory.create())
             .build()
         var signupService: SignupService = retrofit.create(
-            SignupService::class.java)
+            SignupService::class.java
+        )
         btnDone.setOnClickListener {
-            var params:HashMap<String, Any> = HashMap<String, Any>()
+            var params: HashMap<String, Any> = HashMap<String, Any>()
             params.put("username", editEmail.text.toString())
-            params.put("password",editPWD.text.toString())
-            params.put("changePWD",changePWD.text.toString())
+            params.put("password", editPWD.text.toString())
+            params.put("changePWD", changePWD.text.toString())
 
             if (isCheckID) {
-                signupService.findPassword(params).enqueue(object:Callback<ChangePassword>{
+                signupService.findPassword(params).enqueue(object : Callback<ChangePassword> {
                     override fun onFailure(call: Call<ChangePassword>, t: Throwable) {
                         Log.e("LOGIN", t.message)
                         var dialog = AlertDialog.Builder(this@FindPasswordActivity)
@@ -87,7 +90,10 @@ class FindPasswordActivity : AppCompatActivity() {
                         dialog.show()
                     }
 
-                    override fun onResponse(call: Call<ChangePassword>, response: Response<ChangePassword>) {
+                    override fun onResponse(
+                        call: Call<ChangePassword>,
+                        response: Response<ChangePassword>
+                    ) {
                         changepassword = response.body()
                         Log.v("RESPONSE", changepassword.toString())
 
@@ -97,8 +103,7 @@ class FindPasswordActivity : AppCompatActivity() {
                             toast("비밀번호가 변경되었습니다.")
                             finish()
 
-                        }
-                        else{
+                        } else {
                             toast(getString(R.string.error_de_not_exist_id))
                             isCheckID = false
                         }
@@ -130,8 +135,7 @@ class FindPasswordActivity : AppCompatActivity() {
                     if (response.code() == 404) {
                         toast(getString(R.string.error_de_not_exist_id))
                         isCheckID = false
-                    }
-                    else{
+                    } else {
                         toast(getString(R.string.change_password))
                         isCheckID = true
                     }
@@ -139,6 +143,7 @@ class FindPasswordActivity : AppCompatActivity() {
             })
         }
     }
+
     /**
      * 각 필드별 회원가입 조건이 맞는지 비동기 체크
      */
@@ -149,7 +154,7 @@ class FindPasswordActivity : AppCompatActivity() {
             .subscribe({ it ->
                 isCheckID = false
                 reactiveInputTextViewData(0, !it)
-            }){
+            }) {
                 //Error Block
                 settingEmptyInputUI(0)
             }
@@ -160,7 +165,7 @@ class FindPasswordActivity : AppCompatActivity() {
             .subscribe({ it ->
                 inputDataField[2].setText("")
                 reactiveInputTextViewData(1, it)
-            }){
+            }) {
                 //Error Block
             }
 
@@ -169,17 +174,17 @@ class FindPasswordActivity : AppCompatActivity() {
             .map { t -> t.isEmpty() || inputDataField[1].text.toString() == inputDataField[2].text.toString() }
             .subscribe({ it ->
                 reactiveInputTextViewData(2, it)
-            }){
+            }) {
                 //Error Block
             }
 
 
         // ChangePassword
         val disposableNewPwd = RxTextView.textChanges(inputDataField[3])
-            .map { t -> t.isEmpty() || Pattern.matches(Constants.CODE_RULS, t)}
+            .map { t -> t.isEmpty() || Pattern.matches(Constants.CODE_RULS, t) }
             .subscribe({
                 reactiveInputTextViewData(3, it)
-            }){
+            }) {
                 //Error Block
             }
 
@@ -187,6 +192,7 @@ class FindPasswordActivity : AppCompatActivity() {
     }
 
     var isSuccess = false
+
     /**
      * 올바른 회원정보를 입력 받았는지 체크
      */
@@ -203,16 +209,16 @@ class FindPasswordActivity : AppCompatActivity() {
         btnDone.setBackgroundColor(resources.getColor(R.color.disableButton))
         btnDone.setTextColor(resources.getColor(R.color.white))
         btnDone.isEnabled = true
-        isSuccess =true
+        isSuccess = true
     }
 
     /**
      * ReActive 로 입력 들어오는 데이터에 대한 결과를 UI 로 표시합니다
      */
     private fun reactiveInputTextViewData(indexPath: Int, it: Boolean) {
-        if(!inputDataField[indexPath].text.toString().isEmpty()){
+        if (!inputDataField[indexPath].text.toString().isEmpty()) {
             isInputCorrectData[indexPath] = it
-        }else{
+        } else {
             isInputCorrectData[indexPath] = false
         }
 
@@ -221,7 +227,8 @@ class FindPasswordActivity : AppCompatActivity() {
 
         reactiveCheckCorrectData()
     }
-    private fun settingEmptyInputUI(indexPath: Int){
+
+    private fun settingEmptyInputUI(indexPath: Int) {
         isInputCorrectData[indexPath] = false
         textInputLayoutArray[indexPath].isErrorEnabled = false
     }

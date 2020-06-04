@@ -1,6 +1,5 @@
 package com.example.damda.activity
 
-import android.content.Intent
 import android.os.Bundle
 import android.util.Log
 import android.view.MenuItem
@@ -41,26 +40,34 @@ class AddMemberActivity : AppCompatActivity() {
         val jwt = GlobalApplication.prefs.token
         val family_id = GlobalApplication.prefs.family_id.toString()
         var albumsService: AlbumsService = retrofit.create(
-            AlbumsService::class.java)
-        albumsService.requestFaces("JWT $jwt", family_id, prefs.user_id!!).enqueue(object: Callback<Faces> {
-            override fun onFailure(call: Call<Faces>, t: Throwable) {
-                Log.v("face", t.toString())
-                var dialog = AlertDialog.Builder(this@AddMemberActivity)
-                dialog.setTitle("에러")
-                dialog.setMessage("호출실패했습니다.")
-                dialog.show()
-            }
-
-            override fun onResponse(call: Call<Faces>, response: Response<Faces>) {
-                faces = response.body()
-                facesList = faces!!.data
-                if (facesList.size > 0) {
-                    member_list.adapter = MemberAdapter(facesList)
-                    member_list.addItemDecoration(DividerItemDecoration(this@AddMemberActivity, LinearLayoutManager.VERTICAL))
+            AlbumsService::class.java
+        )
+        albumsService.requestFaces("JWT $jwt", family_id, prefs.user_id!!)
+            .enqueue(object : Callback<Faces> {
+                override fun onFailure(call: Call<Faces>, t: Throwable) {
+                    Log.v("face", t.toString())
+                    var dialog = AlertDialog.Builder(this@AddMemberActivity)
+                    dialog.setTitle("에러")
+                    dialog.setMessage("호출실패했습니다.")
+                    dialog.show()
                 }
-            }
-        })
+
+                override fun onResponse(call: Call<Faces>, response: Response<Faces>) {
+                    faces = response.body()
+                    facesList = faces!!.data
+                    if (facesList.size > 0) {
+                        member_list.adapter = MemberAdapter(facesList)
+                        member_list.addItemDecoration(
+                            DividerItemDecoration(
+                                this@AddMemberActivity,
+                                LinearLayoutManager.VERTICAL
+                            )
+                        )
+                    }
+                }
+            })
     }
+
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.getItemId()) {
             android.R.id.home -> {

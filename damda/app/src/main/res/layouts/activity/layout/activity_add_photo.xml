@@ -1,79 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context=".activity.AddPhotoActivity">
+<ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="wrap_content">
 
-    <androidx.appcompat.widget.Toolbar
-        android:id="@+id/my_toolbar"
+    <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
-        android:layout_height="35dp">
+        android:layout_height="match_parent"
+        tools:context=".activity.AddPhotoActivity">
 
-        <ImageView
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:contentDescription="logo"
-            android:src="@drawable/logo_title" />
-    </androidx.appcompat.widget.Toolbar>
+            android:elevation="4dp"
+            app:title="사진 업로드" />
 
-    <LinearLayout
-        android:id="@+id/top_division"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/my_toolbar"
-        android:orientation="horizontal" />
-
-    <ImageView
-        android:id="@+id/addphoto_image"
-        android:layout_width="match_parent"
-        android:layout_height="400dp"
-        android:minHeight="400dp"
-        android:layout_margin="8dp"
-        android:adjustViewBounds="true"
-        android:autofillHints="사진"
-        android:contentDescription="사진을 등록해주세요"
-        android:scaleType="fitCenter" />
-
-    <LinearLayout
-        android:id="@+id/image_division"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/addphoto_image"
-        android:orientation="horizontal" />
-
-    <LinearLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@+id/image_division"
-        android:gravity="center"
-        android:orientation="vertical">
-
-        <Button
-            android:id="@+id/select_photo_button"
+        <LinearLayout
+            android:id="@+id/top_division"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="15dp"
-            android:background="@color/enableButton"
-            android:text="@string/select_image"
-            android:textColor="@color/colorWhite"
-            android:theme="@style/ButtonStyle" />
+            android:layout_height="wrap_content"
+            android:layout_below="@+id/toolbar"
+            android:orientation="vertical" >
 
-        <Button
-            android:id="@+id/upload_photo_button"
+        <ImageView
+            android:id="@+id/addphoto_image"
             android:layout_width="match_parent"
-            android:layout_height="50dp"
-            android:layout_marginLeft="15dp"
-            android:layout_marginTop="20dp"
-            android:layout_marginRight="15dp"
-            android:layout_marginBottom="35dp"
-            android:background="@color/disableButton"
-            android:text="@string/upload_image"
-            android:textColor="@color/colorWhite" />
-    </LinearLayout>
+            android:layout_height="wrap_content"
+            android:maxHeight="400dp"
+            android:layout_margin="8dp"
+            android:adjustViewBounds="true"
+            android:autofillHints="사진"
+            android:contentDescription="사진을 등록해주세요"
+            android:scaleType="fitCenter" />
 
+            <Button
+                android:id="@+id/select_photo_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="15dp"
+                android:background="@color/enableButton"
+                android:text="@string/select_image"
+                android:textColor="@color/colorWhite"
+                android:theme="@style/ButtonStyle" />
 
-</RelativeLayout>
+            <Button
+                android:id="@+id/upload_photo_button"
+                android:layout_width="match_parent"
+                android:layout_height="50dp"
+                android:layout_marginLeft="15dp"
+                android:layout_marginTop="20dp"
+                android:layout_marginRight="15dp"
+                android:layout_marginBottom="35dp"
+                android:background="@color/disableButton"
+                android:text="@string/upload_image"
+                android:textColor="@color/colorWhite" />
+        </LinearLayout>
+    </RelativeLayout>
+</ScrollView>

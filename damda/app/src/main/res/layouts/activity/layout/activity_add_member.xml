@@ -26,7 +26,7 @@
             android:layout_height="wrap_content"
             android:gravity="center_vertical"
             android:padding="4dp"
-            android:text="@string/add_info"
+            android:text="앨범에 연결된 계정을 확인할 수 있습니다."
             />
         <View
             android:layout_below="@+id/member_info"
