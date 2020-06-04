@@ -34,6 +34,7 @@ import com.example.damda.R
 import com.example.damda.URLtoBitmapTask
 import com.example.damda.activity.AddPhotoActivity
 import com.example.damda.activity.MainActivity
+import com.example.damda.activity.MainActivity.Companion.currentPosition
 import com.example.damda.activity.MainActivity.Companion.navStatus
 import com.example.damda.activity.MainActivity.Companion.photoStatus
 import com.example.damda.navigation.adapter.PhotoAdapter
@@ -181,7 +182,7 @@ class PhotoListFragment : Fragment() {
             view.rv_photo.adapter?.notifyDataSetChanged()
             var imageUris = ArrayList<Uri?>()
             for (photo in photoList) {
-                var url = prefs.damdaServer+"/api/${photo.pic_name}"
+                var url = prefs.damdaServer+"/${photo.pic_name}"
                 var image_task: URLtoBitmapTask = URLtoBitmapTask()
                 image_task = URLtoBitmapTask().apply {
                     imgurl = URL(url)
@@ -283,7 +284,7 @@ class PhotoListFragment : Fragment() {
 
     private  fun startDownloading() {
         for(photo in photoList){
-            val imgurl = prefs.damdaServer+"/api/${photo.pic_name}"
+            val imgurl = prefs.damdaServer+"/${photo.pic_name}"
             val request = DownloadManager.Request(Uri.parse(imgurl))
             val jwt = GlobalApplication.prefs.token
             request.addRequestHeader("Authorization", "JWT $jwt")
@@ -352,7 +353,6 @@ class PhotoListFragment : Fragment() {
          *
          * In this demo app, the position always points to an image index at the [ ] class.
          */
-        var currentPosition = 0
         private const val KEY_CURRENT_POSITION = "com.google.samples.gridtopager.key.currentPosition"
         var photoArray = ArrayList<Photos>()
         var deleteArray = ArrayList<Int>()

@@ -180,6 +180,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     companion object {
         var navStatus = 0
         var photoStatus = 0
+        var currentPosition = 0
         private const val TAG = "MainActivity"
     }
     override fun onBackPressed() {

@@ -28,8 +28,8 @@ import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.URLtoBitmapTask
 import com.example.damda.activity.MainActivity
+import com.example.damda.activity.MainActivity.Companion.currentPosition
 import com.example.damda.helper.ZoomOutPageTransformer
-import com.example.damda.navigation.PhotoListFragment.Companion.currentPosition
 import com.example.damda.navigation.model.Album
 import com.example.damda.navigation.model.Photos
 import com.example.damda.retrofit.model.PutAlbum
@@ -76,6 +76,7 @@ class PhotoDetailFragment: Fragment() {
 
         photoList = arguments?.getSerializable("photoList") as Array<Photos>
         selectedPosition = arguments!!.getInt("position")
+
         tvGalleryTitle.text = photoList[selectedPosition].title
 //        view.findViewById<View>(R.id.ivFullscreenImage).transitionName = imageRes.toString()
 
@@ -83,6 +84,7 @@ class PhotoDetailFragment: Fragment() {
         viewPager.addOnPageChangeListener(viewPagerPageChangeListener)
         viewPager.setPageTransformer(true, ZoomOutPageTransformer())
         setCurrentItem(selectedPosition)
+        currentPosition = selectedPosition
         prepareSharedElementTransition()
         if (savedInstanceState == null) {
             postponeEnterTransition()
@@ -94,9 +96,9 @@ class PhotoDetailFragment: Fragment() {
                 DialogInterface.OnClickListener { dialogInterface: DialogInterface, i: Int ->
                     val album = arguments?.getParcelable<Album>("album")
                     val family_id = GlobalApplication.prefs.family_id?.toInt()
-                    var url = URL(prefs.damdaServer+"/api/albums/photo/${family_id}/")
+                    var url = URL(prefs.damdaServer+"/albums/photo/${family_id}/")
                     if (album?.id != null) {
-                        url = URL(prefs.damdaServer+"/api/albums/photo/${family_id}/${album.id}/")
+                        url = URL(prefs.damdaServer+"/albums/photo/${family_id}/${album.id}/")
                     }
                     val jwt = GlobalApplication.prefs.token
                     val payload = photoList[selectedPosition].id
@@ -181,7 +183,7 @@ class PhotoDetailFragment: Fragment() {
                     }
                     R.id.share -> {
                         val share_intent = Intent().apply {
-                            var url = prefs.damdaServer+"/api/${photoList[selectedPosition].pic_name}"
+                            var url = prefs.damdaServer+"/${photoList[selectedPosition].pic_name}"
                             var image_task: URLtoBitmapTask = URLtoBitmapTask()
                             image_task = URLtoBitmapTask().apply {
                                 imgurl = URL(url)
@@ -217,7 +219,7 @@ class PhotoDetailFragment: Fragment() {
 
     private  fun startDownloading() {
         val photo = photoList[selectedPosition]
-        val imgurl = prefs.damdaServer+"/api/${photo.pic_name}"
+        val imgurl = prefs.damdaServer+"/${photo.pic_name}"
         val request = DownloadManager.Request(Uri.parse(imgurl))
         val jwt = GlobalApplication.prefs.token
         request.addRequestHeader("Authorization", "JWT $jwt")
@@ -260,7 +262,7 @@ class PhotoDetailFragment: Fragment() {
             val photo = photoList.get(position)
             // load image
             Glide.with(context!!)
-                .load(prefs.damdaServer+"/api/${photo.pic_name}")
+                .load(prefs.damdaServer+"/${photo.pic_name}")
                 .into(view.ivFullscreenImage)
 
             container.addView(view)
@@ -316,7 +318,7 @@ class PhotoDetailFragment: Fragment() {
                     // visible). To locate the fragment, call instantiateItem with the selection position.
                     // At this stage, the method will simply return the fragment at the position and will
                     // not create a new one.
-                    val currentFragment = viewPager!!.adapter?.instantiateItem(viewPager!!, currentPosition) as Fragment
+                    val currentFragment = viewPager!!.adapter?.instantiateItem(viewPager!!, MainActivity.currentPosition) as Fragment
                     val view = currentFragment.view ?: return
 
                     // Map the first shared element name to the child ImageView.
