@@ -18,9 +18,6 @@ import com.example.damda.R
 import com.example.damda.activity.MainActivity
 import com.example.damda.navigation.MissionFragment.Companion.mission_fragment
 import com.example.damda.navigation.MissionFragment.Companion.my_score
-import com.example.damda.navigation.adapter.MissionAdapter
-import com.example.damda.navigation.model.Mission
-import com.example.damda.navigation.model.Missions
 import com.example.damda.navigation.model.Quiz
 import com.example.damda.retrofit.service.QuizService
 import retrofit2.Call
@@ -102,7 +99,6 @@ class QuizFragment : Fragment() {
 
                     override fun onResponse(call: Call<Int>, response: Response<Int>) {
                         num = response.body()!!
-                        print("!111111111111111111111 ${num}")
 
                     }
                 })

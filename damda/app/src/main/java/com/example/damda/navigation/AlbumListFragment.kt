@@ -2,23 +2,17 @@ package com.example.damda.navigation
 
 import android.Manifest
 import android.annotation.SuppressLint
-import android.app.Activity
 import android.content.Intent
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
-import android.provider.MediaStore
-import android.util.Log
 import android.view.*
-import android.widget.Toast
 import androidx.appcompat.app.AlertDialog
-import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.GridLayoutManager
 import com.example.damda.*
 import com.example.damda.GlobalApplication.Companion.prefs
-import com.example.damda.activity.AddMemberActivity
 import com.example.damda.activity.CropperActivity
 import com.example.damda.activity.MainActivity
 import com.example.damda.activity.MainActivity.Companion.navStatus
@@ -27,7 +21,6 @@ import com.example.damda.navigation.model.Album
 import com.example.damda.navigation.adapter.AlbumAdapter
 import com.example.damda.retrofit.model.Albums
 import com.example.damda.retrofit.service.AlbumsService
-import kotlinx.android.synthetic.main.activity_add_member.*
 import kotlinx.android.synthetic.main.fragment_album_list.view.*
 import retrofit2.Call
 import retrofit2.Callback

@@ -1,9 +1,6 @@
 package com.example.damda.navigation
 
-import android.app.NotificationChannel
-import android.content.Context
 import android.content.Intent
-import android.content.pm.PackageManager
 import android.graphics.Color
 import android.os.Build
 import android.os.Bundle
@@ -19,14 +16,8 @@ import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.activity.*
 import com.example.damda.retrofit.model.DetailFamily
-import com.example.damda.retrofit.model.Message
-import com.example.damda.retrofit.model.User
 import com.example.damda.retrofit.service.FamilyService
-import com.jakewharton.rxbinding2.widget.color
-import kotlinx.android.synthetic.main.fragment_user.*
 import kotlinx.android.synthetic.main.fragment_user.view.*
-import kotlinx.android.synthetic.main.list_item_request.view.*
-import okhttp3.FormBody
 import okhttp3.MultipartBody
 import okhttp3.OkHttpClient
 import okhttp3.Request

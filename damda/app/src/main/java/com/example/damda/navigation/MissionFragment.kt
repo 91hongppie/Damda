@@ -3,18 +3,15 @@ package com.example.damda.navigation
 import android.annotation.SuppressLint
 import android.content.Context
 import android.os.Bundle
-import android.provider.Settings
 import android.view.*
 import android.view.inputmethod.InputMethodManager
 import android.widget.Button
 import android.widget.EditText
 import android.widget.TextView
 import android.widget.Toast
-import android.widget.Toast.LENGTH_SHORT
 import androidx.appcompat.app.AlertDialog
 import androidx.fragment.app.Fragment
 import androidx.viewpager.widget.PagerAdapter
-import com.bumptech.glide.Glide
 import com.example.damda.GlobalApplication
 import com.example.damda.R
 import com.example.damda.activity.MainActivity
@@ -28,7 +25,6 @@ import com.google.android.material.tabs.TabLayout
 import kotlinx.android.synthetic.main.fragment_mission.view.*
 import kotlinx.android.synthetic.main.fragment_mission.view.tv_name
 import kotlinx.android.synthetic.main.fragment_quiz.view.*
-import kotlinx.android.synthetic.main.image_fullscreen.view.*
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
