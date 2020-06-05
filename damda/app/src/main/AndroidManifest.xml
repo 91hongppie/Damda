@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
-    package="com.example.damda">
+    package="com.ebgbs.damda">
 
     <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.CHANGE_WIFI_STATE" />
@@ -13,7 +13,7 @@
 
 
     <application
-        android:name=".GlobalApplication"
+        android:name="com.ebgbs.damda.GlobalApplication"
         android:allowBackup="false"
         tools:replace="android:allowBackup"
         android:fullBackupContent="false"
@@ -24,37 +24,37 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         android:usesCleartextTraffic="true">
-        <activity android:name=".activity.FindPasswordActivity"
+        <activity android:name="com.ebgbs.damda.activity.FindPasswordActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"/>
-        <activity android:name=".activity.AlarmSwitchActivity"
+        <activity android:name="com.ebgbs.damda.activity.AlarmSwitchActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".activity.SelectAlbumActivity"
+        <activity android:name="com.ebgbs.damda.activity.SelectAlbumActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".activity.EditUserActivity"
+        <activity android:name="com.ebgbs.damda.activity.EditUserActivity"
             android:screenOrientation="portrait"/>
 
         <service
-            android:name=".retrofit.service.ScoreService"
+            android:name="com.ebgbs.damda.retrofit.service.ScoreService"
             android:enabled="true"
             android:exported="true" />
         <service
-            android:name=".retrofit.service.MissionService"
+            android:name="com.ebgbs.damda.retrofit.service.MissionService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activity.AddVideoActivity"
+        <activity android:name="com.ebgbs.damda.activity.AddVideoActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".activity.TrimmerActivity"
+        <activity android:name="com.ebgbs.damda.activity.TrimmerActivity"
             android:screenOrientation="portrait"/>
 
         <service
-            android:name=".retrofit.service.RequestService"
+            android:name="com.ebgbs.damda.retrofit.service.RequestService"
             android:enabled="true"
             android:exported="true" />
 
         <activity
-            android:name=".activity.SplashActivity"
+            android:name="com.ebgbs.damda.activity.SplashActivity"
             android:theme="@style/SplashTheme"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -63,21 +63,21 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <activity android:name=".activity.FamilyListActivity"
+        <activity android:name="com.ebgbs.damda.activity.FamilyListActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".activity.RequestListActivity"
+        <activity android:name="com.ebgbs.damda.activity.RequestListActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".activity.CropperActivity"
+        <activity android:name="com.ebgbs.damda.activity.CropperActivity"
             android:screenOrientation="portrait"/>
-        <activity android:name=".activity.AddMemberActivity"
+        <activity android:name="com.ebgbs.damda.activity.AddMemberActivity"
             android:screenOrientation="portrait"/>
 
         <service
-            android:name=".retrofit.service.SignupService"
+            android:name="com.ebgbs.damda.retrofit.service.SignupService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activity.SignupActivity"
+        <activity android:name="com.ebgbs.damda.activity.SignupActivity"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"/> <!-- 배포시 삭제  userCleartextTraffic -->
         <meta-data
@@ -87,7 +87,7 @@
             android:name="firebase_analytics_collection_enabled"
             android:value="false" />
 
-        <service android:name=".MyFirebaseMessagingService">
+        <service android:name="com.ebgbs.damda.MyFirebaseMessagingService">
             <intent-filter>
                 <action android:name="com.google.firebase.INSTANCE_ID_EVENT" />
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
@@ -98,7 +98,7 @@
             android:name="com.google.firebase.messaging.default_notification_channel_id"
             android:value="@string/default_notification_channel_id" />
 
-        <activity android:name=".activity.AddFamilyActivity"
+        <activity android:name="com.ebgbs.damda.activity.AddFamilyActivity"
             android:screenOrientation="portrait"/> <!-- 배포시 삭제  userCleartextTraffic -->
         <meta-data
             android:name="com.kakao.sdk.AppKey"
@@ -109,7 +109,7 @@
             android:launchMode="singleTop"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait"/>
-        <activity android:name=".activity.LoginActivity"
+        <activity android:name="com.ebgbs.damda.activity.LoginActivity"
             android:windowSoftInputMode="adjustResize"
             android:screenOrientation="portrait">
             <intent-filter>
@@ -125,14 +125,14 @@
         </activity>
 
         <service
-            android:name=".retrofit.service.LoginService"
+            android:name="com.ebgbs.damda.retrofit.service.LoginService"
             android:enabled="true"
             android:exported="true" />
 
-        <activity android:name=".activity.MainActivity"
+        <activity android:name="com.ebgbs.damda.activity.MainActivity"
             android:screenOrientation="portrait"
             android:windowSoftInputMode="adjustResize"/>
-        <activity android:name=".activity.AddPhotoActivity"
+        <activity android:name="com.ebgbs.damda.activity.AddPhotoActivity"
             android:screenOrientation="portrait">
 
             <!-- <intent-filter> -->
@@ -140,7 +140,7 @@
             <!-- <category android:name="android.intent.category.LAUNCHER" /> -->
             <!-- </intent-filter> -->
         </activity>
-        <activity android:name=".activity.MissionAddPhotoActivity"
+        <activity android:name="com.ebgbs.damda.activity.MissionAddPhotoActivity"
             android:screenOrientation="portrait"/>
         <activity
             android:name="com.theartofdev.edmodo.cropper.CropImageActivity"
@@ -148,7 +148,7 @@
             android:screenOrientation="portrait"/>
 
         <service
-            android:name=".ImageUpload"
+            android:name="com.ebgbs.damda.ImageUpload"
             android:permission="android.permission.BIND_JOB_SERVICE" />
     </application>
 
