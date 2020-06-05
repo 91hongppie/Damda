@@ -10,7 +10,7 @@
       "client_info": {
         "mobilesdk_app_id": "1:896903437846:android:c9dd5ec8b8c1e7fce99f37",
         "android_client_info": {
-          "package_name": "com.example.damda"
+          "package_name": "com.ebgbs.damda"
         }
       },
       "oauth_client": [
@@ -18,7 +18,7 @@
           "client_id": "896903437846-8ik5naem52n8pt504nmq1lgrq2mto7kr.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
-            "package_name": "com.example.damda",
+            "package_name": "com.ebgbs.damda",
             "certificate_hash": "9b6d5825e25e42f1a7a65bf4f21859a448217bc8"
           }
         },
