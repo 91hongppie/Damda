@@ -1,4 +1,5 @@
 package com.example.damda.navigation.adapter
+
 import android.annotation.SuppressLint
 import android.view.*
 import android.widget.*
@@ -8,8 +9,7 @@ import com.example.damda.GlobalApplication.Companion.prefs
 import com.example.damda.R
 import com.example.damda.navigation.model.Album
 
-class MoveAlbumAdapter(val albumList: Array<Album>) : BaseAdapter()
-{
+class MoveAlbumAdapter(val albumList: Array<Album>) : BaseAdapter() {
     @SuppressLint("ViewHolder")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = LayoutInflater.from(parent?.context).inflate(R.layout.list_item_album, null)

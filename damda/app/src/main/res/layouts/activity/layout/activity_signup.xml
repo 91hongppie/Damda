@@ -5,146 +5,148 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.LoginActivity">
+
     <ImageView
-        android:paddingTop="4dp"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
         android:layout_above="@+id/scroll"
         android:layout_alignParentTop="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:src="@drawable/logo_title"/>
+        android:paddingTop="4dp"
+        android:src="@drawable/logo_title" />
+
     <ScrollView
         android:id="@+id/scroll"
-        android:layout_alignParentBottom="true"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-    <LinearLayout
-        android:id="@+id/signup_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_marginLeft="20dp"
-        android:layout_marginRight="20dp"
-        android:orientation="vertical">
+        android:layout_alignParentBottom="true">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/editEmailLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:hint="@string/email"
-                android:id="@+id/editEmail"
-                android:layout_width="match_parent"
-                android:maxLines="1"
-                android:maxLength="20"
-                android:inputType="text"
-                android:layout_height="wrap_content"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <Button
-            android:id="@+id/btnCheckExistID"
-            android:layout_width="match_parent"
-            android:text="중복체크"
-            android:textColor="@color/white"
-            android:layout_height="40dp" />
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/editPWDLayout"
-            android:layout_width="match_parent"
-            android:hint="@string/pwd"
-            android:layout_marginTop="10dp"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:id="@+id/editPWD"
-                android:layout_width="match_parent"
-                android:maxLines="1"
-                android:maxLength="20"
-                android:inputType="textPassword"
-                android:layout_height="wrap_content"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
-
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/editPWDConfirmLayout"
-            android:layout_width="match_parent"
-            android:hint="@string/pwd_confirm"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="5dp">
-
-            <EditText
-                android:id="@+id/editPWDConfirm"
-                android:layout_width="match_parent"
-                android:maxLines="1"
-                android:maxLength="20"
-                android:inputType="textPassword"
-                android:layout_height="match_parent"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
         <LinearLayout
+            android:id="@+id/signup_layout"
             android:layout_width="match_parent"
-            android:layout_height="match_parent">
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_marginTop="20dp"
+            android:layout_marginRight="20dp"
+            android:orientation="vertical">
 
             <com.google.android.material.textfield.TextInputLayout
-                android:id="@+id/nameLayout"
-                android:layout_width="0dp"
-                android:layout_weight="2"
-                android:hint="이름"
-                android:layout_height="wrap_content"
-                android:layout_marginTop="5dp">
+                android:id="@+id/editEmailLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
 
                 <EditText
-                    android:id="@+id/name"
+                    android:id="@+id/editEmail"
                     android:layout_width="match_parent"
-                    android:maxLines="1"
-                    android:maxLength="20"
+                    android:layout_height="wrap_content"
+                    android:hint="@string/email"
                     android:inputType="text"
-                    android:layout_height="match_parent"
-                    />
+                    android:maxLength="20"
+                    android:maxLines="1" />
             </com.google.android.material.textfield.TextInputLayout>
-            <Spinner
-                android:layout_marginTop="5dp"
-                android:id="@+id/spinner"
-                android:layout_width="0dp"
-                android:layout_weight="1"
-                android:layout_height="match_parent"
-                />
-        </LinearLayout>
 
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="match_parent"
-            android:layout_marginTop="4dp"
-            android:paddingLeft="4dp"
-            android:text="생일"
-            android:gravity="center_vertical"/>
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-            <CheckBox
-                android:id="@+id/is_lunar"
+            <Button
+                android:id="@+id/btnCheckExistID"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:text="중복체크"
+                android:textColor="@color/white" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editPWDLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:hint="@string/pwd">
+
+                <EditText
+                    android:id="@+id/editPWD"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPassword"
+                    android:maxLength="20"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editPWDConfirmLayout"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:hint="@string/pwd_confirm">
+
+                <EditText
+                    android:id="@+id/editPWDConfirm"
+                    android:layout_width="match_parent"
+                    android:layout_height="match_parent"
+                    android:inputType="textPassword"
+                    android:maxLength="20"
+                    android:maxLines="1" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/nameLayout"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="2"
+                    android:hint="이름">
+
+                    <EditText
+                        android:id="@+id/name"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:inputType="text"
+                        android:maxLength="20"
+                        android:maxLines="1" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <Spinner
+                    android:id="@+id/spinner"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_marginTop="5dp"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:gravity="center"
-                android:text="음력"/>
+                android:layout_marginTop="4dp"
+                android:gravity="center_vertical"
+                android:paddingLeft="4dp"
+                android:text="생일" />
 
-            <DatePicker
-                android:id="@+id/dataPicker"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="140dp"
-                android:datePickerMode="spinner"
-                android:calendarViewShown="false"/>
+                android:layout_height="wrap_content">
 
+                <CheckBox
+                    android:id="@+id/is_lunar"
+                    android:layout_width="wrap_content"
+                    android:layout_height="match_parent"
+                    android:gravity="center"
+                    android:text="음력" />
+
+                <DatePicker
+                    android:id="@+id/dataPicker"
+                    android:layout_width="match_parent"
+                    android:layout_height="140dp"
+                    android:calendarViewShown="false"
+                    android:datePickerMode="spinner" />
+
+            </LinearLayout>
+
+            <Button
+                android:id="@+id/btnDone"
+                android:layout_width="match_parent"
+                android:layout_height="40dp"
+                android:layout_marginTop="5dp"
+                android:layout_marginBottom="30dp"
+                android:text="@string/join_done" />
         </LinearLayout>
-
-        <Button
-            android:id="@+id/btnDone"
-            android:layout_marginTop="5dp"
-            android:layout_width="match_parent"
-            android:layout_height="40dp"
-            android:layout_marginBottom="30dp"
-            android:text="@string/join_done"/>
-    </LinearLayout>
     </ScrollView>
 </RelativeLayout>

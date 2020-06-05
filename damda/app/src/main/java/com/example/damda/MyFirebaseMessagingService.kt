@@ -1,10 +1,7 @@
 package com.example.damda
 
-import android.app.Service
 import android.content.ContentValues.TAG
-import android.content.Intent
 import android.os.Handler
-import android.os.IBinder
 import android.os.Looper
 import android.os.Message
 import android.util.Log
@@ -20,8 +17,8 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         super.onNewToken(token)
         Looper.prepare()
 
-        var msgHandler : Handler? = null
-        
+        var msgHandler: Handler? = null
+
         msgHandler = Handler()
         msgHandler.handleMessage(Message())
 
@@ -38,7 +35,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
         val client = OkHttpClient()
         val jwt = GlobalApplication.prefs.token
         val builder = Request.Builder().addHeader("Authorization", "JWT $jwt")
-        val url = builder.url(prefs.damdaServer+"/api/accounts/device/")
+        val url = builder.url(prefs.damdaServer + "/api/accounts/device/")
         val formBody = FormBody.Builder()
         val body = formBody.add("token", token).add("user_id", "${prefs.user_id}").build()
         val request = url
@@ -53,7 +50,7 @@ class MyFirebaseMessagingService : FirebaseMessagingService() {
 
     }
 
-    inner class Callback1: Callback {
+    inner class Callback1 : Callback {
         override fun onFailure(call: Call, e: IOException) {
 
         }

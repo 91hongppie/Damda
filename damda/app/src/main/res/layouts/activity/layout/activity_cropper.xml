@@ -4,15 +4,15 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".activity.CropperActivity"
     android:gravity="center_horizontal"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".activity.CropperActivity">
 
     <androidx.appcompat.widget.Toolbar
         android:id="@+id/toolbar"
-        app:title="앨범 추가하기"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"/>
+        android:layout_height="wrap_content"
+        app:title="앨범 추가하기" />
 
     <ImageView
         android:id="@+id/preview"
@@ -28,25 +28,24 @@
         android:id="@+id/family_name"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:padding="1dp"
         android:layout_marginStart="18dp"
         android:layout_marginTop="10dp"
-        />
+        android:padding="1dp" />
 
     <TextView
         android:id="@+id/my"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
-        android:textSize="25sp"
-        android:text="나" />
+        android:text="나"
+        android:textSize="25sp" />
 
     <Button
         android:id="@+id/save_member"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="5dp"
         android:layout_marginLeft="20dp"
+        android:layout_marginTop="5dp"
         android:layout_marginRight="20dp"
         android:text="등록하기"
         android:theme="@style/ButtonStyle" />

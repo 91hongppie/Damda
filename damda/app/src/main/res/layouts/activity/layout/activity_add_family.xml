@@ -5,12 +5,13 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.AddFamilyActivity">
+
     <ImageView
-        android:layout_above="@+id/signin_layout"
-        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:src="@drawable/logo_title"/>
+        android:layout_above="@+id/signin_layout"
+        android:layout_alignParentTop="true"
+        android:src="@drawable/logo_title" />
 
     <LinearLayout
         android:id="@+id/signin_layout"
@@ -19,6 +20,7 @@
         android:layout_alignParentBottom="true"
         android:layout_marginBottom="-9dp"
         android:orientation="vertical">
+
         <TextView
             android:id="@+id/req_ing"
             android:layout_width="match_parent"
@@ -26,7 +28,8 @@
             android:layout_marginLeft="25dp"
             android:layout_marginRight="25dp"
             android:layout_marginBottom="20dp"
-            android:text="@string/wait"/>
+            android:text="@string/wait" />
+
         <Button
             android:id="@+id/make_family"
             android:layout_width="match_parent"
@@ -38,14 +41,15 @@
             android:text="새로운 가족 앨범 만들기"
             android:textColor="@color/white"
             android:theme="@style/ButtonStyle" />
+
         <EditText
             android:id="@+id/req"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
-            android:inputType="text"
-            android:hint="가족 번호 또는 담장 이메일" />
+            android:hint="가족 번호 또는 담장 이메일"
+            android:inputType="text" />
 
         <Button
             android:id="@+id/req_btn"
@@ -54,20 +58,21 @@
             android:layout_marginLeft="20dp"
             android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp"
-            android:text="요청하기"
             android:background="@color/bluebell"
+            android:text="요청하기"
             android:textColor="@color/colorWhite" />
+
         <Button
             android:id="@+id/delete_btn"
             android:layout_width="match_parent"
             android:layout_height="40dp"
             android:layout_marginLeft="20dp"
-            android:layout_marginRight="20dp"
             android:layout_marginTop="40dp"
+            android:layout_marginRight="20dp"
             android:layout_marginBottom="10dp"
             android:background="@drawable/round_green"
             android:text="요청취소하기"
-            android:textColor="@color/bluebell"/>
+            android:textColor="@color/bluebell" />
 
         <Button
             android:id="@+id/logout"
@@ -78,6 +83,6 @@
             android:layout_marginBottom="70dp"
             android:background="@drawable/round_green"
             android:text="로그아웃"
-            android:textColor="@color/bluebell"/>
+            android:textColor="@color/bluebell" />
     </LinearLayout>
 </RelativeLayout>

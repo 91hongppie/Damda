@@ -2,12 +2,12 @@ package com.example.damda
 
 import android.content.Context
 import android.content.SharedPreferences
-import java.util.*
 
 class MySharedPreferences(context: Context) {
     val PREFS_FILENAME = "prefs"
     val PREF_KEY_MY_EDITTEXT = "token"
     val prefs: SharedPreferences = context.getSharedPreferences(PREFS_FILENAME, 0)
+
     /* 파일 이름과 EditText를 저장할 Key 값을 만들고 prefs 인스턴스 초기화 */
     var token: String?
         get() = prefs.getString(PREF_KEY_MY_EDITTEXT, "")

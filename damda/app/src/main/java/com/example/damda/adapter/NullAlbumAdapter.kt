@@ -1,6 +1,6 @@
 package com.example.damda.navigation.adapter
+
 import android.annotation.SuppressLint
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -14,8 +14,7 @@ import com.example.damda.R
 import com.example.damda.navigation.model.Album
 
 
-class NullAlbumAdapter(val albumList: Array<Album>) : BaseAdapter()
-{
+class NullAlbumAdapter(val albumList: Array<Album>) : BaseAdapter() {
     @SuppressLint("ViewHolder")
     override fun getView(position: Int, convertView: View?, parent: ViewGroup?): View {
         val view = LayoutInflater.from(parent?.context).inflate(R.layout.list_item_nullalbum, null)
@@ -28,8 +27,7 @@ class NullAlbumAdapter(val albumList: Array<Album>) : BaseAdapter()
             name.visibility = View.GONE
             hint.visibility = View.VISIBLE
             hint.setHint("앨범을\n선택해주세요")
-        }
-        else if (albumList[position].image != "empty") {
+        } else if (albumList[position].image != "empty") {
             Glide.with(view.context)
                 .load(prefs.damdaServer + "/api/${albumList[position].image}")
                 .error(R.drawable.album).apply(RequestOptions().override(600, 600))

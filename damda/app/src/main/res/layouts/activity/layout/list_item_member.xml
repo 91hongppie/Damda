@@ -2,30 +2,31 @@
     android:id="@+id/list_item_memeber_layout"
     android:layout_width="match_parent"
     android:layout_height="60dp"
-    android:padding="10dp"
-    android:paddingBottom="0dp"
     android:background="?attr/selectableItemBackground"
-    >
+    android:padding="10dp"
+    android:paddingBottom="0dp">
 
     <TextView
         android:id="@+id/member_name"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="제목"
-        android:textSize="15dp"
         android:gravity="center_vertical"
-        android:textColor="@color/black"/>
+        android:text="제목"
+        android:textColor="@color/black"
+        android:textSize="15dp" />
+
     <Space
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_weight="1"/>
+        android:layout_weight="1" />
+
     <TextView
         android:id="@+id/connect_account"
         android:layout_width="wrap_content"
         android:layout_height="match_parent"
-        android:text="선택 안함"
-        android:textSize="15dp"
         android:gravity="center_vertical"
-        android:textColor="@color/bluebell"/>
+        android:text="선택 안함"
+        android:textColor="@color/bluebell"
+        android:textSize="15dp" />
 
 </LinearLayout>

@@ -1,9 +1,9 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".activity.AddMemberActivity">
 
     <androidx.appcompat.widget.Toolbar
@@ -23,12 +23,12 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="50dp"
+            android:layout_marginTop="10dp"
+            android:layout_marginBottom="20dp"
             android:elevation="2dp"
             android:gravity="center"
             android:paddingStart="15dp"
-            android:paddingEnd="20dp"
-            android:layout_marginTop="10dp"
-            android:layout_marginBottom="20dp">
+            android:paddingEnd="20dp">
 
             <Switch
                 android:id="@+id/switch_all"
@@ -38,6 +38,7 @@
                 android:textSize="12pt" />
 
         </LinearLayout>
+
         <LinearLayout
             android:id="@+id/switch_each"
             android:layout_width="match_parent"
@@ -59,9 +60,9 @@
                 android:id="@+id/new_alarm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
                 android:paddingStart="15dp"
                 android:paddingEnd="20dp"
-                android:layout_marginBottom="15dp"
                 android:text="새롭게 업로드된 사진"
                 android:textSize="10pt" />
 
@@ -69,9 +70,9 @@
                 android:id="@+id/congratulations_alarm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
                 android:paddingStart="15dp"
                 android:paddingEnd="20dp"
-                android:layout_marginBottom="15dp"
                 android:text="생일"
                 android:textSize="10pt" />
 
@@ -79,9 +80,9 @@
                 android:id="@+id/mission_alarm"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:layout_marginBottom="15dp"
                 android:paddingStart="15dp"
                 android:paddingEnd="20dp"
-                android:layout_marginBottom="15dp"
                 android:text="미션"
                 android:textSize="10pt" />
 

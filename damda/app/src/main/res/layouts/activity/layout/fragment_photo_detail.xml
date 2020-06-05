@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/detail_view"
@@ -28,13 +27,13 @@
         android:layout_alignParentBottom="true"
         android:layout_marginTop="50dp"
         android:layout_marginBottom="50dp"
+        android:background="#7f000000"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/vp_photo"
-        app:layout_constraintVertical_bias="1.0"
-        android:background="#7f000000">
+        app:layout_constraintVertical_bias="1.0">
 
         <TextView
             android:id="@+id/tvGalleryTitle"

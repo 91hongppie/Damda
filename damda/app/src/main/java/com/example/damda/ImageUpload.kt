@@ -5,11 +5,8 @@ import android.content.Context
 import android.content.Intent
 import android.media.ExifInterface
 import android.util.Log
-import androidx.core.app.ActivityCompat
 import androidx.core.app.JobIntentService
 import androidx.core.app.NotificationCompat
-import androidx.core.app.NotificationManagerCompat
-import com.example.damda.activity.MainActivity
 import okhttp3.*
 import java.io.File
 import java.io.IOException
@@ -23,23 +20,24 @@ class ImageUpload : JobIntentService() {
         const val TAG = "ImageUpload"
         const val JOB_ID = 1004
     }
+
     val MEDIA_TYPE_IMAGE = MediaType.parse("image/*")
 
     val jwt = GlobalApplication.prefs.token
 
-    fun enqueueWork(context: Context, work: Intent){
+    fun enqueueWork(context: Context, work: Intent) {
         enqueueWork(context, ImageUpload::class.java, JOB_ID, work)
     }
 
     override fun onCreate() {
         super.onCreate()
-        Log.d(TAG,"이미지 업로드 시작하자")
+        Log.d(TAG, "이미지 업로드 시작하자")
     }
 
     override fun onHandleWork(intent: Intent) {
         var url = URL(GlobalApplication.prefs.damdaServer + "/api/albums/addphoto/")
         if (intent.getStringExtra("before") == "main") {
-            url = URL(GlobalApplication.prefs.damdaServer+"/api/albums/autoaddphoto/")
+            url = URL(GlobalApplication.prefs.damdaServer + "/api/albums/autoaddphoto/")
         }
         val paths = intent.getStringArrayListExtra("paths")!!
         val ids = intent.getStringArrayListExtra("ids")!!
@@ -53,7 +51,7 @@ class ImageUpload : JobIntentService() {
 
     override fun onDestroy() {
         super.onDestroy()
-        val url = URL(GlobalApplication.prefs.damdaServer+"/api/albums/uploadend/")
+        val url = URL(GlobalApplication.prefs.damdaServer + "/api/albums/uploadend/")
 
         val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
             .addFormDataPart("user_id", "${GlobalApplication.prefs.user_id}").build()
@@ -68,7 +66,8 @@ class ImageUpload : JobIntentService() {
 
         client.newCall(request).enqueue(callback)
 
-        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager: NotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         var builder = NotificationCompat.Builder(this, "UPLOAD")
             .setSmallIcon(R.drawable.push_icon)
             .setContentTitle("담다")
@@ -77,15 +76,16 @@ class ImageUpload : JobIntentService() {
 
         notificationManager.notify(12100, builder.build())
 
-        Log.d(TAG,"끝끝끝")
+        Log.d(TAG, "끝끝끝")
     }
-    fun uploadImage(url : URL, image: File, path: String, id: String, i: Int, size: Int) {
+
+    fun uploadImage(url: URL, image: File, path: String, id: String, i: Int, size: Int) {
         val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
             .addFormDataPart("user_id", "${GlobalApplication.prefs.user_id}")
 
         try {
             val exif = ExifInterface(path)
-            var fileDatetime : String = if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
+            var fileDatetime: String = if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
                 val datetime = exif.getAttribute(ExifInterface.TAG_DATETIME)
                 val datetime_split = datetime.split(" ")
                 var date = datetime_split[0].split(":").joinToString("")
@@ -96,7 +96,11 @@ class ImageUpload : JobIntentService() {
                 val today = SimpleDateFormat("yyyyMMdd_HHmmss").format(datetime)
                 today + "_$id"
             }
-            requestBody.addFormDataPart("uploadImages", "damda_${fileDatetime}_${GlobalApplication.prefs.user_id}", RequestBody.create(MEDIA_TYPE_IMAGE, image))
+            requestBody.addFormDataPart(
+                "uploadImages",
+                "damda_${fileDatetime}_${GlobalApplication.prefs.user_id}",
+                RequestBody.create(MEDIA_TYPE_IMAGE, image)
+            )
 
             Log.d("사진 순서", ": $i")
             Log.d("사진 ID", ": $id")
@@ -119,7 +123,8 @@ class ImageUpload : JobIntentService() {
             Log.d("Exception", "$e")
         }
 
-        val notificationManager: NotificationManager = getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
+        val notificationManager: NotificationManager =
+            getSystemService(Context.NOTIFICATION_SERVICE) as NotificationManager
         var builder = NotificationCompat.Builder(this, "UPLOAD")
             .setSmallIcon(R.drawable.push_icon)
             .setContentTitle("담다")
@@ -127,7 +132,7 @@ class ImageUpload : JobIntentService() {
 
         var present = i.toFloat()
         var max_size = size.toFloat()
-        var progress =  present.div(max_size).times(100).toInt()
+        var progress = present.div(max_size).times(100).toInt()
         Log.d("PROGRESS", "i: $i, progress: $progress == ${present / max_size * 100}, size: $size")
         builder.setProgress(100, progress, false)
         notificationManager.notify(12100, builder.build())

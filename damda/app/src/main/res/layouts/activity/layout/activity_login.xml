@@ -5,21 +5,23 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     tools:context=".activity.LoginActivity">
+
     <ImageView
-        android:layout_above="@+id/signin_layout"
-        android:layout_alignParentTop="true"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:paddingBottom="5dp"
+        android:layout_above="@+id/signin_layout"
+        android:layout_alignParentTop="true"
         android:paddingTop="20dp"
-        android:src="@drawable/logo_title"/>
+        android:paddingBottom="5dp"
+        android:src="@drawable/logo_title" />
+
     <LinearLayout
         android:id="@+id/signin_layout"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
         android:layout_alignParentBottom="true"
         android:layout_marginLeft="20dp"
+        android:layout_marginTop="20dp"
         android:layout_marginRight="20dp"
         android:orientation="vertical">
 
@@ -29,31 +31,29 @@
             android:layout_height="wrap_content">
 
             <EditText
-                android:hint="@string/email"
                 android:id="@+id/email"
                 android:layout_width="match_parent"
-                android:maxLines="1"
-                android:maxLength="20"
-                android:inputType="text"
                 android:layout_height="wrap_content"
-                />
+                android:hint="@string/email"
+                android:inputType="text"
+                android:maxLength="20"
+                android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.textfield.TextInputLayout
             android:id="@+id/PWDLayout"
             android:layout_width="match_parent"
-            android:hint="@string/pwd"
+            android:layout_height="wrap_content"
             android:layout_marginTop="5dp"
-            android:layout_height="wrap_content">
+            android:hint="@string/pwd">
 
             <EditText
                 android:id="@+id/password"
                 android:layout_width="match_parent"
-                android:maxLines="1"
-                android:maxLength="20"
-                android:inputType="textPassword"
                 android:layout_height="wrap_content"
-                />
+                android:inputType="textPassword"
+                android:maxLength="20"
+                android:maxLines="1" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <Button
@@ -72,18 +72,19 @@
             android:layout_width="match_parent"
             android:layout_height="42dp"
             android:layout_marginBottom="10dp"
-            android:textSize="18sp"
-            android:text="회원가입"
             android:background="@drawable/round_green"
-            android:textColor="@color/bluebell" />
+            android:text="회원가입"
+            android:textColor="@color/bluebell"
+            android:textSize="18sp" />
+
         <TextView
             android:id="@+id/find_pw"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="35dp"
             android:layout_gravity="center"
+            android:layout_marginBottom="35dp"
             android:text="비밀번호가 기억나지않으세요?"
-            android:textAlignment="center"/>
+            android:textAlignment="center" />
 
 
         <com.kakao.usermgmt.LoginButton

@@ -4,32 +4,33 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
+
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rv_album"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:background="@color/colorWhite"
+        android:paddingStart="8dp"
+        android:paddingEnd="8dp"
+        android:scrollbars="vertical"
+        app:layoutManager="GridLayoutManager"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
-        android:paddingStart="8dp"
-        android:paddingEnd="8dp"
-        android:scrollbars="vertical"
-        app:layoutManager="GridLayoutManager"
         app:layout_constraintVertical_bias="1.0" />
 
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/add_album_button"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        android:layout_alignEnd="@id/rv_album"
+        android:layout_alignParentBottom="true"
         android:layout_gravity="bottom|right"
         android:layout_margin="16dp"
         android:contentDescription="@string/favorite"
         app:backgroundTint="@color/bluebell"
-        android:layout_alignParentBottom="true"
-        android:layout_alignEnd="@id/rv_album"
         app:srcCompat="@drawable/baseline_add_black_24dp" />
 </RelativeLayout>
 

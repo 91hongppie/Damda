@@ -2,20 +2,20 @@
     android:id="@+id/video_item_layout"
     android:layout_width="match_parent"
     android:layout_height="400dp"
-    android:padding="10dp"
-    android:gravity="center">
+    android:gravity="center"
+    android:padding="10dp">
+
     <ImageView
         android:id="@+id/thumbnail"
         android:layout_width="wrap_content"
-        android:src="@drawable/no_image"
-        android:layout_height="300dp">
-    </ImageView>
+        android:layout_height="300dp"
+        android:src="@drawable/no_image"></ImageView>
+
     <TextView
         android:id="@+id/video_title"
         android:layout_width="wrap_content"
         android:layout_height="30dp"
-        android:textSize="20sp"
         android:layout_below="@+id/thumbnail"
         android:textColor="@color/black"
-        />
+        android:textSize="20sp" />
 </RelativeLayout>

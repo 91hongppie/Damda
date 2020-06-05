@@ -26,7 +26,7 @@ class GlobalApplication : Application() {
 
     companion object {
         var instance: GlobalApplication? = null
-        lateinit var prefs : MySharedPreferences
+        lateinit var prefs: MySharedPreferences
     }
 
 }
