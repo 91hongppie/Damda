@@ -5,8 +5,6 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.CheckBox
 import android.widget.ImageView
-import androidx.appcompat.app.AppCompatActivity
-import androidx.fragment.app.FragmentManager
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions
@@ -20,11 +18,7 @@ import com.example.damda.navigation.PhotoListFragment.Companion.deleteArray
 import com.example.damda.navigation.PhotoListFragment.Companion.image_checked
 import com.example.damda.navigation.PhotoListFragment.Companion.photoArray
 import com.example.damda.navigation.model.Photos
-import com.google.android.material.bottomnavigation.BottomNavigationView
-import com.jakewharton.rxbinding2.widget.checked
-import com.jakewharton.rxbinding2.widget.checkedChanges
 import kotlinx.android.synthetic.main.fragment_photo_list.*
-import java.net.URL
 
 
 class PhotoAdapter (val photoList: Array<Photos>, val activity: MainActivity, val fragment: PhotoListFragment, val itemClick: (Photos) -> Unit) : RecyclerView.Adapter<PhotoAdapter.CustomViewHolder>() {
@@ -103,7 +97,6 @@ class PhotoAdapter (val photoList: Array<Photos>, val activity: MainActivity, va
                         }
                     }
                 }
-                println(photoArray.size)
             }
             checkbox.setOnClickListener {
                 if (photoArray.contains(photo)) {
@@ -119,7 +112,6 @@ class PhotoAdapter (val photoList: Array<Photos>, val activity: MainActivity, va
                         fragment.cb_image.text = "전체 해제"
                     }
                 }
-                println(photoArray.size)
             }
         }
     }

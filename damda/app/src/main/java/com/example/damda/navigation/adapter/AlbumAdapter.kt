@@ -5,10 +5,8 @@ import android.content.Context
 import android.content.DialogInterface
 import android.net.Uri
 import android.os.Environment
-import android.util.Log
 import android.view.*
 import android.widget.*
-import androidx.core.content.res.TypedArrayUtils.getString
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.request.RequestOptions

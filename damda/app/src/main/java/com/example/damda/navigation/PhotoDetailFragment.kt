@@ -36,11 +36,8 @@ import com.example.damda.navigation.model.Photos
 import com.example.damda.retrofit.model.PutAlbum
 import com.example.damda.retrofit.service.AlbumsService
 import com.google.gson.GsonBuilder
-import io.reactivex.Single
-import kotlinx.android.synthetic.main.fragment_photo_detail.*
 import kotlinx.android.synthetic.main.fragment_photo_detail.view.*
 import kotlinx.android.synthetic.main.fragment_photo_detail.view.btn_option
-import kotlinx.android.synthetic.main.fragment_photo_list.*
 import kotlinx.android.synthetic.main.image_fullscreen.view.*
 import okhttp3.*
 import retrofit2.Retrofit

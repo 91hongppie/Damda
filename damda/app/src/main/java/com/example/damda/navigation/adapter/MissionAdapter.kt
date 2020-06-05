@@ -2,18 +2,15 @@ package com.example.damda.navigation.adapter
 
 import android.annotation.SuppressLint
 import android.content.Intent
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.appcompat.app.AlertDialog
-import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.fragment.app.Fragment
 import androidx.recyclerview.widget.RecyclerView
 import com.example.damda.GlobalApplication
 import com.example.damda.R
-import com.example.damda.activity.AddPhotoActivity
 import com.example.damda.activity.MainActivity
 import com.example.damda.activity.MissionAddPhotoActivity
 import com.example.damda.navigation.MissionFragment
@@ -21,7 +18,6 @@ import com.example.damda.navigation.MissionFragment.Companion.mission_fragment
 import com.example.damda.navigation.MissionFragment.Companion.my_score
 import com.example.damda.navigation.model.Mission
 import com.example.damda.navigation.model.Score
-import com.example.damda.retrofit.service.MissionService
 import com.example.damda.retrofit.service.ScoreService
 import retrofit2.Call
 import retrofit2.Callback
