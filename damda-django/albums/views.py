@@ -269,15 +269,12 @@ def addphoto(request):
             image_face = image[top:bottom, left:right]
             unknown_face = fr.face_encodings(image_face)
             if len(unknown_face) == 0:
-                if not Photo.objects.filter(pic_name=image_path):
-                    make_image.albums.add(album)
-                break
+                continue
             try:
                 with open(f'uploads/faces/family_{album.family.id}.json', 'r', encoding='utf-8') as family:
                     data = json.load(family)
             except:
-                if not Photo.objects.filter(pic_name=image_path):
-                    make_image.albums.add(album)
+                make_image.albums.add(album)
                 break
             for album_name, data in data.items():
                 for dt in data:
@@ -289,9 +286,8 @@ def addphoto(request):
                         make_image.albums.add(user_album)
                         count += 1
                         break
-        if count == 0:
-            if not Photo.objects.filter(pic_name=image_path):
-                make_image.albums.add(album)
+        if count < 1:
+            make_image.albums.add(album)
     else:
         make_image.albums.add(album)
     return Response(status=status.HTTP_200_OK)
@@ -431,7 +427,6 @@ def autoaddphoto(request):
     if len(Photo.objects.filter(pic_name=image_path)):
         print('이미 있는 사진입니다')
         return Response(status=status.HTTP_200_OK)
-    skimage.io.imsave(image_path, image)
     make_image = Photo.objects.create(pic_name=image_path, title=item.name)
     faces = fr.face_locations(image)
     if len(faces) != 0:
@@ -441,19 +436,14 @@ def autoaddphoto(request):
             image_face = image[top:bottom, left:right]
             unknown_face = fr.face_encodings(image_face)
             if len(unknown_face) == 0:
-                if not Photo.objects.filter(pic_name=image_path):
-                    make_image.albums.add(album)
                 break
             try:
                 with open(f'uploads/faces/family_{album.family.id}.json', 'r', encoding='utf-8') as family:
                     data = json.load(family)
             except:
-                if not Photo.objects.filter(pic_name=image_path):
-                    make_image.albums.add(album)
                 break
             for album_name, data in data.items():
                 info = album_name.split('_')
-                print(info)
                 owner = User.objects.filter(family=info[0], state=3)[0]
                 familyname = FamilyName.objects.filter(user=user, owner=owner)[0]
                 if familyname.call != info[1]:
@@ -465,6 +455,11 @@ def autoaddphoto(request):
                             make_image.albums.add(user_album)
                             count += 1
                             break
+        if count > 0:
+            skimage.io.imsave(image_path, image)
+        else:
+            photo = get_object_or_404(Photo, pk=make_image.id)
+            photo.delete()
     return Response(status=status.HTTP_200_OK)
 
 @api_view(['POST', ])
