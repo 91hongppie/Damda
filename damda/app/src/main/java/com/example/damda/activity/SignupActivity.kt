@@ -247,8 +247,9 @@ class SignupActivity : AppCompatActivity() {
         } else {
             isInputCorrectData[indexPath] = false
         }
-
+        if (!textInputLayoutArray[indexPath].isErrorEnabled) {
         textInputLayoutArray[indexPath].error = inputInfoMessage[indexPath]
+        }
         textInputLayoutArray[indexPath].isErrorEnabled = !it
 
         reactiveCheckCorrectData()
