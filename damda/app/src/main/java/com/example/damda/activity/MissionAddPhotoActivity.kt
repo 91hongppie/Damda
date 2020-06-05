@@ -20,6 +20,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import com.example.damda.GlobalApplication
 import com.example.damda.GlobalApplication.Companion.prefs
+import com.example.damda.LoadingDialog
 import com.example.damda.R
 import com.example.damda.navigation.model.Mission
 import com.example.damda.retrofit.service.MissionService
@@ -41,6 +42,7 @@ class MissionAddPhotoActivity : AppCompatActivity() {
     private var mission_title: String? = null
     private var mission_id = 0
     private var period = 0
+    var loadingDialog = LoadingDialog(this)
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mission_title = intent.getStringExtra("mission_title")
@@ -131,6 +133,7 @@ class MissionAddPhotoActivity : AppCompatActivity() {
                     )
                 }
 
+                loadingDialog.show()
                 val url = URL(prefs.damdaServer + "/api/albums/addphoto/")
 
                 uploadImage(url, images, paths)
@@ -215,12 +218,14 @@ class MissionAddPhotoActivity : AppCompatActivity() {
     inner class Callback1 : Callback {
         override fun onFailure(call: okhttp3.Call, e: IOException) {
             Log.d("Sever response", "error: $e")
+            loadingDialog.dismiss()
 
         }
 
         override fun onResponse(call: okhttp3.Call, response: Response) {
             val status = response.code()
             Log.d("server response", "$status")
+            loadingDialog.dismiss()
 
             val result = response.body()?.string()
             Log.d("Sever response", "result: $result")
