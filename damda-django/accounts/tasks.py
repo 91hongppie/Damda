@@ -7,6 +7,7 @@ from damda.celery_app import app
 
 import threading
 import datetime
+import random
 import requests, json
 
 import jwt
@@ -16,6 +17,7 @@ from korean_lunar_calendar import KoreanLunarCalendar
 from django.contrib.auth import get_user_model
 from django import db
 from albums.models import Album, Photo
+from accounts.models import Mission
 from .models import Device
 
 
@@ -166,3 +168,45 @@ def sendPushCongrat():
             result.append(response.status_code)
     
     return result
+
+@app.task
+def dailymission():
+    missions = Mission.objects.filter(period=0)
+    missions.delete()
+    users = User.objects.all()
+    with open(f'quiz/mission.json', 'r', encoding='utf-8') as quiz:
+        data = json.load(quiz)
+    missions_data = data["0"]
+    todays_mission = random.sample(range(0, len(missions_data)), 3)
+    for i in todays_mission:
+        for user in users:
+            Mission.objects.create(user=user, title=missions_data[i], status=0, point=3, prize=0, period=0)
+   
+
+
+@app.task
+def weeklymission():
+    missions = Mission.objects.filter(period=1)
+    missions.delete()
+    users = User.objects.all()
+    with open(f'quiz/mission.json', 'r', encoding='utf-8') as quiz:
+        data = json.load(quiz)
+    missions_data = data["1"]
+    thisweek_mission = random.sample(range(0, len(missions_data)), 5)
+    for i in thisweek_mission:
+        for user in users:
+            Mission.objects.create(user=user, title=missions_data[i], status=0, point=5, prize=0, period=1)
+
+
+@app.task
+def monthlymission():
+    missions = Mission.objects.filter(period=1)
+    missions.delete()
+    users = User.objects.all()
+    with open(f'quiz/mission.json', 'r', encoding='utf-8') as quiz:
+        data = json.load(quiz)
+    missions_data = data["2"]
+    thismonth_mission = random.sample(range(0, len(missions_data)), 5)
+    for i in thismonth_mission:
+        for user in users:
+            Mission.objects.create(user=user, title=missions_data[i], status=0, point=10, prize=0, period=2)

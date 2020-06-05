@@ -128,15 +128,6 @@ def face(request, family_pk, user_pk):
             return Response(status=202, data={'message': '얼굴을 찾을 수 없습니다.'})
         ROOT_DIR = os.path.abspath("./")
         os.makedirs(os.path.join(ROOT_DIR, 'uploads/faces'), exist_ok=True)
-        try:
-            with open(f'uploads/faces/family_{family_pk}.json', 'r', encoding='utf-8') as family:
-                data = json.load(family)
-            data[f'{family_pk}_{title}'] = [face_encoding[0].tolist()]
-        except:
-            data = {}
-            data[f'{family_pk}_{title}'] = [face_encoding[0].tolist()]
-        with open(f'uploads/faces/family_{family_pk}.json', 'w', encoding='utf-8') as family:
-            json.dump(data, family, cls=NumpyArrayEncoder, ensure_ascii=-False, indent=2)
         
         albumSerializer = AlbumSerializer(data={'family':family_pk, 'title':title, 'image': "empty"})
         if albumSerializer.is_valid():
@@ -157,6 +148,15 @@ def face(request, family_pk, user_pk):
                 make_image.albums.add(album)
                 response_data = albumSerializer2.data
                 response_data['call'] = title
+                try:
+                    with open(f'uploads/faces/family_{family_pk}.json', 'r', encoding='utf-8') as family:
+                        data = json.load(family)
+                    data[f'{family_pk}_{album.id}'] = [face_encoding[0].tolist()]
+                except:
+                    data = {}
+                    data[f'{family_pk}_{album.id}'] = [face_encoding[0].tolist()]
+                with open(f'uploads/faces/family_{family_pk}.json', 'w', encoding='utf-8') as family:
+                    json.dump(data, family, cls=NumpyArrayEncoder, ensure_ascii=-False, indent=2)
                 return Response(response_data)
             else:
                 album.delete()
@@ -285,7 +285,7 @@ def addphoto(request):
                     distance = fr.face_distance(dt, unknown_face[0])
                     if distance < 0.44:
                         info = album_name.split('_')
-                        user_album = Album.objects.filter(family=info[0], title=info[1])[0]
+                        user_album = Album.objects.filter(family=info[0], id=info[1])[0]
                         make_image.albums.add(user_album)
                         count += 1
                         break
@@ -453,15 +453,13 @@ def autoaddphoto(request):
                 break
             for album_name, data in data.items():
                 info = album_name.split('_')
-                print(info)
-                owner = User.objects.filter(family=info[0], state=3)[0]
-                familyname = FamilyName.objects.filter(user=user, owner=owner)[0]
-                if familyname.call != info[1]:
+                album = Album.objects.filter(member=user)[0]
+                if album.id != info[1]:
                     for dt in data:
                         dt = [np.asarray(dt)]
                         distance = fr.face_distance(dt, unknown_face[0])
                         if distance < 0.44:
-                            user_album = Album.objects.filter(family=info[0], title=info[1])[0]
+                            user_album = Album.objects.filter(family=info[0], id=info[1])[0]
                             make_image.albums.add(user_album)
                             count += 1
                             break

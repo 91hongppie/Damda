@@ -41,6 +41,21 @@ app.conf.update(
             'schedule': crontab(minute=0, hour=9),
             'args': ()
         },
+        'daily_mission': {
+            'task': 'accounts.tasks.dailymission',
+            'schedule': crontab(minute=0, hour=0),
+            'args': ()
+        },
+        'weekly_mission': {
+            'task': 'accounts.tasks.weeklymission',
+            'schedule': crontab(minute=0, hour=0, day_of_week='monday'),
+            'args': ()
+        },
+        '_mission': {
+            'task': 'accounts.tasks.monthlymission',
+            'schedule': crontab(minute=0, hour=0, day_of_month='1'),
+            'args': ()
+        }
     }
 )
 

@@ -425,36 +425,6 @@ def checkDevice(request):
 def missions(request, user_pk, period):
     if request.method == 'GET':
         missions = Mission.objects.filter(user=user_pk, period=period)
-        today = datetime.date.today()
-        user = get_object_or_404(User, id=user_pk)
-        if period == 0:
-            if len(missions) != 0:
-                if missions[0].created_at.day != today.day:
-                    missions.delete()
-                    for i in range(5):
-                        Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
-            else:
-                for i in range(5):
-                    Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
-        elif period == 1:
-            if len(missions) != 0:
-                if today.weekday() == 1 and missions[0].created_at.day != today.day:
-                        missions.delete()
-                        for i in range(5, 10, 1):
-                            Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
-            else:
-                for i in range(5, 10, 1):
-                    Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
-        elif period == 2:
-            if len(missions) != 0:
-                if today.day == 0 and missions[0].created_at.month != today.month:
-                    missions.delete()
-                    for i in range(100, 105, 1):
-                        Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
-            else:
-                for i in range(100, 105, 1):
-                    Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
-        missions = Mission.objects.filter(user=user_pk, period=period)
         serializers = MissionSerializer(missions, many=True)
         return Response({"data": serializers.data})
     if request.method == 'PUT':
