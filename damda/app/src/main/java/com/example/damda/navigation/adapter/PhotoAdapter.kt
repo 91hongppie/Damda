@@ -47,7 +47,7 @@ class PhotoAdapter (val photoList: Array<Photos>, val activity: MainActivity, va
         val image = view.findViewById<ImageView>(R.id.iv_image)
         var checkbox = view.findViewById<CheckBox>(R.id.cb_photo)
         fun bind(photo: Photos) {
-            Glide.with(view.context).load(url + "/${photo.pic_name}")
+            Glide.with(view.context).load(url + "/api/${photo.pic_name}")
                 .apply(RequestOptions().override(600, 600))
                 .apply(RequestOptions.centerCropTransform()).into(image)
             if (photoStatus == 1) {

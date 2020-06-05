@@ -274,7 +274,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                                     uploadIntent.putExtra("paths", paths)
                                     uploadIntent.putExtra("before", "main")
                                     uploadIntent.putExtra("ids", ids)
-                                    startService(uploadIntent)
+//                                    startService(uploadIntent)
                                     ImageUpload().enqueueWork(this@MainActivity, uploadIntent)
                                 }
                                 DialogInterface.BUTTON_POSITIVE -> {

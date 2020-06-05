@@ -88,7 +88,6 @@ class QuizFragment : Fragment() {
             } else {
                 button_quiz.visibility = View.GONE
                 editText.visibility = View.GONE
-                check.visibility = View.VISIBLE
                 my_score += 5
                 congrat.visibility = View.VISIBLE
                 button_point.visibility = View.VISIBLE
@@ -109,14 +108,9 @@ class QuizFragment : Fragment() {
                 })
                 button_point.setOnClickListener {
                     if (num == 1) {
-<<<<<<< HEAD
-                        MissionFragment().refreshMissionFragment(mission_fragment)
-                        this.fragmentManager?.beginTransaction()?.detach(this)?.attach(this)
-                            ?.commit()
-=======
                         editText.text = null
+                        MissionFragment().refreshMissionFragment(mission_fragment)
                         this.fragmentManager?.beginTransaction()?.detach(this)?.attach(this)?.commit()
->>>>>>> origin/feature/layout
                     }
                 }
 

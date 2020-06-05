@@ -283,7 +283,7 @@ class PhotoListFragment : Fragment() {
                     view.rv_photo.adapter?.notifyDataSetChanged()
                     var imageUris = ArrayList<Uri?>()
                     for (photo in photoList) {
-                        var url = prefs.damdaServer + "/${photo.pic_name}"
+                        var url = prefs.damdaServer + "/api/${photo.pic_name}"
                         var image_task: URLtoBitmapTask = URLtoBitmapTask()
                         image_task = URLtoBitmapTask().apply {
                             imgurl = URL(url)
@@ -431,7 +431,7 @@ class PhotoListFragment : Fragment() {
 
     private  fun startDownloading() {
         for(photo in photoList){
-            val imgurl = prefs.damdaServer+"/${photo.pic_name}"
+            val imgurl = prefs.damdaServer+"/api/${photo.pic_name}"
             val request = DownloadManager.Request(Uri.parse(imgurl))
             val jwt = GlobalApplication.prefs.token
             request.addRequestHeader("Authorization", "JWT $jwt")
