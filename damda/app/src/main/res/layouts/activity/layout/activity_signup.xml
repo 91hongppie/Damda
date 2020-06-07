@@ -29,30 +29,20 @@
             android:layout_marginRight="20dp"
             android:orientation="vertical">
 
-        <com.google.android.material.textfield.TextInputLayout
-            android:id="@+id/editEmailLayout"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content">
-
-            <EditText
-                android:hint="@string/email"
-                android:id="@+id/editEmail"
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/editEmailLayout"
                 android:layout_width="match_parent"
-                android:maxLines="1"
-                android:maxLength="20"
-                android:inputType="textEmailAddress"
-                android:layout_height="wrap_content"
-                />
-        </com.google.android.material.textfield.TextInputLayout>
+                android:layout_height="wrap_content">
 
                 <EditText
+                    android:hint="@string/email"
                     android:id="@+id/editEmail"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/email"
-                    android:inputType="text"
+                    android:maxLines="1"
                     android:maxLength="20"
-                    android:maxLines="1" />
+                    android:inputType="textEmailAddress"
+                    android:layout_height="wrap_content"
+                    />
             </com.google.android.material.textfield.TextInputLayout>
 
             <Button
