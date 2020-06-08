@@ -44,7 +44,7 @@
   <a :href=baseURL @click.prevent="downloadItem" class="d-block" align="center" :style="{marginTop:'18px'}">앱을 다운로드하세요.</a>
 </v-col>
 <v-col cols=6>
-  <v-img src="../assets/google_play_badge.png" width="100%"/>
+  <a href='https://play.google.com/store/apps/details?id=com.ebgbs.damda&pcampaignid=pcampaignidMKT-Other-global-all-co-prtnr-py-PartBadge-Mar2515-1'><img width="100%" alt='다운로드하기 Google Play' src='https://play.google.com/intl/ko/badges/static/images/badges/ko_badge_web_generic.png'/></a>
 </v-col>
 </v-row>
   </v-card>
@@ -91,7 +91,7 @@
       }
     },
     mounted() {
-      this.baseURL = this.$store.state.server + '/uploads/app-release.apk'
+      this.baseURL = this.$store.state.server + '/api/uploads/app-release.apk'
     },
     methods: {
       validate() {

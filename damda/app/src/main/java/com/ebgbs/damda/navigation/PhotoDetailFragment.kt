@@ -241,8 +241,7 @@ class PhotoDetailFragment: Fragment() {
                 // set gallery title
                 selectedPosition = position
                 currentPosition = position
-                var photo_title = photoList.get(selectedPosition).title?.split("_")!![1]
-                tvGalleryTitle.text = photo_title.slice(0 until 4) + "년 " + photo_title.slice(4 until 6) + "월 " + photo_title.slice(6 until 8) + "일"
+                tvGalleryTitle.text = photoList[position].title
             }
 
             override fun onPageScrolled(arg0: Int, arg1: Float, arg2: Int) {

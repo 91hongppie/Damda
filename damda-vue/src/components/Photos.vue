@@ -78,9 +78,9 @@
         else {
             if (this.album_id === 0) {
                     this.requestURL = `/api/albums/photo/${this.family}/`
-                } else {
-                    this.requestURL = `/api/albums/photo/${this.family}/${this.album_id}/`
-                }
+            } else {
+                this.requestURL = `/api/albums/photo/${this.family}/${this.album_id}/`
+            }
             http.get(`${this.requestURL}?page=${this.limit}`, this.options)
             .then(response => {
                 this.photo_list = response.data
