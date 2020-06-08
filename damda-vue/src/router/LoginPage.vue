@@ -20,6 +20,10 @@
       </v-col>
     </v-row>
     </v-container>
+    <v-footer fixed="true">
+    <v-spacer></v-spacer>
+    <div><span>&copy; {{ new Date().getFullYear() }} | </span><span>개인정보처리방침</span></div>
+  </v-footer>
   </div>
 </template>
 

@@ -83,7 +83,7 @@
                 }
             http.get(`${this.requestURL}?page=${this.limit}`, this.options)
             .then(response => {
-                this.photo_list = response.data.reverse()
+                this.photo_list = response.data
             })
             .catch(error => {
                 console.log(error)

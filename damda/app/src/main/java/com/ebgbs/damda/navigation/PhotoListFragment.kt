@@ -341,7 +341,7 @@ class PhotoListFragment : Fragment() {
                         nullalbumList = albums!!.data
                         var movealbumId = 0
                         var dialogBuilder = AlertDialog.Builder(activity)
-                        dialogBuilder.setTitle("가족 설정")
+                        dialogBuilder.setTitle("앨범 이동")
                         var fnl = MoveAlbumAdapter(nullalbumList)
                         dialogBuilder.setSingleChoiceItems(
                             fnl,

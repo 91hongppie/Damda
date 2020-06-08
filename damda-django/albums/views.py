@@ -379,8 +379,9 @@ class PostPagination(PageNumberPagination):
 class PostListAPIView(generics.ListAPIView):    
     def get_queryset(self):
         albums = Album.objects.filter(family=self.kwargs['family_pk'])
-        photos = Photo.objects.filter(albums=albums)
-        return photos
+        photos = Photo.objects.filter(albums__in=albums).order_by('-id')
+        serializers = PhotoSerializer(photos, many=True)
+        return serializers.data
     
     serializer_class = PhotoSerializer
     pagination_class = PostPagination
@@ -388,7 +389,7 @@ class PostListAPIView(generics.ListAPIView):
 class ListAPIView(generics.ListAPIView):
     def get_queryset(self):
         album = get_object_or_404(Album, pk=self.kwargs['album_pk'])
-        photos = Photo.objects.filter(albums=album)
+        photos = Photo.objects.filter(albums=album).order_by('-id')
         serializers = PhotoSerializer(photos, many=True)
         return serializers.data
     serializer_class = PhotoSerializer

@@ -41,7 +41,7 @@
 </v-card>
 <v-row :style="{'width': '365.6px', 'margin-left':'1px'}">
 <v-col cols=6>
-  <p align="center" :style="{marginTop:'18px'}">앱을 다운로드하세요</p>
+  <a :href=baseURL @click.prevent="downloadItem" class="d-block" align="center" :style="{marginTop:'18px'}">앱을 다운로드하세요.</a>
 </v-col>
 <v-col cols=6>
   <v-img src="../assets/google_play_badge.png" width="100%"/>
@@ -87,7 +87,11 @@
           username: '',
           password: '',
         },
+        baseURL :"",
       }
+    },
+    mounted() {
+      this.baseURL = this.$store.state.server + '/uploads/app-release.apk'
     },
     methods: {
       validate() {
@@ -145,8 +149,17 @@
       onFailure(data) {
         console.log(data)
         console.log("failure")
-      } 
-
+      }, 
+    downloadItem () {
+    http.get(this.baseURL, { responseType: 'blob' })
+      .then(response => {
+        const blob = new Blob([response.data], { type: 'application/vnd.android.package-archive' })
+        const link = document.createElement('a')
+        link.href = URL.createObjectURL(blob)
+        link.click()
+        URL.revokeObjectURL(link.href)
+      }).catch(console.error)
+    }
     },
     computed: {
       ...mapGetters([
