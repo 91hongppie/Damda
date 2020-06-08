@@ -329,7 +329,6 @@ def UserInfo(request):
 @permission_classes([AllowAny])
 @csrf_exempt
 def signup(request):
-    print('aaa')
     if request.method == 'GET':
         data = request.GET.get('username')
         user = User.objects.filter(username=data)        
@@ -344,6 +343,25 @@ def signup(request):
         serializer.is_valid()
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
+            with open(f'quiz/mission.json', 'r', encoding='utf-8') as mission:
+                data = json.load(mission)
+            for i in range(3):
+                if i == 0: 
+                    point = 3
+                    nums = 3
+                    mission_data = data["0"]
+                elif i == 1: 
+                    nums = 3
+                    point = 5
+                    mission_data = data["1"]
+                else: 
+                    nums = 4
+                    point = 10
+                    mission_data = data["2"]
+                missions = random.sample(range(0, len(mission_data)), nums)
+                for j in missions:
+                    Mission.objects.create(user=user, title=mission_data[j], status=0, point=point, prize=0, period=i)
+
             Score.objects.create(user=user)
             return Response(serializer.data)
         else:
