@@ -329,7 +329,6 @@ def UserInfo(request):
 @permission_classes([AllowAny])
 @csrf_exempt
 def signup(request):
-    print('aaa')
     if request.method == 'GET':
         data = request.GET.get('username')
         user = User.objects.filter(username=data)        
@@ -344,6 +343,25 @@ def signup(request):
         serializer.is_valid()
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
+            with open(f'quiz/mission.json', 'r', encoding='utf-8') as mission:
+                data = json.load(mission)
+            for i in range(3):
+                if i == 0: 
+                    point = 3
+                    nums = 3
+                    mission_data = data["0"]
+                elif i == 1: 
+                    nums = 3
+                    point = 5
+                    mission_data = data["1"]
+                else: 
+                    nums = 4
+                    point = 10
+                    mission_data = data["2"]
+                missions = random.sample(range(0, len(mission_data)), nums)
+                for j in missions:
+                    Mission.objects.create(user=user, title=mission_data[j], status=0, point=point, prize=0, period=i)
+
             Score.objects.create(user=user)
             return Response(serializer.data)
         else:
@@ -371,10 +389,8 @@ def FindPassword(request):
         else:
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'POST':
-        print('aaa')
         user = get_object_or_404(User, username=request.data.get("username"))
         serializer = UserChangeSerializer(data={'username': user.username, 'password': request.data.get("password")}, instance=user)
-        print(serializer)
         serializer.is_valid()
         if serializer.is_valid(raise_exception=True):
             user = serializer.save()
@@ -461,10 +477,7 @@ def score(request, user_pk):
 @authentication_classes((JSONWebTokenAuthentication,))
 @csrf_exempt
 def logout(request):
-    print('-----------------------------------------------------------')
-    print(request.data)
     device_token = request.POST.get('device_token')
-    print(device_token)
     target = get_object_or_404(Device, device_token=device_token)
     target.delete()
     return Response(status=status.HTTP_200_OK)

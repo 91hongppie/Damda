@@ -99,7 +99,6 @@ def albumMember(request, family_pk, user_pk):
             calls = get_object_or_404(FamilyName, user=user_pk, album=data['id'])
             data['call'] = calls.call
         datas.append({'title': '', 'image': '', 'id': None})
-        print(datas)
         return Response({"data": datas})
     return Response(status=status.HTTP_400_BAD_REQUEST)
 
@@ -144,7 +143,9 @@ def face(request, family_pk, user_pk):
                 if makeFamilyName(family_pk, request.data, albumSerializer.data['id'], title):
                     album.delete()
                     return Response(status=status.HTTP_400_BAD_REQUEST)
-                make_image = Photo.objects.create(pic_name=image_path, title=request.FILES['image'])
+                title = image_path.split('_')[1]
+                title = title[0:4:] + '년 ' + title[4:6:] + '월 ' + title[6::] + '일'
+                make_image = Photo.objects.create(pic_name=image_path, title=title)
                 make_image.albums.add(album)
                 response_data = albumSerializer2.data
                 response_data['call'] = title
@@ -256,11 +257,13 @@ def addphoto(request):
     image = fr.load_image_file(item)
 
     image_path = 'uploads/albums/{}/{}'.format(user.family_id, item.name + '.jpg')
+    title = image_path.split('_')[1]
+    title = title[0:4:] + '년 ' + title[4:6:] + '월 ' + title[6::] + '일'
     if len(Photo.objects.filter(pic_name=image_path)):
         print('이미 있는 사진입니다')
         return Response(status=status.HTTP_200_OK)
     skimage.io.imsave(image_path, image)
-    make_image = Photo.objects.create(pic_name=image_path, title=item.name)
+    make_image = Photo.objects.create(pic_name=image_path, title=title)
     faces = fr.face_locations(image)
     if len(faces) != 0:
         count = 0
@@ -344,12 +347,10 @@ def video(request,family_pk):
     if request.method == 'GET':
         videos = Video.objects.filter(family=family_pk)
         serializers = VideoSerializer(videos, many=True)
-        print(serializers.data)
         return Response({"data": serializers.data})
     elif request.method == 'POST':
         serializer = VideoSerializer(data={'file':request.FILES['image'],'family':family_pk,'title':request.data.get('title')[1:-1]})
         serializer.is_valid()
-        print(serializer.errors)
         if serializer.is_valid():
             serializer.save()
             # data = {
@@ -424,10 +425,13 @@ def autoaddphoto(request):
     image = fr.load_image_file(item)
 
     image_path = 'uploads/albums/{}/{}'.format(user.family_id, item.name + '.jpg')
+    
+    title = image_path.split('_')[1]
+    title = title[0:4:] + '년 ' + title[4:6:] + '월 ' + title[6::] + '일'
     if len(Photo.objects.filter(pic_name=image_path)):
         print('이미 있는 사진입니다')
         return Response(status=status.HTTP_200_OK)
-    make_image = Photo.objects.create(pic_name=image_path, title=item.name)
+    make_image = Photo.objects.create(pic_name=image_path, title=title)
     faces = fr.face_locations(image)
     if len(faces) != 0:
         count = 0
@@ -445,7 +449,7 @@ def autoaddphoto(request):
             for album_name, data in data.items():
                 info = album_name.split('_')
                 album = Album.objects.filter(member=user)[0]
-                if album.id != info[1]:
+                if album.id != int(info[1]):
                     for dt in data:
                         dt = [np.asarray(dt)]
                         distance = fr.face_distance(dt, unknown_face[0])

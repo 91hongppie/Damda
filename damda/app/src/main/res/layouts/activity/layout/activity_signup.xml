@@ -45,16 +45,6 @@
                 />
         </com.google.android.material.textfield.TextInputLayout>
 
-                <EditText
-                    android:id="@+id/editEmail"
-                    android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
-                    android:hint="@string/email"
-                    android:inputType="text"
-                    android:maxLength="20"
-                    android:maxLines="1" />
-            </com.google.android.material.textfield.TextInputLayout>
-
             <Button
                 android:id="@+id/btnCheckExistID"
                 android:layout_width="match_parent"
