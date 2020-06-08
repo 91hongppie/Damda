@@ -5,6 +5,7 @@ import android.app.Activity
 import android.app.AlertDialog
 import android.content.Intent
 import android.content.pm.PackageManager
+import android.graphics.Bitmap
 import android.media.ExifInterface
 import android.net.Uri
 import android.os.Build
@@ -20,6 +21,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
+import androidx.core.net.toUri
 import com.ebgbs.damda.GlobalApplication
 import com.ebgbs.damda.GlobalApplication.Companion.prefs
 import com.ebgbs.damda.LoadingDialog
@@ -51,7 +53,6 @@ class CropperActivity : AppCompatActivity() {
     var imagePreview: ImageView? = null
     val token = "JWT " + prefs.token.toString()
     val family_id = prefs.family_id.toString()
-    var uri: Uri? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -61,9 +62,7 @@ class CropperActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
-        if (checkPermission(STORAGE_PERMISSION, FLAG_PERM_STORAGE)) {
-            setViews()
-        }
+
         var retrofit = Retrofit.Builder()
             .baseUrl(prefs.damdaServer)
             .addConverterFactory(GsonConverterFactory.create())
@@ -72,11 +71,8 @@ class CropperActivity : AppCompatActivity() {
             AlbumsService::class.java
         )
         imagePreview = findViewById<ImageView>(R.id.preview) as ImageView
-        preview.setOnClickListener {
-            if (checkPermission(STORAGE_PERMISSION, FLAG_PERM_STORAGE)) {
-                setViews()
-            }
-        }
+        var uri = intent.getParcelableExtra("uri") as Uri
+        imagePreview?.setImageURI(uri)
         val spinner: Spinner = findViewById(R.id.family_name)
         if (intent.getStringExtra("before") == "addFamily") {
             family_name.visibility = View.GONE
@@ -106,10 +102,13 @@ class CropperActivity : AppCompatActivity() {
                 albumCall = spinner.selectedItem.toString()
             }
             save_member.clickable().accept(false)
-            val file = File(getPath(uri!!))
+            val directory = getApplicationContext().cacheDir
+            val arr = uri.toString().split("/")
+            val file_name = arr[arr.size - 1]
+            val file = File(directory, file_name)
             val requestFile: RequestBody =
                 RequestBody.create(MediaType.parse("multipart/form-data"), file)
-            val exif = ExifInterface(getPath(uri!!))
+            val exif = ExifInterface("$directory/$file_name")
             var fileDatetime : String = if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
                 val datetime = exif.getAttribute(ExifInterface.TAG_DATETIME)
                 val datetime_split = datetime.split(" ")
@@ -122,7 +121,7 @@ class CropperActivity : AppCompatActivity() {
                 today + "_0"
             }
 
-            var filename = "damda_${fileDatetime}_${GlobalApplication.prefs.user_id}.jpg"
+            var filename = "damda_${fileDatetime}_${prefs.user_id}.jpg"
             val body =
                 MultipartBody.Part.createFormData("image", filename, requestFile)
             albumsService.updateFace(
@@ -175,68 +174,6 @@ class CropperActivity : AppCompatActivity() {
         }
     }
 
-    fun setViews() {
-        val intent = Intent(Intent.ACTION_PICK)
-        intent.type = "image/*"
-        intent.putExtra("crop", "true")
-        startActivityForResult(Intent.createChooser(intent, "사진 선택"), FLAG_REQ_STORAGE)
-    }
-
-    fun checkPermission(permissions: Array<out String>, flag: Int): Boolean {
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            for (permission in permissions) {
-                if (ContextCompat.checkSelfPermission(
-                        this,
-                        permission
-                    ) != PackageManager.PERMISSION_GRANTED
-                ) {
-                    ActivityCompat.requestPermissions(this, permissions, flag)
-                    return false
-                }
-            }
-        }
-        return true
-    }
-
-    override fun onRequestPermissionsResult(
-        requestCode: Int,
-        permissions: Array<out String>,
-        grantResults: IntArray
-    ) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
-        when (requestCode) {
-            FLAG_PERM_STORAGE -> {
-                for (grant in grantResults) {
-                    if (grant != PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(this, "저장소 권환을 승인해야지만 앱을 사용할 수 있습니다.", Toast.LENGTH_LONG)
-                            .show()
-                        return
-                    }
-                }
-                setViews()
-            }
-        }
-    }
-
-    override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
-        super.onActivityResult(requestCode, resultCode, data)
-        if (resultCode == Activity.RESULT_OK) {
-            when (requestCode) {
-                FLAG_REQ_STORAGE -> {
-                    uri = data?.data
-                    imagePreview?.setImageURI(uri)
-                }
-            }
-        }
-    }
-
-    private fun getPath(uri: Uri): String {
-        val projection = arrayOf(MediaStore.Images.Media.DATA)
-        val cursor = managedQuery(uri, projection, null, null, null)
-        val column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA)
-        cursor.moveToFirst()
-        return cursor.getString(column_index)
-    }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
         when (item.getItemId()) {
