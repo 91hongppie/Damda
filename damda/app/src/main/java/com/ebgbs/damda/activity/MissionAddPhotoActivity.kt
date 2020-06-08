@@ -42,7 +42,7 @@ class MissionAddPhotoActivity : AppCompatActivity() {
     private var mission_title: String? = null
     private var mission_id = 0
     private var period = 0
-    var loadingDialog = LoadingDialog(this)
+    private lateinit var loadingDialog: LoadingDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         mission_title = intent.getStringExtra("mission_title")
@@ -77,7 +77,6 @@ class MissionAddPhotoActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
 
             var imageUris = arrayListOf<Uri>()
@@ -132,7 +131,7 @@ class MissionAddPhotoActivity : AppCompatActivity() {
                         100
                     )
                 }
-
+                loadingDialog = LoadingDialog(this)
                 loadingDialog.show()
                 val url = URL(prefs.damdaServer + "/api/albums/addphoto/")
 
