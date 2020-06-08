@@ -99,7 +99,6 @@ def albumMember(request, family_pk, user_pk):
             calls = get_object_or_404(FamilyName, user=user_pk, album=data['id'])
             data['call'] = calls.call
         datas.append({'title': '', 'image': '', 'id': None})
-        print(datas)
         return Response({"data": datas})
     return Response(status=status.HTTP_400_BAD_REQUEST)
 

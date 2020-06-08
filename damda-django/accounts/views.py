@@ -198,7 +198,7 @@ def makeFamilyName(family_pk, user_pk, owner, albumId, familyName):
                 else:
                     return True
 
-        nullOwnerAlbum = Album.objects.filter(member=None).exclude(title="기본 앨범")
+        nullOwnerAlbum = Album.objects.filter(family=family_pk, member=None).exclude(title="기본 앨범")
         for noa in nullOwnerAlbum:
             member = get_object_or_404(FamilyName, user=user_pk, album=noa.id)
             try:
@@ -208,7 +208,6 @@ def makeFamilyName(family_pk, user_pk, owner, albumId, familyName):
             if familyNameSerializer2.is_valid():
                 familyNameSerializer2.save()
 
-        
     else:
         return True
     
