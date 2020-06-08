@@ -24,6 +24,7 @@ import datetime
 from .helper import email_auth_num
 import random
 from django.core.mail import EmailMessage
+from django.contrib.auth import authenticate
 
 
 # Create your views here.
@@ -312,7 +313,7 @@ def UserInfo(request):
             data['my_album'] = True
         else:
             data['my_album'] = False
-        return Response(data)
+        return Response(serializer.data)
     elif request.method == 'PUT':
         User = get_user_model()
         user = get_object_or_404(User, username=request.user)
@@ -372,15 +373,16 @@ def FindPassword(request):
             return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
     elif request.method == 'POST':
         print('aaa')
-        user = get_object_or_404(User, username=request.data.get("username"))
-        serializer = UserChangeSerializer(data={'username': user.username, 'password': request.data.get("password")}, instance=user)
-        print(serializer)
-        serializer.is_valid()
-        if serializer.is_valid(raise_exception=True):
-            user = serializer.save()
-            return Response(serializer.data)
+        # user = get_object_or_404(User, username=request.data.get("username"))
+        user = authenticate(username=request.data.get("username"), password=request.data.get("changePWD"))
+        if user is not None:
+            serializer = UserChangeSerializer(data={'username': user.username, 'password': request.data.get("password")}, instance=user)
+            serializer.is_valid()
+            if serializer.is_valid(raise_exception=True):
+                user = serializer.save()
+                return Response(serializer.data)
         else:
-            return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+            return Response({'message': 'error'}, status=status.HTTP_400_BAD_REQUEST)
 
 
 @method_decorator(csrf_exempt, name='dispatch')
@@ -425,6 +427,36 @@ def checkDevice(request):
 def missions(request, user_pk, period):
     if request.method == 'GET':
         missions = Mission.objects.filter(user=user_pk, period=period)
+        today = datetime.date.today()
+        user = get_object_or_404(User, id=user_pk)
+        if period == 0:
+            if len(missions) != 0:
+                if missions[0].created_at.day != today.day:
+                    missions.delete()
+                    for i in range(5):
+                        Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
+            else:
+                for i in range(5):
+                    Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
+        elif period == 1:
+            if len(missions) != 0:
+                if today.weekday() == 1 and missions[0].created_at.day != today.day:
+                        missions.delete()
+                        for i in range(5, 10, 1):
+                            Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
+            else:
+                for i in range(5, 10, 1):
+                    Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
+        elif period == 2:
+            if len(missions) != 0:
+                if today.day == 0 and missions[0].created_at.month != today.month:
+                    missions.delete()
+                    for i in range(100, 105, 1):
+                        Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
+            else:
+                for i in range(100, 105, 1):
+                    Mission.objects.create(user=user, title=f"엄마랑 사진 {i+1}장 찍기", status=0, point= 100*(i+1), prize=0, period=period)
+        missions = Mission.objects.filter(user=user_pk, period=period)
         serializers = MissionSerializer(missions, many=True)
         return Response({"data": serializers.data})
     if request.method == 'PUT':
@@ -461,10 +493,7 @@ def score(request, user_pk):
 @authentication_classes((JSONWebTokenAuthentication,))
 @csrf_exempt
 def logout(request):
-    print('-----------------------------------------------------------')
-    print(request.data)
     device_token = request.POST.get('device_token')
-    print(device_token)
     target = get_object_or_404(Device, device_token=device_token)
     target.delete()
     return Response(status=status.HTTP_200_OK)
@@ -509,7 +538,7 @@ def getquiz(request, user_pk):
     if request.method == 'GET':
         quizs = Quiz.objects.filter(user=user_pk)
         if len(quizs) == 0:
-            return Response(1, status=status.HTTP_200_OK)
+            return Response(0, status=status.HTTP_400_BAD_REQUEST)
         else:
             serializer = QuizSerializer(quizs[0])
             return Response(serializer.data)
