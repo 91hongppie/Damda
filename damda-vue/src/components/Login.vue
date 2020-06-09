@@ -91,7 +91,7 @@
       }
     },
     mounted() {
-      this.baseURL = this.$store.state.server + '/api/uploads/app-release.apk'
+      this.baseURL = this.$store.state.server + 'api/uploads/app-release.apk'
     },
     methods: {
       validate() {
