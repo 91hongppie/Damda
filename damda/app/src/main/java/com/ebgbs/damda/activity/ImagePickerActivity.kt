@@ -42,7 +42,7 @@ class ImagePickerActivity : AppCompatActivity() {
 
     companion object {
         private const val READ_EXTERNAL_STORAGE_REQUEST = 0x1045
-        const val TAG = "MainActivity"
+        const val TAG = "ImagePickerActivity"
     }
 
     private val images = MutableLiveData<List<MediaStoreImage>>()

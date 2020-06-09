@@ -335,7 +335,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     fun moveActivity() {
-        var intent = Intent(this, CropperActivity::class.java)
+        var intent = Intent(this, ImagePickerOneActivity::class.java)
         intent.putExtra("before", "addFamily")
         startActivity(intent)
         finish()
