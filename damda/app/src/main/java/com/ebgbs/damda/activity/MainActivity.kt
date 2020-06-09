@@ -154,7 +154,9 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
                         Manifest.permission.READ_EXTERNAL_STORAGE
                     ) == PackageManager.PERMISSION_GRANTED
                 ) {
-                    startActivity(Intent(this, AddPhotoActivity::class.java))
+                    intent = Intent(this, ImagePickerActivity::class.java)
+                    intent.putExtra("before", "addPhoto")
+                    startActivity(intent)
                 }
                 return true
             }
@@ -333,7 +335,7 @@ class MainActivity : AppCompatActivity(), BottomNavigationView.OnNavigationItemS
     }
 
     fun moveActivity() {
-        var intent = Intent(this, CropperActivity::class.java)
+        var intent = Intent(this, ImagePickerOneActivity::class.java)
         intent.putExtra("before", "addFamily")
         startActivity(intent)
         finish()

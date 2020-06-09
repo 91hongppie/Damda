@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.GridLayoutManager
 import com.ebgbs.damda.*
 import com.ebgbs.damda.GlobalApplication.Companion.prefs
 import com.ebgbs.damda.activity.CropperActivity
+import com.ebgbs.damda.activity.ImagePickerOneActivity
 import com.ebgbs.damda.activity.MainActivity
 import com.ebgbs.damda.activity.MainActivity.Companion.navStatus
 import com.ebgbs.damda.activity.MainActivity.Companion.photoStatus
@@ -82,7 +83,7 @@ class AlbumListFragment : Fragment() {
         view.rv_album.layoutManager = GridLayoutManager(activity, 3)
         if(prefs.state == "3"){
             view.add_album_button.setOnClickListener {
-                var intent = Intent(context, CropperActivity::class.java)
+                var intent = Intent(context, ImagePickerOneActivity::class.java)
                 startActivity(intent)
             }
         }
