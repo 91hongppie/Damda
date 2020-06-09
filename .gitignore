@@ -7,7 +7,7 @@
 *.apk
 *.ap_
 *.aab
-damda.jks
+*.jks
 private_key.pepk
 
 # Files for the ART/Dalvik VM
