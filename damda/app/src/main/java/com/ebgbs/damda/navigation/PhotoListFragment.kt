@@ -489,7 +489,19 @@ class PhotoListFragment : Fragment() {
         return Uri.parse(path)
     }
     fun btnInvisible(fragment: Fragment) {
-        fragment.fragmentManager?.beginTransaction()?.detach(fragment)?.attach(fragment)?.commit()
+        if (photoList.isNotEmpty()) {
+            photoArray = ArrayList<Photos>()
+            deleteArray = ArrayList<Int>()
+            navStatus = 1
+            photoStatus = 1
+            view?.cb_image?.isChecked = false
+            view?.cb_image?.text = "전체 선택"
+            view?.cb_image?.visibility = View.VISIBLE
+            view?.cl_navbar?.visibility = View.VISIBLE
+            view?.btn_cancel?.visibility = View.VISIBLE
+            view?.btn_correct?.visibility = View.INVISIBLE
+            view?.rv_photo?.adapter?.notifyDataSetChanged()
+        }
     }
     companion object {
         /**
