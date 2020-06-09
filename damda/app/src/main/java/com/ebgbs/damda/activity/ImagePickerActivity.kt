@@ -24,6 +24,7 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ebgbs.damda.ImageUpload
+import com.ebgbs.damda.MediaStoreAlbum
 import com.ebgbs.damda.MediaStoreImage
 import com.ebgbs.damda.R
 import com.ebgbs.damda.navigation.PhotoListFragment
@@ -46,6 +47,7 @@ class ImagePickerActivity : AppCompatActivity() {
     }
 
     private val images = MutableLiveData<List<MediaStoreImage>>()
+    private val albums = MutableLiveData<List<MediaStoreAlbum>>()
     private var paths = ArrayList<String>()
     private var ids = ArrayList<String>()
 
@@ -109,7 +111,9 @@ class ImagePickerActivity : AppCompatActivity() {
     private fun showImages() {
         GlobalScope.launch {
             val imageList = queryImages()
+            val albumList = queryAlbums()
             images.postValue(imageList)
+            albums.postValue(albumList)
         }
     }
 
@@ -184,13 +188,53 @@ class ImagePickerActivity : AppCompatActivity() {
 
                     val image = MediaStoreImage(id, displayName, dateTaken, contentUri, contentPath)
                     images += image
-                    Log.d(TAG, image.toString())
                 }
             }
         }
 
-        Log.d(TAG, "Found ${images.size} images")
         return images
+    }
+
+    private suspend fun queryAlbums(): List<MediaStoreAlbum> {
+        val albums = mutableListOf<MediaStoreAlbum>()
+
+        withContext(Dispatchers.IO) {
+            val projection = arrayOf(MediaStore.Images.Media.BUCKET_ID,
+                MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
+                MediaStore.Images.Media.DATA)
+            val sortBy = "${MediaStore.Images.Media.BUCKET_DISPLAY_NAME}"
+
+            val selection = "${MediaStore.Images.Media.BUCKET_DISPLAY_NAME}!= ?) GROUP BY (${MediaStore.Images.Media.BUCKET_DISPLAY_NAME}"
+            contentResolver.query(
+                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                projection,
+                selection, // selection
+                arrayOf(""), // selectionArgs
+                sortBy
+            )?.use { cursor ->
+                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
+                val displayNameColumn =
+                    cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
+                while (cursor.moveToNext()) {
+                    val id = cursor.getLong(idColumn)
+                    val displayName = cursor.getString(displayNameColumn)
+                    val imageDataIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
+                    val imageData = cursor.getString(imageDataIndex!!)
+                    val contentUri = Uri.withAppendedPath(
+                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
+                        id.toString()
+                    )
+                    val contentPath = imageData
+
+                    val album = MediaStoreAlbum(id, displayName, contentUri, contentPath)
+                    albums += album
+                    Log.d(TAG, album.toString())
+                }
+            }
+        }
+
+        Log.d(TAG, "Found ${albums.size} albums")
+        return albums
     }
 
     @SuppressLint("SimpleDateFormat")
