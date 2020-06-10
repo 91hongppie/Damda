@@ -24,7 +24,6 @@ import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.ebgbs.damda.ImageUpload
-import com.ebgbs.damda.MediaStoreAlbum
 import com.ebgbs.damda.MediaStoreImage
 import com.ebgbs.damda.R
 import com.ebgbs.damda.navigation.PhotoListFragment
@@ -47,7 +46,6 @@ class ImagePickerActivity : AppCompatActivity() {
     }
 
     private val images = MutableLiveData<List<MediaStoreImage>>()
-    private val albums = MutableLiveData<List<MediaStoreAlbum>>()
     private var paths = ArrayList<String>()
     private var ids = ArrayList<String>()
 
@@ -59,7 +57,7 @@ class ImagePickerActivity : AppCompatActivity() {
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
         upload_layout.visibility = View.VISIBLE
-
+        btn_upload.isEnabled = false
         val galleryAdapter = GalleryAdapter()
         gallery.also { view ->
             view.layoutManager = GridLayoutManager(this, 3)
@@ -111,9 +109,7 @@ class ImagePickerActivity : AppCompatActivity() {
     private fun showImages() {
         GlobalScope.launch {
             val imageList = queryImages()
-            val albumList = queryAlbums()
             images.postValue(imageList)
-            albums.postValue(albumList)
         }
     }
 
@@ -161,7 +157,7 @@ class ImagePickerActivity : AppCompatActivity() {
                 dateToTimestamp(day = 1, month = 1, year = 1970).toString()
             )
 
-            val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
+            val sortOrder = "${MediaStore.Images.Media._ID} DESC"
             contentResolver.query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 projection,
@@ -188,53 +184,13 @@ class ImagePickerActivity : AppCompatActivity() {
 
                     val image = MediaStoreImage(id, displayName, dateTaken, contentUri, contentPath)
                     images += image
+                    Log.d(TAG, image.toString())
                 }
             }
         }
 
+        Log.d(TAG, "Found ${images.size} images")
         return images
-    }
-
-    private suspend fun queryAlbums(): List<MediaStoreAlbum> {
-        val albums = mutableListOf<MediaStoreAlbum>()
-
-        withContext(Dispatchers.IO) {
-            val projection = arrayOf(MediaStore.Images.Media.BUCKET_ID,
-                MediaStore.Images.Media.BUCKET_DISPLAY_NAME,
-                MediaStore.Images.Media.DATA)
-            val sortBy = "${MediaStore.Images.Media.BUCKET_DISPLAY_NAME}"
-
-            val selection = "${MediaStore.Images.Media.BUCKET_DISPLAY_NAME}!= ?) GROUP BY (${MediaStore.Images.Media.BUCKET_DISPLAY_NAME}"
-            contentResolver.query(
-                MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                projection,
-                selection, // selection
-                arrayOf(""), // selectionArgs
-                sortBy
-            )?.use { cursor ->
-                val idColumn = cursor.getColumnIndexOrThrow(MediaStore.Images.Media._ID)
-                val displayNameColumn =
-                    cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DISPLAY_NAME)
-                while (cursor.moveToNext()) {
-                    val id = cursor.getLong(idColumn)
-                    val displayName = cursor.getString(displayNameColumn)
-                    val imageDataIndex = cursor.getColumnIndex(MediaStore.Images.Media.DATA)
-                    val imageData = cursor.getString(imageDataIndex!!)
-                    val contentUri = Uri.withAppendedPath(
-                        MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
-                        id.toString()
-                    )
-                    val contentPath = imageData
-
-                    val album = MediaStoreAlbum(id, displayName, contentUri, contentPath)
-                    albums += album
-                    Log.d(TAG, album.toString())
-                }
-            }
-        }
-
-        Log.d(TAG, "Found ${albums.size} albums")
-        return albums
     }
 
     @SuppressLint("SimpleDateFormat")
@@ -261,20 +217,22 @@ class ImagePickerActivity : AppCompatActivity() {
                 .thumbnail(0.33f)
                 .centerCrop()
                 .into(holder.imageView)
-            holder.chk.isChecked = paths.contains(mediaStoreImage.contentPath)
+
             holder.imageView.setOnClickListener {
-                if (paths.contains(mediaStoreImage.contentPath)) {
+                if (ids.contains(mediaStoreImage.id.toString())) {
                     holder.chk.isChecked = false
                     paths.remove(mediaStoreImage.contentPath)
                     ids.remove(mediaStoreImage.id.toString())
                     if (ids.size == 0) {
                         btn_upload.background = getDrawable(R.color.gray)
                         btn_upload.isClickable = false
+                        btn_upload.isEnabled = false
                     }
                 } else {
-                    if (paths.size == 0) {
+                    if (ids.size == 0) {
                         btn_upload.background = getDrawable(R.color.disableButton)
                         btn_upload.isClickable = true
+                        btn_upload.isEnabled = true
                     }
                     holder.chk.isChecked = true
                     paths.add(mediaStoreImage.contentPath)
@@ -284,18 +242,20 @@ class ImagePickerActivity : AppCompatActivity() {
             }
 
             holder.chk.setOnClickListener {
-                if (paths.contains(mediaStoreImage.contentPath)) {
+                if (ids.contains(mediaStoreImage.id.toString())) {
                     holder.chk.isChecked = false
                     paths.remove(mediaStoreImage.contentPath)
                     ids.remove(mediaStoreImage.id.toString())
-                    if (paths.size == 0) {
+                    if (ids.size == 0) {
                         btn_upload.background = getDrawable(R.color.gray)
                         btn_upload.isClickable = false
+                        btn_upload.isEnabled = false
                     }
                 } else {
-                    if (paths.size == 0) {
+                    if (ids.size == 0) {
                         btn_upload.background = getDrawable(R.color.disableButton)
                         btn_upload.isClickable = true
+                        btn_upload.isEnabled = true
                     }
                     holder.chk.isChecked = true
                     paths.add(mediaStoreImage.contentPath)

@@ -143,7 +143,7 @@ class ImagePickerOneActivity : AppCompatActivity() {
                 dateToTimestamp(day = 1, month = 1, year = 1970).toString()
             )
 
-            val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
+            val sortOrder = "${MediaStore.Images.Media._ID} DESC"
             contentResolver.query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 projection,
@@ -205,7 +205,17 @@ class ImagePickerOneActivity : AppCompatActivity() {
                 .into(holder.imageView)
 
             holder.imageView.setOnClickListener {
-                CropImage.activity(mediaStoreImage.contentUri).start(this@ImagePickerOneActivity)
+                if (before == "mission") {
+                    val intent = Intent()
+                    intent.putExtra("path", mediaStoreImage.contentPath)
+                    intent.putExtra("uri", mediaStoreImage.contentUri)
+                    intent.putExtra("photo_id", mediaStoreImage.id)
+                    setResult(1, intent)
+                    finish()
+                } else {
+                    CropImage.activity(mediaStoreImage.contentUri)
+                        .start(this@ImagePickerOneActivity)
+                }
             }
 
         }
@@ -216,17 +226,12 @@ class ImagePickerOneActivity : AppCompatActivity() {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
             if (resultCode == RESULT_OK) {
-                if (before == "mission") {
-                    val intent = Intent()
-                    intent.putExtra("uri", result.uri)
-                    setResult(1, intent)
-                } else {
                 var intent = Intent(this@ImagePickerOneActivity, CropperActivity::class.java)
                 intent.putExtra("uri", result.uri)
                 if (before == "addFamily") {
                     intent.putExtra("before", "addFamily")
                 }
-                startActivity(intent)}
+                startActivity(intent)
                 finish()
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 val error = result.getError()

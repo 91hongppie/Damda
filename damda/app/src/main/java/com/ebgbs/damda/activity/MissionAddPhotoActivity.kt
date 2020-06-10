@@ -42,6 +42,7 @@ class MissionAddPhotoActivity : AppCompatActivity() {
     private var mission_title: String? = null
     private var mission_id = 0
     private var period = 0
+    private var photo_id = 0
     private lateinit var loadingDialog: LoadingDialog
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -67,9 +68,8 @@ class MissionAddPhotoActivity : AppCompatActivity() {
                     )
                     return
                 }
-                val intent = Intent(Intent.ACTION_PICK)
-                intent.putExtra(Intent.EXTRA_ALLOW_MULTIPLE, true)
-                intent.type = "image/*"
+                var intent = Intent(this@MissionAddPhotoActivity, ImagePickerOneActivity::class.java)
+                intent.putExtra("before", "mission")
                 startActivityForResult(intent, 1)
             }
         })
@@ -77,46 +77,21 @@ class MissionAddPhotoActivity : AppCompatActivity() {
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-        if (requestCode == 1 && resultCode == Activity.RESULT_OK) {
+        if (requestCode == 1 && resultCode == 1) {
+            Log.v("asdf", data?.getStringExtra("path").toString())
+            var imageUri : Uri? = null
+            var image : File? = null
+            var path : String? = null
 
-            var imageUris = arrayListOf<Uri>()
-            var images = arrayListOf<File>()
-            var paths = arrayListOf<String>()
-            val clipdata: ClipData? = data?.clipData
-
-            if (clipdata != null) {
-                for (i in 0 until clipdata.itemCount) {
-                    var imageUri: Uri = clipdata.getItemAt(i).uri
-                    var path = getFilePath(imageUri)
-                    imageUris.add(imageUri)
-                    paths.add(path!!)
-                    val image = File(path)
-                    Log.d("File path", "result : $path")
-                    try {
-                        images.add(image)
-                    } catch (e: FileNotFoundException) {
-                        e.printStackTrace()
-                    }
-                }
-                Log.d("Image arraylist", "size: ${images.size}")
-            } else {
-                var imageUri: Uri? = data?.data
-                var path = getFilePath(imageUri!!)
-                imageUris.add(imageUri)
-                paths.add(path!!)
-                val image = File(path)
-                try {
-                    images.add(image)
-
-                } catch (e: FileNotFoundException) {
-                    e.printStackTrace()
-                }
-            }
+            imageUri = data?.getParcelableExtra("uri") as Uri
+            path = data?.getStringExtra("path")
+            photo_id = data?.getIntExtra("id", 0)
+            image = File(path)
 
             upload_photo_button.isClickable = true
             upload_photo_button.background = getDrawable(R.color.enableButton)
 
-            setImageView(imageUris)
+            setImageView(imageUri)
             select_photo_button.text = "다시 선택"
 
             upload_photo_button.setOnClickListener {
@@ -135,7 +110,7 @@ class MissionAddPhotoActivity : AppCompatActivity() {
                 loadingDialog.show()
                 val url = URL(prefs.damdaServer + "/api/albums/addphoto/")
 
-                uploadImage(url, images, paths)
+                uploadImage(url, image, path)
 
             }
         }
@@ -157,42 +132,39 @@ class MissionAddPhotoActivity : AppCompatActivity() {
         return result
     }
 
-    fun setImageView(imageUris: ArrayList<Uri>) {
-        addphoto_image.setImageURI(imageUris[0])
+    fun setImageView(imageUri: Uri) {
+        addphoto_image.setImageURI(imageUri)
     }
 
-    fun uploadImage(url: URL, images: ArrayList<File>, paths: ArrayList<String>) {
+    fun uploadImage(url: URL, image: File, path: String) {
         try {
             val MEDIA_TYPE_IMAGE = MediaType.parse("image/*")
 
             val requestBody = MultipartBody.Builder().setType(MultipartBody.FORM)
                 .addFormDataPart("user_id", "${prefs.user_id}")
 
-            for (i in 0 until images.size) {
-                val exif = ExifInterface(paths[i])
-                var fileDatetime: String
+                val exif = ExifInterface(path)
 
-                fileDatetime = if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
+                var fileDatetime: String = if (exif.getAttribute(ExifInterface.TAG_DATETIME) != null) {
                     val datetime = exif.getAttribute(ExifInterface.TAG_DATETIME)
                     val datetime_split = datetime.split(" ")
                     var date = datetime_split[0].split(":").joinToString("")
                     var time = datetime_split[1].split(":").joinToString("")
-                    "${date}_${time}"
+                    "${date}_${time}_${photo_id}"
                 } else {
                     val datetime = Calendar.getInstance(TimeZone.getDefault(), Locale.KOREA).time
                     val today = SimpleDateFormat("yyyyMMdd_HHmmss").format(datetime)
-                    today + "_$i"
+                    today + "_$photo_id"
                 }
 
                 Log.d("TIME", "$fileDatetime")
                 Log.d("USER", "id: ${prefs.user_id}")
                 requestBody.addFormDataPart(
                     "uploadImages",
-                    "damda_${prefs.user_id}_${fileDatetime}",
-                    RequestBody.create(MEDIA_TYPE_IMAGE, images[i])
+                    "damda_${fileDatetime}_${prefs.user_id}",
+                    RequestBody.create(MEDIA_TYPE_IMAGE, image)
                 )
 
-            }
 
             val body = requestBody.build()
             val jwt = GlobalApplication.prefs.token
