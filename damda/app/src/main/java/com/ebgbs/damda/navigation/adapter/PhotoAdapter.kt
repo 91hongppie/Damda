@@ -51,11 +51,8 @@ class PhotoAdapter (val photoList: Array<Photos>, val activity: MainActivity, va
             }
             checkbox.isChecked = photoArray.contains(photo)
             image.setOnLongClickListener {
-                PhotoListFragment().btnInvisible(fragment)
-                navStatus = 1
-                photoStatus = 1
+                fragment.btnInvisible(fragment)
                 activity.replaceNavbar()
-                notifyDataSetChanged()
                 true
             }
             if (image_checked == 1) {

@@ -53,6 +53,8 @@ class ImagePickerOneActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
+        upload_layout.visibility = View.GONE
+
 
         if (intent.getStringExtra("before") != null) {
             before = intent.getStringExtra("before")
