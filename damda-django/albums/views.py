@@ -434,9 +434,9 @@ def autoaddphoto(request):
     if len(Photo.objects.filter(pic_name=image_path)):
         print('이미 있는 사진입니다')
         return Response(status=status.HTTP_200_OK)
-    make_image = Photo.objects.create(pic_name=image_path, title=title)
     faces = fr.face_locations(image)
     if len(faces) != 0:
+        make_image = Photo.objects.create(pic_name=image_path, title=title)
         count = 0
         for face in faces:
             top, right, bottom, left = face
@@ -464,8 +464,7 @@ def autoaddphoto(request):
         if count > 0:
             skimage.io.imsave(image_path, image)
         else:
-            photo = get_object_or_404(Photo, pk=make_image.id)
-            photo.delete()
+            make_image.delete()
     return Response(status=status.HTTP_200_OK)
 
 @api_view(['POST', ])
