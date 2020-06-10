@@ -99,11 +99,11 @@ class LoginActivity : AppCompatActivity() {
             if (prefs.state == "1" || GlobalApplication.prefs.state == "0") {
                 var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
                 startActivity(intent)
-                finish()
+                finishAffinity()
             } else {
                 var intent = Intent(this@LoginActivity, MainActivity::class.java)
                 startActivity(intent)
-                finish()
+                finishAffinity()
             }
         } else {
             Session.getCurrentSession().addCallback(callback)
@@ -164,7 +164,7 @@ class LoginActivity : AppCompatActivity() {
                                         intent.putExtra("username", userInfo?.username)
                                         intent.putExtra("name", userInfo?.first_name)
                                         startActivity(intent)
-                                        finish()
+                                        finishAffinity()
                                     } else {
                                         prefs.gender = userInfo?.gender!!
                                         moveActivity(userInfo?.state!!.toInt())
@@ -202,13 +202,13 @@ class LoginActivity : AppCompatActivity() {
 
     private fun moveActivity(state: Int) {
         if (state < 2) {
-            var intent = Intent(this@LoginActivity, AddFamilyActivity::class.java)
+            var intent = Intent(this, AddFamilyActivity::class.java)
             startActivity(intent)
-            finish()
+            finishAffinity()
         } else {
-            var intent = Intent(this@LoginActivity, MainActivity::class.java)
+            var intent = Intent(this, MainActivity::class.java)
             startActivity(intent)
-            finish()
+            finishAffinity()
         }
     }
 
