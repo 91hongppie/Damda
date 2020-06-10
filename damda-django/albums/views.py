@@ -27,7 +27,7 @@ import requests
 def photo(request, family_pk, album_pk):
     if request.method == 'GET':
         album = get_object_or_404(Album, pk=album_pk)
-        photos = Photo.objects.filter(albums=album).order_by('-id')
+        photos = Photo.objects.filter(albums=album).order_by('-title')
         serializers = PhotoSerializer(photos, many=True)
         return Response(serializers.data)
     elif request.method == 'POST':
@@ -42,7 +42,7 @@ def photo(request, family_pk, album_pk):
                 if os.path.isfile(file_path):
                     os.remove(file_path)
                 photo.delete()
-        photo_list = Photo.objects.filter(albums=album)
+        photo_list = Photo.objects.filter(albums=album).order_by('-title')
         serializers = PhotoSerializer(photo_list, many=True)
         return Response(serializers.data)
 
@@ -218,7 +218,7 @@ def makeFamilyName(family_pk, data, album, title):
 def all_photo(request, family_pk):
     if request.method == 'GET':
         albums = Album.objects.filter(family=family_pk)
-        photos = Photo.objects.filter(albums__in=albums).order_by('-id')
+        photos = Photo.objects.filter(albums__in=albums).values('id', 'pic_name', 'title').distinct().order_by('-title')
         serializers = PhotoSerializer(photos, many=True)
         return Response(serializers.data)
     elif request.method == 'POST':
@@ -231,7 +231,7 @@ def all_photo(request, family_pk):
                 os.remove(file_path)
         photos.delete()
         albums = Album.objects.filter(family=family_pk)
-        photos = Photo.objects.filter(albums__in=albums).order_by('-id')
+        photos = Photo.objects.filter(albums__in=albums).values('id', 'pic_name', 'title').distinct().order_by('-title')
         serializers = PhotoSerializer(photos, many=True)
         return Response(serializers.data)
 
