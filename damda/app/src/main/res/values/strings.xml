@@ -1,0 +1,163 @@
+<resources>
+    <string name="app_name">Damda</string>
+    <string name="facebook_app_id">873009302900995</string>
+    <string name="fb_login_protocol_scheme">fb873009302900995</string>
+    <string name="kakao_app_key">1ecc00ce5effc6b1718425438d605126</string>
+    <string name="kakao_scheme">kakao1ecc00ce5effc6b1718425438d605126</string>
+    <string name="kakaolink_host">kakaolink</string>
+
+    <!-- Sign In -->
+    <string name="email">이메일 주소</string>
+    <string name="password">비밀번호</string>
+    <string name="signin_email">Signup or Signin by email</string>
+    <string name="signin_google">Google login</string>
+    <string name="signin_facebook">Facebook login</string>
+    <string name="signup_complete">Membership success</string>
+    <string name="signin_complete">Login success</string>
+    <string name="signout">Signout</string>
+    <string name="signout_success">Signout success</string>
+    <string name="signout_fail">Signout fail</string>
+    <string name="signout_fail_null">Please enter your email and password</string>
+    <string name="msg_token_fmt" translatable="false">InstanceID Token: %s</string>
+
+    <!-- Bottom Navigation View -->
+    <string name="home">Album</string>
+    <string name="search">Photos</string>
+    <string name="gallery">Upload</string>
+    <string name="favorite">Challenge</string>
+    <string name="account">Account</string>
+
+    <!-- Account -->
+    <string name="post">Post</string>
+    <string name="following">Following</string>
+    <string name="follower">Follower</string>
+    <string name="follow">Follow</string>
+    <string name="follow_cancel">Follow cancel</string>
+    <string name="profile">Profile</string>
+    <string name="count_0">0</string>
+
+    <!-- Alarm -->
+    <string name="alarm_favorite">Liked the press</string>
+    <string name="alarm_comment">left a message</string>
+    <string name="alarm_follow">has started to follow your account</string>
+
+    <!-- Comment -->
+    <string name="send">Send</string>
+
+    <!-- Add Photo -->
+    <string name="select_image">사진 선택</string>
+    <string name="upload_image">업로드</string>
+    <string name="hint_image_content">Image description</string>
+    <string name="upload_success">Upload success</string>
+    <string name="upload_fail">Upload fail</string>
+
+    <!-- Toolbar -->
+    <string name="back">Back</string>
+
+    <!-- etc -->
+    <item name="visible" type="id" />
+    <item name="masked" type="id" />
+
+    <!-- Sign In -->
+    <string name="join_name">회원가입</string>
+    <string name="id">아이디</string>
+    <string name="pwd">비밀번호</string>
+    <string name="pwd_confirm">비밀번호 확인</string>
+    <string name="birth">생년월일</string>
+    <string name="ok">확인</string>
+    <string name="join_done">가입하기</string>
+    <string name="edit_done">수정하기</string>
+    <string name="done">확인</string>
+    <string name="join">회원가입</string>
+    <string name="clear">초기화</string>
+    <string name="cancel">취소</string>
+    <string name="error_join_field_empty">모두 입력해주세요.</string>
+    <string name="error_do_not_same_pwd">비밀번호를 확인해주세요.</string>
+    <string name="error_discorrent_email">이메일을 확인해주세요.</string>
+    <string name="error_change_pwd">임시 비밀번호를 입력해주세요.</string>
+    <string name="error_change_pwd_confirm">임시 비밀번호를 확인해주세요.</string>
+    <string name="error_fail_login">아이디 혹은 비밀번호를 확인해주세요.</string>
+    <string name="login_detail_title">로그인 성공</string>
+    <string name="txtInputInfoID">최소 8자 이상</string>
+    <string name="txtInputInfoPWD">영문, 숫자, 특수문자를 포함하여 8자 이상</string>
+    <string name="txtInputInfoRePWD">비밀번호가 일치하지 않습니다.</string>
+    <string name="txtInputInfoEmail">정확한 이메일이 아닙니다.</string>
+    <string name="logout">로그아웃</string>
+    <string name="error_do_not_input_id">아이디를 입력해주세요.</string>
+    <string name="error_de_not_exist_id">아이디를 확인해주세요.</string>
+    <string name="error_exist_id">중복된 아이디가 있습니다.</string>
+    <string name="error_exist_email">중복된 이메일이 있습니다.</string>
+    <string name="can_use_email">사용 가능한 이메일입니다.</string>
+    <string name="error_do_not_check_id">아이디 중복 체크 확인해 주세요.</string>
+    <string name="add_info">앨범이 있어야 요청을 수락 할 수 있습니다. 앨범이 없는 경우 앨범 생성 후 수락해 주세요.</string>
+    <string name="family_info">음력 생일은 올해 해당 양력 날짜로 표시 됩니다.</string>
+    <string name="user_info">상세정보</string>
+    <string name="wait">진행중인 요청이 있습니다.\n담장이 수락하면 가족 앨범을 이용할 수 있습니다.</string>
+    <string name="change_password">임시 비밀번호를 이메일에 전송하였습니다.</string>
+
+    <!-- Album -->
+    <string name="album_title">앨범 이름</string>
+    <string name="saveAlbum">저장</string>
+    <string name="album_image">앨범 이미지</string>
+    <string name="albumImageChange">대표 이미지 변경</string>
+    <string name="deleteAlbum">앨범 비우기</string>
+
+    <!-- Photo -->
+    <string name="savePhoto">저장</string>
+    <string name="deletePhoto">삭제</string>
+    <string name="sharePhoto">공유</string>
+    <string name="avatar">아바타</string>
+
+    <string name="label_cancel">Cancel</string>
+    <string name="label_ok">OK</string>
+    <string name="label_select_video">Select Video</string>
+    <string name="permission_title_rationale">Permission needed</string>
+    <string name="permission_read_storage_rationale">Storage read permission is needed to pick files.</string>
+    <string name="toast_cannot_retrieve_selected_video">Cannot retrieve selected video</string>
+    <string name="video_saved_at">Video saves at : $%1s</string>
+    <string name="title_description">A library with UI and mechanisms to trim local videos on Android applications</string>
+    <string name="description_app">
+            # Provide UI to preview and select start/end of the video to trim
+        \n\n# Thumbnails with frame by frame overview of the video
+        \n\n# Works with gallery and recorded videos
+    </string>
+    <string name="pick_a_video">Select or record a a video below to try it out:</string>
+    <string name="trimming_progress">Trimming your video...</string>
+
+    <!--  Notification channel  -->
+    <string name="default_notification_channel_id">PUSH</string>
+    <string name="channel_name1">안부 묻기</string>
+    <string name="channel_name2">새로운 사진 알림</string>
+    <string name="channel_name3">생일 알림</string>
+    <string name="channel_name4">미션 알림</string>
+    <string name="channel_name5">이미지 업로드 상태</string>
+    <string name="channel_description1">일정 기간 활동하지 않으면 알림이 울립니다.</string>
+    <string name="channel_description2">새로운 사진이 업로드되면 알림이 울립니다.</string>
+    <string name="channel_description3">생일 축하메세지를 보여줍니다.</string>
+    <string name="channel_description4">부모님이 새로운 미션을 등록하면 알림이 울립니다.</string>
+    <string name="channel_description5">이미지가 업로드되고 있는 상태를 보여줍니다.</string>
+
+    <!--  가족 관계 선택  -->
+    <string-array name="familyNameF">
+        <item>엄마</item>
+        <item>아빠</item>
+        <item>언니</item>
+        <item>오빠</item>
+        <item>남동생</item>
+        <item>여동생</item>
+    </string-array>
+    <string-array name="familyNameM">
+        <item>엄마</item>
+        <item>아빠</item>
+        <item>누나</item>
+        <item>형</item>
+        <item>남동생</item>
+        <item>여동생</item>
+    </string-array>
+    
+    <!--  Mission  -->
+    <string name="daily_mission">일일 미션</string>
+    <string name="weekly_mission">주간 미션</string>
+    <string name="monthly_mission">월간 미션</string>
+
+</resources>

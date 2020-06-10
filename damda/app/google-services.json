@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "896903437846",
+    "firebase_url": "https://damda-2de9c.firebaseio.com",
+    "project_id": "damda-2de9c",
+    "storage_bucket": "damda-2de9c.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:896903437846:android:c9dd5ec8b8c1e7fce99f37",
+        "android_client_info": {
+          "package_name": "com.ebgbs.damda"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "896903437846-8ik5naem52n8pt504nmq1lgrq2mto7kr.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ebgbs.damda",
+            "certificate_hash": "9b6d5825e25e42f1a7a65bf4f21859a448217bc8"
+          }
+        },
+        {
+          "client_id": "896903437846-mbn4ljripqo9abjf6mondv4htu19siff.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBphAh9IxvdMr5zEnboC6e2Ztbbv3hYtiA"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "896903437846-mbn4ljripqo9abjf6mondv4htu19siff.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
