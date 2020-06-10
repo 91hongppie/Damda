@@ -22,7 +22,7 @@
     </v-container>
     <v-footer fixed="true">
     <v-spacer></v-spacer>
-    <div><v-btn text disabled="">&copy; {{ new Date().getFullYear() }}</v-btn><v-btn href="https://k02b2051.p.ssafy.io/uploads/info.html" text>개인정보처리방침</v-btn></div>
+    <div><v-btn text disabled="">&copy; {{ new Date().getFullYear() }}</v-btn><v-btn href="https://k02b2051.p.ssafy.io/api/uploads/info.html" text>개인정보처리방침</v-btn></div>
   </v-footer>
   </div>
 </template>

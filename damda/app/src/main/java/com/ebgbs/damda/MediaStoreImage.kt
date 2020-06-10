@@ -24,3 +24,19 @@ data class MediaStoreImage(
         }
     }
 }
+data class MediaStoreAlbum(
+    val id: Long,
+    val displayName: String,
+    val contentUri: Uri,
+    val contentPath: String
+) {
+    companion object {
+        val DiffCallback = object : DiffUtil.ItemCallback<MediaStoreAlbum>() {
+            override fun areItemsTheSame(oldItem: MediaStoreAlbum, newItem: MediaStoreAlbum) =
+                oldItem.id == newItem.id
+
+            override fun areContentsTheSame(oldItem: MediaStoreAlbum, newItem: MediaStoreAlbum) =
+                oldItem == newItem
+        }
+    }
+}
