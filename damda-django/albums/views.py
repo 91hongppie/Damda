@@ -285,7 +285,7 @@ def addphoto(request):
                 for dt in data:
                     dt = [np.asarray(dt)]
                     distance = fr.face_distance(dt, unknown_face[0])
-                    if distance < 0.44:
+                    if distance < 0.5:
                         info = album_name.split('_')
                         user_album = Album.objects.filter(family=info[0], id=info[1])[0]
                         make_image.albums.add(user_album)
@@ -456,7 +456,7 @@ def autoaddphoto(request):
                     for dt in data:
                         dt = [np.asarray(dt)]
                         distance = fr.face_distance(dt, unknown_face[0])
-                        if distance < 0.44:
+                        if distance < 0.5:
                             user_album = Album.objects.filter(family=info[0], id=info[1])[0]
                             make_image.albums.add(user_album)
                             count += 1

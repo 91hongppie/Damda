@@ -545,6 +545,45 @@ def makequiz(request, family_pk, user_pk):
         answer = json.loads(request.data['answer'])
         quiz.answer = answer
         quiz.save()
+
+        url = 'https://fcm.googleapis.com/fcm/send'
+
+        headers = {
+            'Content-Type': 'application/json',
+            'Authorization': f'key={config("AUTHORIZATION_TOKEN")}'
+        }
+
+        devices = Device.objects.filter(owner__in=users)
+        if len(devices) > 0:
+            if len(devices) == 1:
+                data = {
+                    "to": devices[0].device_token,
+                    "notification": {
+                        "title": "담다",
+                        "body": "새로운 퀴즈가 등록되었습니다.",
+                        "android_channel_id": "MISSION"
+                    }
+                }
+            elif len(devices) > 1:
+                device_list = []
+                for device in devices:
+                    device_list.append(device.device_token)
+
+                data = {
+                    "registration_ids": device_list,
+                    "notification": {
+                        "title": "담다",
+                        "body": "새로운 퀴즈가 등록되었습니다.",
+                        "android_channel_id": "MISSION"
+                    }
+                }
+            response = requests.post(url, data=json.dumps(data), headers=headers)
+            result = response.status_code
+        else:
+            result = '알맞은 대상이 없습니다.'
+        
+        print(result)
+
         for user in users:
             Quiz.objects.create(user=user, quiz=f'{parent_user.first_name}님의 {quiz.quiz}', answer=answer)
         return Response(1, status=status.HTTP_200_OK)
