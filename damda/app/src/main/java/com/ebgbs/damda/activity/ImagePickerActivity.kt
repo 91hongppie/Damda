@@ -57,7 +57,7 @@ class ImagePickerActivity : AppCompatActivity() {
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
         upload_layout.visibility = View.VISIBLE
-
+        btn_upload.isEnabled = false
         val galleryAdapter = GalleryAdapter()
         gallery.also { view ->
             view.layoutManager = GridLayoutManager(this, 3)
@@ -157,7 +157,7 @@ class ImagePickerActivity : AppCompatActivity() {
                 dateToTimestamp(day = 1, month = 1, year = 1970).toString()
             )
 
-            val sortOrder = "${MediaStore.Images.Media.DATE_TAKEN} DESC"
+            val sortOrder = "${MediaStore.Images.Media._ID} DESC"
             contentResolver.query(
                 MediaStore.Images.Media.EXTERNAL_CONTENT_URI,
                 projection,
@@ -217,20 +217,22 @@ class ImagePickerActivity : AppCompatActivity() {
                 .thumbnail(0.33f)
                 .centerCrop()
                 .into(holder.imageView)
-            holder.chk.isChecked = paths.contains(mediaStoreImage.contentPath)
+
             holder.imageView.setOnClickListener {
-                if (paths.contains(mediaStoreImage.contentPath)) {
+                if (ids.contains(mediaStoreImage.id.toString())) {
                     holder.chk.isChecked = false
                     paths.remove(mediaStoreImage.contentPath)
                     ids.remove(mediaStoreImage.id.toString())
                     if (ids.size == 0) {
                         btn_upload.background = getDrawable(R.color.gray)
                         btn_upload.isClickable = false
+                        btn_upload.isEnabled = false
                     }
                 } else {
-                    if (paths.size == 0) {
+                    if (ids.size == 0) {
                         btn_upload.background = getDrawable(R.color.disableButton)
                         btn_upload.isClickable = true
+                        btn_upload.isEnabled = true
                     }
                     holder.chk.isChecked = true
                     paths.add(mediaStoreImage.contentPath)
@@ -240,18 +242,20 @@ class ImagePickerActivity : AppCompatActivity() {
             }
 
             holder.chk.setOnClickListener {
-                if (paths.contains(mediaStoreImage.contentPath)) {
+                if (ids.contains(mediaStoreImage.id.toString())) {
                     holder.chk.isChecked = false
                     paths.remove(mediaStoreImage.contentPath)
                     ids.remove(mediaStoreImage.id.toString())
-                    if (paths.size == 0) {
+                    if (ids.size == 0) {
                         btn_upload.background = getDrawable(R.color.gray)
                         btn_upload.isClickable = false
+                        btn_upload.isEnabled = false
                     }
                 } else {
-                    if (paths.size == 0) {
+                    if (ids.size == 0) {
                         btn_upload.background = getDrawable(R.color.disableButton)
                         btn_upload.isClickable = true
+                        btn_upload.isEnabled = true
                     }
                     holder.chk.isChecked = true
                     paths.add(mediaStoreImage.contentPath)

@@ -93,6 +93,11 @@ class CropperActivity : AppCompatActivity() {
 
         }
 
+        preview.setOnClickListener {
+            var intent = Intent(this, ImagePickerOneActivity::class.java)
+            startActivity(intent)
+            finish()
+        }
 
         save_member.setOnClickListener {
             var loadingDialog = LoadingDialog(this)

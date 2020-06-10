@@ -36,6 +36,7 @@
             android:layout_height="55dp"
             android:textSize="20sp"
             android:text="0장 업로드"
+            android:clickable="false"
             android:background="@color/gray"
             android:textColor="@color/white">
         </Button>
