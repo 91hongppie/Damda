@@ -5,16 +5,17 @@ import android.annotation.SuppressLint
 import android.content.Intent
 import android.content.pm.PackageManager.PERMISSION_GRANTED
 import android.net.Uri
-import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
 import android.provider.MediaStore
 import android.provider.Settings.ACTION_APPLICATION_DETAILS_SETTINGS
 import android.util.Log
-import android.view.*
-import android.widget.CheckBox
+import android.view.LayoutInflater
+import android.view.MenuItem
+import android.view.View
+import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
-import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.appcompat.app.AppCompatActivity
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.MutableLiveData
@@ -23,14 +24,10 @@ import androidx.recyclerview.widget.GridLayoutManager
 import androidx.recyclerview.widget.ListAdapter
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.ebgbs.damda.ImageUpload
 import com.ebgbs.damda.MediaStoreImage
 import com.ebgbs.damda.R
-import com.ebgbs.damda.navigation.PhotoListFragment
 import com.theartofdev.edmodo.cropper.CropImage
-import kotlinx.android.synthetic.main.activity_add_photo.*
 import kotlinx.android.synthetic.main.activity_image_picker.*
-import kotlinx.android.synthetic.main.fragment_photo_list.*
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.launch
@@ -47,6 +44,7 @@ class ImagePickerOneActivity : AppCompatActivity() {
     }
 
     private val images = MutableLiveData<List<MediaStoreImage>>()
+    private var before : String? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -55,7 +53,12 @@ class ImagePickerOneActivity : AppCompatActivity() {
         val actionBar = supportActionBar
         actionBar?.setDisplayShowCustomEnabled(true)
         actionBar?.setDisplayHomeAsUpEnabled(true)
+        upload_layout.visibility = View.GONE
 
+
+        if (intent.getStringExtra("before") != null) {
+            before = intent.getStringExtra("before")
+        }
         val galleryAdapter = GalleryAdapter()
         gallery.also { view ->
             view.layoutManager = GridLayoutManager(this, 3)
@@ -213,10 +216,17 @@ class ImagePickerOneActivity : AppCompatActivity() {
         if (requestCode == CropImage.CROP_IMAGE_ACTIVITY_REQUEST_CODE) {
             val result = CropImage.getActivityResult(data)
             if (resultCode == RESULT_OK) {
-                Log.v("uri", result.getUri().toString())
+                if (before == "mission") {
+                    val intent = Intent()
+                    intent.putExtra("uri", result.uri)
+                    setResult(1, intent)
+                } else {
                 var intent = Intent(this@ImagePickerOneActivity, CropperActivity::class.java)
                 intent.putExtra("uri", result.uri)
-                startActivity(intent)
+                if (before == "addFamily") {
+                    intent.putExtra("before", "addFamily")
+                }
+                startActivity(intent)}
                 finish()
             } else if (resultCode == CropImage.CROP_IMAGE_ACTIVITY_RESULT_ERROR_CODE) {
                 val error = result.getError()

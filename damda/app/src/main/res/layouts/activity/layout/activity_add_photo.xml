@@ -15,7 +15,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:elevation="4dp"
-            app:title="사진 업로드" />
+            app:title="미션 사진" />
 
         <LinearLayout
             android:id="@+id/top_division"

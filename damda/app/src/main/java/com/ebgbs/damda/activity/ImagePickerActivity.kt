@@ -43,7 +43,7 @@ class ImagePickerActivity : AppCompatActivity() {
 
     companion object {
         private const val READ_EXTERNAL_STORAGE_REQUEST = 0x1045
-        const val TAG = "MainActivity"
+        const val TAG = "ImagePickerActivity"
     }
 
     private val images = MutableLiveData<List<MediaStoreImage>>()
@@ -261,9 +261,9 @@ class ImagePickerActivity : AppCompatActivity() {
                 .thumbnail(0.33f)
                 .centerCrop()
                 .into(holder.imageView)
-
+            holder.chk.isChecked = paths.contains(mediaStoreImage.contentPath)
             holder.imageView.setOnClickListener {
-                if (ids.contains(mediaStoreImage.id.toString())) {
+                if (paths.contains(mediaStoreImage.contentPath)) {
                     holder.chk.isChecked = false
                     paths.remove(mediaStoreImage.contentPath)
                     ids.remove(mediaStoreImage.id.toString())
@@ -272,7 +272,7 @@ class ImagePickerActivity : AppCompatActivity() {
                         btn_upload.isClickable = false
                     }
                 } else {
-                    if (ids.size == 0) {
+                    if (paths.size == 0) {
                         btn_upload.background = getDrawable(R.color.disableButton)
                         btn_upload.isClickable = true
                     }
@@ -284,16 +284,16 @@ class ImagePickerActivity : AppCompatActivity() {
             }
 
             holder.chk.setOnClickListener {
-                if (ids.contains(mediaStoreImage.id.toString())) {
+                if (paths.contains(mediaStoreImage.contentPath)) {
                     holder.chk.isChecked = false
                     paths.remove(mediaStoreImage.contentPath)
                     ids.remove(mediaStoreImage.id.toString())
-                    if (ids.size == 0) {
+                    if (paths.size == 0) {
                         btn_upload.background = getDrawable(R.color.gray)
                         btn_upload.isClickable = false
                     }
                 } else {
-                    if (ids.size == 0) {
+                    if (paths.size == 0) {
                         btn_upload.background = getDrawable(R.color.disableButton)
                         btn_upload.isClickable = true
                     }

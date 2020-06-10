@@ -197,7 +197,7 @@ class AddFamilyActivity : AppCompatActivity() {
     }
 
     fun moveActivity() {
-        var intent = Intent(this@AddFamilyActivity, CropperActivity::class.java)
+        var intent = Intent(this@AddFamilyActivity, ImagePickerOneActivity::class.java)
         intent.putExtra("before", "addFamily")
         startActivity(intent)
         finish()

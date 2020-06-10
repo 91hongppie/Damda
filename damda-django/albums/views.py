@@ -142,10 +142,12 @@ def face(request, family_pk, user_pk):
                 skimage.io.imsave(save_path, image)
                 if makeFamilyName(family_pk, request.data, albumSerializer.data['id'], title):
                     album.delete()
+                    album2 = get_object_or_404(Album, pk=albumSerializer2.data['id'])
+                    album2.delete()
                     return Response(status=status.HTTP_400_BAD_REQUEST)
-                title = image_path.split('_')[1]
-                title = title[0:4:] + '년 ' + title[4:6:] + '월 ' + title[6::] + '일'
-                make_image = Photo.objects.create(pic_name=image_path, title=title)
+                title2 = image_path.split('_')[1]
+                title2 = title2[0:4:] + '년 ' + title2[4:6:] + '월 ' + title2[6::] + '일'
+                make_image = Photo.objects.create(pic_name=image_path, title=title2)
                 make_image.albums.add(album)
                 response_data = albumSerializer2.data
                 response_data['call'] = title
