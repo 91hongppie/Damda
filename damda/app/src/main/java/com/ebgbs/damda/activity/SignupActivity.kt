@@ -138,7 +138,7 @@ class SignupActivity : AppCompatActivity() {
                             toast("회원 가입 되었습니다.")
                             val intent = Intent(this@SignupActivity, LoginActivity::class.java)
                             startActivity(intent)
-                            finish()
+                            finishAffinity()
                         }
                     })
                 }
