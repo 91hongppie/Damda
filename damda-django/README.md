@@ -88,19 +88,22 @@ DB 생성
 create database damda DEFAULT CHARACTER SET utf8 COLLATE utf8_general_ci;
 ```
 
+```bash
+# 테이블 생성
+(venv)$python manage.py migrate
+```
+
+
+
+### 회원 로그인 관련 초기 설정
+
+[회원인증 초기 설정](https://lab.ssafy.com/s02-final/s02p31b205/blob/master/damda-django/%ED%9A%8C%EC%9B%90%EC%9D%B8%EC%A6%9D%EC%B4%88%EA%B8%B0%EC%84%A4%EC%A0%95.md)
+
 
 
 ### 실행
 
 ```bash
-# 테이블 생성
-(venv)$python manage.py migrate
-
 # 서버 실행
 (venv)$python manage.py runserver
 ```
-
-
-
-
-

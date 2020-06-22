@@ -560,7 +560,7 @@ def makequiz(request, family_pk, user_pk):
                     "to": devices[0].device_token,
                     "notification": {
                         "title": "담다",
-                        "body": "새로운 퀴즈가 등록되었습니다.",
+                        "body": "새로운 퀴즈 도착! 부모님 퀴즈를 풀어보세요!",
                         "android_channel_id": "MISSION"
                     }
                 }
@@ -573,7 +573,7 @@ def makequiz(request, family_pk, user_pk):
                     "registration_ids": device_list,
                     "notification": {
                         "title": "담다",
-                        "body": "새로운 퀴즈가 등록되었습니다.",
+                        "body": "새로운 퀴즈 도착! 부모님 퀴즈를 풀어보세요!!",
                         "android_channel_id": "MISSION"
                     }
                 }
